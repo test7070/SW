@@ -14,21 +14,31 @@
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
 		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
 		<script type="text/javascript">
-            var q_name = "img";
-            var q_readonly = [];
+		
+			q_tables = 't';
+            var q_name = "news";
+            var q_readonly = ['txtNoa','txtWorker','txtWorker2'];
+            var q_readonlys =[];
+            var q_readonlyt =[];
             var bbmNum = [];
+            var bbsNum = [];
+            var bbtNum = [];
             var bbmMask = [];
+            var bbsMask = [];
+            var bbtMask = [];
      
             q_sqlCount = 6;
             brwCount = 6;
             brwList = [];
             brwNowPage = 0;
             brwKey = 'noa';
-			brwCount2 =8;
-			aPop = new Array();
+			brwCount2 =13;
+			aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea', 'txtSssno,txtNamea', 'sss_b.aspx']);
             				
             $(document).ready(function() {
                 bbmKey = ['noa'];
+                bbsKey = ['noa','noq'];
+                bbtKey = ['noa','noq'];
                 q_brwCount();
                 q_gt(q_name, q_content, q_sqlCount, 1);
             });
@@ -38,96 +48,87 @@
                     dataErr = false;
                     return;
                 }
-                mainForm(0);
+                mainForm(1);
             }
-
+			
+			var n_typeb=[],n_typec=[],n_typed=[],n_typeNow=[];
+			n_typeNow.push({typea:'',typeb:'',typec:'',typed:''});
             function mainPost() {
+            	bbmMask = [['txtDatea', '9999/99/99']];
                 q_mask(bbmMask);
-                $('#txtNoa').change(function(e) {			
-					t_where = "where=^^ noa='" + $(this).val() + "'^^";
-					q_gt('img', t_where, 0, 0, 0, "checkNoa_change", r_accy);				
-				});
-				$('#btnFile').change(function(e){
-					event.stopPropagation(); 
-				    event.preventDefault();
-					file = $('#btnFile')[0].files[0];
-					if(file){
-						fr = new FileReader();
-					    fr.readAsDataURL(file);
-					    fr.onloadend = function(e){
-					    	$('#imgPic').attr('src',fr.result);
-					    	$('#btnFile').val('');
-					    	refreshImg(true);
-					    };
-					}
-				});
-				$('#textPara').change(function(e){
-					if(q_cur==1 || q_cur==2){
-						refreshPara();
-					}
-				});
-				$('#textPara').focusout(function(e){
-					if(q_cur==1 || q_cur==2){
-						refreshPara();
-					}
-				});
-            }
-            function refreshPara(){
-            	var string = $.trim($('#textPara').val());
-				var t_para = new Array();
-				var value = string.split('\n');
-				for(var i=0;i<value.length;i++){
-					if(value[i].split(',').length==4){
-						try{
-							t_para.push({key:value[i].split(',')[0]
-								,top:parseInt(value[i].split(',')[1])
-								,left:parseInt(value[i].split(',')[2])
-								,fontsize:value[i].split(',')[3]});
-						}catch(e){
-						}
-					}
-				}
-				$('#txtPara').val(JSON.stringify(t_para));
-				refreshImg(false);
-            }
-			function refreshImg(isOrg){
-				if(!isOrg){
-					$('#imgPic').attr('src',$('#txtOrg').val());
-				}
-				var imgwidth = $('#imgPic').width();
-                var imgheight = $('#imgPic').height();
-                $('#canvas').width(imgwidth).height(imgheight);
-                var c = document.getElementById("canvas");
-				var ctx = c.getContext("2d");		
-				c.width = imgwidth;
-				c.height = imgheight;
-				ctx.drawImage($('#imgPic')[0],0,0,imgwidth,imgheight);
-				if(!isOrg && $('#textPara').val().length>0){
-					t_para = JSON.parse($('#txtPara').val());
-					$('#textPara').val('');
-					for(var i=0;i<t_para.length;i++){
-						ctx.font = t_para[i].fontsize+"px times new roman";
-						ctx.fillStyle = 'red';
-						ctx.fillText(t_para[i].key,t_para[i].left,t_para[i].top);
-						if($('#textPara').val().length>0)
-							$('#textPara').val($('#textPara').val()+'\n');
-						$('#textPara').val($('#textPara').val()+t_para[i].key+','+t_para[i].top+','+t_para[i].left+','+t_para[i].fontsize);
-					}
-				}
-				$('#imgPic').attr('src',c.toDataURL());
-				if(isOrg){
-					//縮放為300*100
-					$('#canvas').width(300).height(100);
-					c.width = 300;
-					c.height = 100;
-					$("#canvas")[0].getContext("2d").drawImage($('#imgPic')[0],0,0,imgwidth,imgheight,0,0,300,100);
-					$('#txtOrg').val(c.toDataURL());
-					refreshImg(false);
-				}
-				else
-					$('#txtData').val(c.toDataURL());
+                
+                $('.lblLanguage1').text('繁體').css('float','left');
+                $('.lblLanguage2').text('簡體').css('float','left');
+                $('.lblImgplace').text('位置').css('float','left');
+                
+                q_cmbParse("cmbRank", "0@選擇等級,1,2,3,4,5,6,7,8,9,10");
+                q_cmbParse("cmbImgaplace", ",0@右,1@下");
+                q_cmbParse("cmbImgbplace", ",0@右,1@下");
+                q_cmbParse("cmbImgcplace", ",0@右,1@下");
+                q_cmbParse("cmbImgdplace", ",0@右,1@下");
 				
+                q_gt('newsstype', '', 0, 0, 0, "newsstype");
+                q_gt('newsarea', '', 0, 0, 0, "newsarea");
+                q_gt('newstypea', '', 0, 0, 0, "newstypea");
+                q_gt('newstypeb', '', 0, 0, 0, "newstypeb");
+                q_gt('newstypec', '', 0, 0, 0, "newstypec");
+                q_gt('newstyped', '', 0, 0, 0, "newstyped");
+                
+                $('#cmbTypea').change(function() {
+                	n_typeNow[0].typea=$('#cmbTypea').val()
+                	Typeachange(); 
+				});
+				$('#cmbTypeb').change(function() {
+					n_typeNow[0].typeb=$('#cmbTypeb').val()
+                	Typeachange(); 
+				});
+				$('#cmbTypec').change(function() {
+					n_typeNow[0].typec=$('#cmbTypec').val()
+                	Typeachange(); 
+				});
+				$('#cmbTypec').change(function() {
+					n_typeNow[0].typed=$('#cmbTyped').val()
+                	Typeachange(); 
+				});
+                
+            }
+            
+            function Typeachange() {
+				if($('#cmbTypea').val()!=''){
+					//處理內容
+					$('#cmbTypeb').text('');
+					$('#cmbTypec').text('');
+					$('#cmbTyped').text('');
+					
+					var c_typeb='@';
+					for (i=0;i<n_typeb.length;i++){
+						if(n_typeb[i].typeano==$('#cmbTypea').val())
+							c_typeb=c_typeb+','+n_typeb[i].noa+"@"+n_typeb[i].typeb;
+					}
+					q_cmbParse("cmbTypeb", c_typeb);
+					if(n_typeNow[0])
+						$('#cmbTypeb').val(n_typeNow[0].typeb);
+					
+					var c_typec='@';
+					for (i=0;i<n_typec.length;i++){
+						if(n_typec[i].typebno==$('#cmbTypeb').val())
+							c_typec=c_typec+','+n_typec[i].noa+"@"+n_typec[i].typec;
+					}					
+					q_cmbParse("cmbTypec", c_typec);
+					if(abbm[q_recno])
+						$('#cmbTypec').val(n_typeNow[0].typec);
+						
+					var c_typed='@';
+					for (i=0;i<n_typed.length;i++){
+						if(n_typed[i].typecno==$('#cmbTypec').val())
+							c_typed=c_typed+','+n_typed[i].noa+"@"+n_typed[i].typed;
+					}					
+					q_cmbParse("cmbTyped", c_typed);
+					if(abbm[q_recno])
+						$('#cmbTyped').val(n_typeNow[0].typed);
+				}
 			}
+            
             function q_boxClose(s2) {
                 var ret;
                 switch (b_pop) {
@@ -136,26 +137,54 @@
                         break;
                 } 
             }
+            
             function q_gtPost(t_name) {
                 switch (t_name) {
-                	case 'checkNoa_change':
-						var as = _q_appendData("img", "", true);
+                	case 'newsstype':
+                		var as = _q_appendData("newsstype", "", true);
 						if (as[0] != undefined) {
-							alert('已存在 ' + as[0].noa + ' ' + as[0].namea);
-							Unlock(1);
-							return;
+							var t_item = "@";
+							for (i = 0; i < as.length; i++) {
+								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].noa) + '@' + $.trim(as[i].stype);
+							}
+							q_cmbParse("cmbStype", t_item);
+							if(abbm[q_recno])
+								$("#cmbStype").val(abbm[q_recno].stype);
 						}
-						break;
-                	case 'checkNoa_btnOk':
-						var as = _q_appendData("img", "", true);
+                		break;
+                	case 'newsarea':
+                		var as = _q_appendData("newsarea", "", true);
 						if (as[0] != undefined) {
-							alert('已存在 ' + as[0].noa + ' ' + as[0].namea);
-							Unlock(1);
-							return;
-						} else {
-							wrServer($('#txtNoa').val());
+							var t_item = "@";
+							for (i = 0; i < as.length; i++) {
+								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].noa) + '@' + $.trim(as[i].area);
+							}
+							q_cmbParse("cmbArea", t_item);
+							if(abbm[q_recno])
+								$("#cmbArea").val(abbm[q_recno].area);
 						}
-						break;
+                		break;
+                	case 'newstypea':
+                		var as = _q_appendData("newstypea", "", true);
+						if (as[0] != undefined) {
+							var t_item = "@";
+							for (i = 0; i < as.length; i++) {
+								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].noa) + '@' + $.trim(as[i].typea);
+							}
+							q_cmbParse("cmbTypea", t_item);
+							if(abbm[q_recno])
+								$("#cmbTypea").val(abbm[q_recno].typea);
+						}
+                		break;
+                	case 'newstypeb':
+                		n_typeb = _q_appendData("newstypeb", "", true);
+                		break;
+                	case 'newstypec':
+                		n_typec = _q_appendData("newstypec", "", true);
+                		break;
+                	case 'newstyped':
+                		n_typed = _q_appendData("newstyped", "", true);
+                		break;
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
@@ -166,44 +195,51 @@
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)// 1-3
                     return;
-                q_box('imgfe_s.aspx', q_name + '_s', "500px", "310px", q_getMsg("popSeek"));
+                q_box('news_s.aspx', q_name + '_s', "500px", "310px", q_getMsg("popSeek"));
             }
 
             function btnIns() {
                 _btnIns();
-                refreshBbm();
-                $('#txtNoa').focus();
+                $('#txtTitle').focus();
+                $('#txtDatea').val(q_date());
             }
 
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
                 _btnModi();
-                refreshBbm();
-                $('#txtNamea').focus();
+                $('#txtTitle').focus();
             }
 
             function btnPrint() {
 
             }
+            
 			function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
                 Unlock(1);
             }
+            
             function btnOk() {
             	Lock(1,{opacity:0});
-            	if($('#txtNoa').val().length==0){
-            		alert('請輸入'+q_getMsg("lblNoa"));
+            	if($('#txtTitle').val().length==0){
+            		alert('請輸入'+q_getMsg("lblTitle"));
             		Unlock(1);
             		return;
             	}
-				if (q_cur == 1) {
-					t_where = "where=^^ noa='" + $('#txtNoa').val() + "'^^";
-					q_gt('img', t_where, 0, 0, 0, "checkNoa_btnOk");
-				} else {
-					wrServer($('#txtNoa').val());
-				}          	
+            	
+				if(q_cur==1){
+					$('#txtWorker').val(r_name);
+				}else{
+					$('#txtWorker2').val(r_name);
+				}
+
+				var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
+				if (s1.length == 0 || s1 == "AUTO")
+					q_gtnoa(q_name, replaceAll(q_getPara('sys.key_news') + q_date(), '/', ''));
+				else
+					wrServer(s1);
             }
 
             function wrServer(key_value) {
@@ -216,40 +252,38 @@
                 $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val(key_value);
                 _btnOk(key_value, bbmKey[0], '', '', 2);
             }
+            
+            function bbsSave(as) {
+				if (!as['title']) {
+					as[bbsKey[1]] = '';
+					return;
+				}
+				q_nowf();
+				return true;
+			}
+			
+			function bbtSave(as) {
+				if (!as['title']) {
+					as[bbtKey[1]] = '';
+					return;
+				}
+				q_nowf();
+				return true;
+			}
 
             function refresh(recno) {
-                _refresh(recno);     
-                refreshBbm();
-            }
-			function refreshBbm(){
-            	if(q_cur==1){
-            		$('#txtNoa').css('color','black').css('background','white').removeAttr('readonly');
-            	}else{
-            		$('#txtNoa').css('color','green').css('background','RGB(237,237,237)').attr('readonly','readonly');
-            	}
-            	if(q_cur==1 || q_cur==2)
-                	$('#btnFile').removeAttr('disabled');
-                else
-                	$('#btnFile').attr('disabled','disabled');
-            	$('#imgPic').attr('src',$('#txtData').val());
-                for(var i=0;i<brwCount2;i++){
-                	$('#vtimg_'+i).children().attr('src',$('#vtdata_'+i).text());
-                }
-                try{
-                	t_para = JSON.parse($('#txtPara').val());
-					$('#textPara').val('');
-					for(var i=0;i<t_para.length;i++){
-						if($('#textPara').val().length>0)
-							$('#textPara').val($('#textPara').val()+'\n');
-						$('#textPara').val($('#textPara').val()+t_para[i].key+','+t_para[i].top+','+t_para[i].left+','+t_para[i].fontsize);
-					}
-                }catch(e){
-                	
-                }
+                _refresh(recno);   
+                Typeachange();  
             }
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
+                if(t_para){
+                	$('#txtDatea').datepicker( 'destroy' );
+                }else{
+                	$('#txtDatea').removeClass('hasDatepicker')
+					$('#txtDatea').datepicker();
+                }
             }
 
             function btnMinus(id) {
@@ -259,6 +293,28 @@
             function btnPlus(org_htm, dest_tag, afield) {
                 _btnPlus(org_htm, dest_tag, afield);
             }
+            
+            function btnPlut(org_htm, dest_tag, afield) {
+				_btnPlut(org_htm, dest_tag, afield);
+			}
+			
+			function bbsAssign() {
+				for (var i = 0; i < q_bbsCount; i++) {
+					$('#lblNo_' + i).text(q_getMsg("lblAtt")+(i + 1));
+				}
+				_bbsAssign();
+				$('.lblLanguage1_s').text('繁體');
+                $('.lblLanguage2_s').text('簡體');
+			}
+
+			function bbtAssign() {
+				for (var i = 0; i < q_bbtCount; i++) {
+					$('#lblNo__' + i).text(q_getMsg("lblWeb")+(i + 1));
+				}
+				_bbtAssign();
+				$('.lblLanguage1_t').text('繁體');
+                $('.lblLanguage2_t').text('簡體');
+			}
 
             function q_appendData(t_Table) {
                 return _q_appendData(t_Table);
@@ -311,7 +367,7 @@
             }
             .dview {
                 float: left;
-                width: 350px; 
+                width: 400px; 
                 border-width: 0px; 
             }
             .tview {
@@ -331,7 +387,7 @@
             }
             .dbbm {
                 float: left;
-                width: 600px;
+                width: 850px;
                 /*margin: -1px;        
                 border: 1px black solid;*/
                 border-radius: 5px;
@@ -350,7 +406,7 @@
                 height: 35px;
             }
             .tbbm tr td {
-                width: 20%;
+                
             }
             .tbbm .tdZ {
                 width: 2%;
@@ -377,6 +433,10 @@
                 width: 100%;
                 float: left;
             }
+            .txt.c2 {
+                width: 50%;
+                float: left;
+            }
             .txt.num {
                 text-align: right;
             }
@@ -395,17 +455,57 @@
                 padding: 0px;
                 margin: -1px;
             }
-            .tbbs input[type="text"] {
-                width: 98%;
-            }
-            .tbbs a {
-                font-size: medium;
-            }
+            .dbbs {
+				width: 1250px;
+			}
+			.dbbs .tbbs {
+				margin: 0;
+				padding: 2px;
+				border: 2px lightgrey double;
+				border-spacing: 1;
+				border-collapse: collapse;
+				font-size: medium;
+				color: blue;
+				/*background: #cad3ff;*/
+				background: lightgrey;
+				width: 100%;
+			}
+			.dbbs .tbbs tr {
+				height: 35px;
+			}
+			.dbbs .tbbs tr td {
+				text-align: center;
+				border: 2px lightgrey double;
+			}
+			select {
+				border-width: 1px;
+				padding: 0px;
+				margin: -1px;
+				font-size: medium;
+			}
+			#dbbt {
+				width: 1250px;
+			}
+			#tbbt {
+				margin: 0;
+				padding: 2px;
+				border: 2px pink double;
+				border-spacing: 1;
+				border-collapse: collapse;
+				font-size: medium;
+				color: blue;
+				background: pink;
+				width: 100%;
+			}
+			#tbbt tr {
+				height: 35px;
+			}
+			#tbbt tr td {
+				text-align: center;
+				border: 2px pink double;
+			}
             .num {
                 text-align: right;
-            }
-            .bbs {
-                float: left;
             }
             input[type="text"], input[type="button"] {
                 font-size: medium;
@@ -428,76 +528,156 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td align="center" style="width:120px; color:black;"><a id='vewImg'> </a></td>
-						<td align="center" style="width:100px; color:black;"><a id='vewNoa'> </a></td>
-						<td align="center" style="width:100px; color:black;"><a id='vewNamea'> </a></td>
-						<td align="center" style="display:none;"><a id='vewData'> </a></td>
+						<td align="center" style="width:100px; color:black;"><a id='vewDatea'> </a></td>
+						<td align="center" style="width:100px; color:black;"><a id='vewSss'> </a></td>
+						<td align="center" style="width:170px; color:black;"><a id='vewTitle'> </a></td>
 					</tr>
 					<tr>
 						<td ><input id="chkBrow.*" type="checkbox" style=' '/></td>
-						<td id='img' style="text-align: center;"><img src="" style="width:120px;height:40px;"/></td>
-						<td id='noa' style="text-align: center;">~noa</td>
-						<td id='namea' style="text-align: left;">~namea</td>
-						<td id='data' style="display:none;">~data</td>
+						<td id='datea' style="text-align: center;">~datea</td>
+						<td id='namea' style="text-align: center;">~namea</td>
+						<td id='title,8' style="text-align: center;">~title,8</td>
 					</tr>
 				</table>
 			</div>
 			<div class='dbbm' >
 				<table class="tbbm"  id="tbbm">
-					<tbody>
-						<tr style="height:1px;">
-							<td> </td>
-							<td> </td>
-							<td> </td>
-							<td class="tdZ"> </td>
-						</tr>
-						<tr>
-							<td><span> </span><a id='lblNoa' class="lbl"> </a></td>
-							<td colspan="2"><input id="txtNoa"  type="text"  class="txt c1"/></td>
-						</tr>
-						<tr>
-							<td><span> </span><a id='lblNamea' class="lbl"> </a></td>
-							<td colspan="2">
-								<input id="txtNamea"  type="text" class="txt c1" />	
-								<input id="txtData"  type="text" style="display:none;" />
-								<input id="txtOrg"  type="text" style="display:none;"/>
-								<input id="txtPara"  type="text" style="display:none;" />	
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td colspan="2"><a style="color:#8A4B08;">代號,TOP,LEFT,字形大小</a></td>
-						</tr>
-						<tr> 
-							<td><span> </span><a id='lblPara' class="lbl"> </a></td>
-							<td colspan="2"rowspan="3">
-								<textarea id="textPara" class="txt c1" rows="6"> </textarea>
-							</td>
-						</tr>
-						<tr> </tr>
-						<tr> </tr>
-						<tr> </tr>
-						<tr>
-							<td><span> </span><a id='lblImgpci' class="lbl"> </a></td>
-							<td colspan="2" rowspan="4">
-								<img id="imgPic" src="" style="width:300px;height:100px;"/>
-								<canvas id="canvas" style="display:none"> </canvas>
-							</td>
-						</tr>
-						<tr> </tr>
-						<tr> </tr>
-						<tr> </tr>
-						<tr>
-							<td></td>
-							<td colspan="3">
-								<input type="file" id="btnFile" value="上傳"/>
-							</td>
-						</tr>
-					</tbody>
+					<tr style="height:1px;">
+						<td style="width: 100px"> </td>
+						<td style="width: 180px"> </td>
+						<td style="width: 100px"> </td>
+						<td style="width: 180px"> </td>
+						<td style="width: 100px"> </td>
+						<td style="width: 180px"> </td>
+						<td style="width: 10px"> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblSss' class="lbl btn"> </a></td>
+						<td>
+							<input id="txtSssno"  type="text"  class="txt c1" style="width: 49%"/>
+							<input id="txtNamea"  type="text"  class="txt c1" style="width: 49%"/>
+						</td>
+						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
+						<td><input id="txtDatea"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblNoa' class="lbl"> </a></td>
+						<td><input id="txtNoa"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblStype' class="lbl"> </a></td>
+						<td><select id="cmbStype" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblIllustrate' class="lbl"> </a></td>
+						<td><input id="txtIllustrate"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblRank' class="lbl"> </a></td>
+						<td><select id="cmbRank" class="txt c1"> </select></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
+						<td><select id="cmbTypea" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblArea' class="lbl"> </a></td>
+						<td><select id="cmbArea" class="txt c1"> </select></td>
+						<td colspan="2">
+							<input id="chkOnline" type="checkbox" style="float: center;"/>
+							<a id='lblOnline' class="lbl" style="float: center;"> </a>
+							<input id="chkNewimg" type="checkbox" style="float: center;"/>
+							<a id='lblNewimg' class="lbl" style="float: center;"> </a>
+							<input id="chkWatermark" type="checkbox" style="float: center;"/>
+							<a id='lblWatermark' class="lbl" style="float: center;"> </a>
+						</td>
+					</tr>
+					<tr class="typea">
+						<td><span> </span><a id='lblTypeb' class="lbl"> </a></td>
+						<td><select id="cmbTypeb" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblTypec' class="lbl"> </a></td>
+						<td><select id="cmbTypec" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblTyped' class="lbl"> </a></td>
+						<td><select id="cmbTyped" class="txt c1"> </select></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblTitle' class="lbl"> </a></td>
+						<td colspan="5"><input id="txtITitle"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblContents' class="lbl"> </a></td>
+						<td colspan="5"><textarea id="txtContents" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblImga' class="lbl"> </a></td>
+						<td colspan="2"><a class='lblLanguage1'> </a><span style="float: left;"> </span><input type="file" id="btnImga1" value="選擇檔案"/></td>
+						<td colspan="2"><a class='lblLanguage2'> </a><span style="float: left;"> </span><input type="file" id="btnImga2" value="選擇檔案"/></td>
+						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgaplace" class="txt c2"> </select></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblImgb' class="lbl"> </a></td>
+						<td colspan="2"><a class='lblLanguage1'> </a><span style="float: left;"> </span><input type="file" id="btnImgb1" value="選擇檔案"/></td>
+						<td colspan="2"><a class='lblLanguage2'> </a><span style="float: left;"> </span><input type="file" id="btnImgb2" value="選擇檔案"/></td>
+						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgbplace" class="txt c2"> </select></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblImgc' class="lbl"> </a></td>
+						<td colspan="2"><a class='lblLanguage1'> </a><span style="float: left;"> </span><input type="file" id="btnImgc1" value="選擇檔案"/></td>
+						<td colspan="2"><a class='lblLanguage2'> </a><span style="float: left;"> </span><input type="file" id="btnImgc2" value="選擇檔案"/></td>
+						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgcplace" class="txt c2"> </select></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblImgd' class="lbl"> </a></td>
+						<td colspan="2"><a class='lblLanguage1'> </a><span style="float: left;"> </span><input type="file" id="btnImgd1" value="選擇檔案"/></td>
+						<td colspan="2"><a class='lblLanguage2'> </a><span style="float: left;"> </span><input type="file" id="btnImgd2" value="選擇檔案"/></td>
+						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgdplace" class="txt c2"> </select></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
+						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
+						<td><input id="txtWorker2"  type="text"  class="txt c1"/></td>
+					</tr>
 				</table>
 			</div>
 		</div>
-
+		<div class='dbbs'>
+				<table id="tbbs" class='tbbs'>
+					<tr style='color:white; background:#003366;' >
+						<td style="width:20px;"><input id="btnPlus" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
+						<td style="width:80px;"><a id='lblNo_s'> </a></td>
+						<td><a id='lblTitle_s'> </a></td>
+						<td style="width:300px;"><a class='lblLanguage1_s'> </a></td>
+						<td style="width:300px;"><a class='lblLanguage2_s'> </a></td>
+						
+					</tr>
+					<tr style='background:#cad3ff;'>
+						<td align="center">
+							<input type="button" id="btnMinus.*" style="font-size: medium; font-weight: bold;" value="－"/>
+							<input type="text" id="txtNoq.*" style="display: none;"/>
+						</td>
+						<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
+						<td><input type="text" id="txtTitle.*" class="txt c1" /></td>
+						<td><input type="file" id="btnAtt1.*" value="選擇檔案"/></td>
+						<td><input type="file" id="btnAtt2.*" value="選擇檔案"/></td>
+					</tr>
+				</table>
+			</div>
+			<div id="dbbt" >
+			<table id="tbbt">
+				<tbody>
+					<tr class="head" style="color:white; background:#003366;">
+						<td style="width:20px;"><input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
+						<td style="width:80px;"><a id='lblNo_t'> </a></td>
+						<td><a id='lblTitle_t'> </a></td>
+						<td style="width:300px; text-align: center;"><a class='lblLanguage1_t'> </a></td>
+						<td style="width:300px; text-align: center;"><a class='lblLanguage2_t'> </a></td>
+					</tr>
+					<tr>
+						<td>
+							<input id="btnMinut..*" type="button" style="font-size: medium; font-weight: bold;" value="－"/>
+							<input class="txt" id="txtNoq..*" type="text" style="display: none;"/>
+						</td>
+						<td><a id="lblNo..*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
+						<td><input id="txtTitle..*" type="text" class="txt  c1"/></td>
+						<td><input id="txtWeb1..*" type="text" class="txt  c1"/></td>
+						<td><input id="txtWeb2..*" type="text" class="txt  c1"/></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 		<input id="q_sys" type="hidden" />
 	</body>
 </html>
