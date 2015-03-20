@@ -13,6 +13,10 @@
 		<script src="css/jquery/ui/jquery.ui.core.js"></script>
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
 		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
+		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide.packed.js"></script>
+		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide-with-html.packed.js"></script>
+		<link rel="stylesheet" type="text/css" href="http://59.125.143.170/highslide/highslide.css" /> 
+		<script type="text/javascript"> hs.graphicsDir = 'http://59.125.143.170/highslide/graphics/'; hs.showCredits = false; hs.outlineType = 'rounded-white'; hs.outlineWhileAnimating = true; </script>
 		<script type="text/javascript">
 		
 			q_tables = 't';
@@ -78,20 +82,84 @@
                 	n_typeNow[0].typea=$('#cmbTypea').val()
                 	Typeachange(); 
 				});
+				
 				$('#cmbTypeb').change(function() {
 					n_typeNow[0].typeb=$('#cmbTypeb').val()
                 	Typeachange(); 
 				});
+				
 				$('#cmbTypec').change(function() {
 					n_typeNow[0].typec=$('#cmbTypec').val()
                 	Typeachange(); 
 				});
-				$('#cmbTypec').change(function() {
+				
+				$('#cmbTyped').change(function() {
 					n_typeNow[0].typed=$('#cmbTyped').val()
                 	Typeachange(); 
 				});
                 
+                $('.btnImg').change(function() {
+					event.stopPropagation(); 
+					event.preventDefault();
+					if(q_cur==1 || q_cur==2){}else{return;}
+					var txtName = replaceAll($(this).attr('id'),'btn','txt');
+					file = $(this)[0].files[0];
+					if(file){
+						Lock(1);
+						var ext = '';
+						var extindex = file.name.lastIndexOf('.');
+						if(extindex>=0){
+							ext = file.name.substring(extindex,file.name.length);
+						}
+						$('#'+txtName+'name').val(file.name);
+						$('#'+txtName).val(guid()+Date.now()+ext);
+						
+						fr = new FileReader();
+						fr.fileName = $('#'+txtName).val();
+					    fr.readAsDataURL(file);
+					    fr.onprogress = function(e){
+							if ( e.lengthComputable ) { 
+								var per = Math.round( (e.loaded * 100) / e.total) ; 
+								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
+							}; 
+						}
+						fr.onloadstart = function(e){
+							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
+						}
+						fr.onloadend = function(e){
+							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
+							console.log(fr.fileName+':'+fr.result.length);
+							var oReq = new XMLHttpRequest();
+							oReq.upload.addEventListener("progress",function(e) {
+								if (e.lengthComputable) {
+									percentComplete = Math.round((e.loaded / e.total) * 100,0);
+									$('#FileList').children().last().find('progress').eq(1).attr('value',percentComplete);
+								}
+							}, false);
+							oReq.upload.addEventListener("load",function(e) {
+								Unlock(1);
+							}, false);
+							oReq.upload.addEventListener("error",function(e) {
+								alert("資料上傳發生錯誤!");
+							}, false);
+								
+							oReq.timeout = 360000;
+							oReq.ontimeout = function () { alert("Timed out!!!"); }
+							oReq.open("POST", 'news_upload.aspx', true);
+							oReq.setRequestHeader("Content-type", "text/plain");
+							oReq.setRequestHeader("FileName", escape(fr.fileName));
+							oReq.send(fr.result);
+						};
+					}
+					ShowImglbl();
+				});
             }
+            
+            var guid = (function() {
+				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
+				//return function() {return s4() + s4() + '-' + s4() + '-' + s4() + '-' +s4() + '-' + s4() + s4() + s4();};
+				return function() {return s4() + s4() + s4() + s4();};
+			})();
             
             function Typeachange() {
 				if($('#cmbTypea').val()!=''){
@@ -127,6 +195,46 @@
 					if(abbm[q_recno])
 						$('#cmbTyped').val(n_typeNow[0].typed);
 				}
+			}
+			
+			function ShowImglbl() {
+				$('.lblImgShowDown').each(function(){
+					var txtimg=replaceAll($(this).attr('id'),'lbl','txt');
+					var lblimg=replaceAll($(this).attr('id'),'lbl','lbl');
+					if(!emp($('#'+txtimg).val())){
+						$('#'+lblimg).addClass('lbl btn highslide ').attr('href','../images/sw/news/'+$('#'+txtimg).val())
+						.attr('onclick',"return hs.expand(this, { captionId: 'caption1', align: 'center',allowWidthReduction: true } )");
+					}else{
+						$('#'+lblimg).removeClass('lbl btn highslide ').removeAttr('href').removeAttr('onclick');
+					}
+						
+					
+					$('#'+lblimg).bind('contextmenu', function(e) {
+						/*滑鼠右鍵*/
+						e.preventDefault();
+                        if(txtimg.length>0)
+                        	$('#xdownload').attr('src','news_download.aspx?FileName='+$('#'+txtimg+'name').val()+'&TempName='+$('#'+txtimg).val());
+                        else
+                        	alert('無資料...'+n);
+					});
+				});
+				
+				$('.lblDownload').text('').hide();
+				$('.lblDownload').each(function(){
+					var txtimg=replaceAll($(this).attr('id'),'lbl','txt');
+					var lblimg=replaceAll($(this).attr('id'),'lbl','lbl');
+					var txtOrgName = replaceAll($(this).attr('id'),'lbl','txt').split('_');
+					
+					if(!emp($('#'+txtimg).val()))
+						$(this).text('下載').show();
+											
+					$('#'+lblimg).click(function(e) {
+                        if(txtimg.length>0)
+                        	$('#xdownload').attr('src','news_download.aspx?FileName='+$('#'+txtOrgName[0]+'name_'+txtOrgName[1]).val()+'&TempName='+$('#'+txtimg).val());
+                        else
+                        	alert('無資料...'+n);
+					});
+				});
 			}
             
             function q_boxClose(s2) {
@@ -178,12 +286,15 @@
                 		break;
                 	case 'newstypeb':
                 		n_typeb = _q_appendData("newstypeb", "", true);
+                		Typeachange();
                 		break;
                 	case 'newstypec':
                 		n_typec = _q_appendData("newstypec", "", true);
+                		Typeachange();
                 		break;
                 	case 'newstyped':
                 		n_typed = _q_appendData("newstyped", "", true);
+                		Typeachange();
                 		break;
                     case q_name:
                         if (q_cur == 4)
@@ -202,6 +313,7 @@
                 _btnIns();
                 $('#txtTitle').focus();
                 $('#txtDatea').val(q_date());
+                ShowImglbl();
             }
 
             function btnModi() {
@@ -237,7 +349,7 @@
 
 				var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
 				if (s1.length == 0 || s1 == "AUTO")
-					q_gtnoa(q_name, replaceAll(q_getPara('sys.key_news') + q_date(), '/', ''));
+					q_gtnoa(q_name, replaceAll(q_date(), '/', ''));
 				else
 					wrServer(s1);
             }
@@ -254,7 +366,7 @@
             }
             
             function bbsSave(as) {
-				if (!as['title']) {
+				if (!as['title']&&!as['att1']&&!as['att2']) {
 					as[bbsKey[1]] = '';
 					return;
 				}
@@ -263,7 +375,7 @@
 			}
 			
 			function bbtSave(as) {
-				if (!as['title']) {
+				if (!as['title']&&!as['web1']&&!as['web2']) {
 					as[bbtKey[1]] = '';
 					return;
 				}
@@ -272,15 +384,24 @@
 			}
 
             function refresh(recno) {
-                _refresh(recno);   
+                _refresh(recno);
+                n_typeNow[0].typea=abbm[q_recno].typea;
+                n_typeNow[0].typeb=abbm[q_recno].typeb;
+                n_typeNow[0].typec=abbm[q_recno].typec;
+                n_typeNow[0].typed=abbm[q_recno].typed;
                 Typeachange();  
+                ShowImglbl();
             }
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                 if(t_para){
+                	$('.btnImg').attr('disabled', 'disabled');
+                	$('.btnAtt').attr('disabled', 'disabled');
                 	$('#txtDatea').datepicker( 'destroy' );
                 }else{
+                	$('.btnImg').removeAttr('disabled', 'disabled');
+                	$('.btnAtt').removeAttr('disabled', 'disabled');
                 	$('#txtDatea').removeClass('hasDatepicker')
 					$('#txtDatea').datepicker();
                 }
@@ -303,8 +424,72 @@
 					$('#lblNo_' + i).text(q_getMsg("lblAtt")+(i + 1));
 				}
 				_bbsAssign();
+				if(q_cur==1 || q_cur==2){
+					$('.btnAtt').removeAttr('disabled', 'disabled');
+				}else{
+					$('.btnAtt').attr('disabled', 'disabled');
+				}
+				
 				$('.lblLanguage1_s').text('繁體');
                 $('.lblLanguage2_s').text('簡體');
+                
+                $('.btnAtt').change(function() {
+					event.stopPropagation(); 
+					event.preventDefault();
+					if(q_cur==1 || q_cur==2){}else{return;}
+					var txtOrgName = replaceAll($(this).attr('id'),'btn','txt').split('_');
+					var txtName = replaceAll($(this).attr('id'),'btn','txt');
+					file = $(this)[0].files[0];
+					if(file){
+						Lock(1);
+						var ext = '';
+						var extindex = file.name.lastIndexOf('.');
+						if(extindex>=0){
+							ext = file.name.substring(extindex,file.name.length);
+						}
+						$('#'+txtOrgName[0]+'name_'+txtOrgName[1]).val(file.name);
+						$('#'+txtName).val(guid()+Date.now()+ext);
+						
+						fr = new FileReader();
+						fr.fileName = $('#'+txtName).val();
+					    fr.readAsDataURL(file);
+					    fr.onprogress = function(e){
+							if ( e.lengthComputable ) { 
+								var per = Math.round( (e.loaded * 100) / e.total) ; 
+								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
+							}; 
+						}
+						fr.onloadstart = function(e){
+							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
+						}
+						fr.onloadend = function(e){
+							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
+							console.log(fr.fileName+':'+fr.result.length);
+							var oReq = new XMLHttpRequest();
+							oReq.upload.addEventListener("progress",function(e) {
+								if (e.lengthComputable) {
+									percentComplete = Math.round((e.loaded / e.total) * 100,0);
+									$('#FileList').children().last().find('progress').eq(1).attr('value',percentComplete);
+								}
+							}, false);
+							oReq.upload.addEventListener("load",function(e) {
+								Unlock(1);
+							}, false);
+							oReq.upload.addEventListener("error",function(e) {
+								alert("資料上傳發生錯誤!");
+							}, false);
+								
+							oReq.timeout = 360000;
+							oReq.ontimeout = function () { alert("Timed out!!!"); }
+							oReq.open("POST", 'news_upload.aspx', true);
+							oReq.setRequestHeader("Content-type", "text/plain");
+							oReq.setRequestHeader("FileName", escape(fr.fileName));
+							oReq.send(fr.result);
+						};
+					}
+					ShowImglbl();
+				});
+				ShowImglbl();
 			}
 
 			function bbtAssign() {
@@ -360,7 +545,6 @@
                 _btnCancel();
             }
 		</script>
-
 		<style type="text/css">
             #dmain {
                 overflow: hidden;
@@ -425,6 +609,7 @@
             .tbbm tr td .lbl.btn {
                 color: #4297D7;
                 font-weight: bolder;
+                cursor: pointer;
             }
             .tbbm tr td .lbl.btn:hover {
                 color: #FF8F19;
@@ -477,6 +662,11 @@
 				text-align: center;
 				border: 2px lightgrey double;
 			}
+			.dbbs tr td .lbl.btn {
+                color: #4297D7;
+                font-weight: bolder;
+                cursor: pointer;
+            }
 			select {
 				border-width: 1px;
 				padding: 0px;
@@ -513,6 +703,9 @@
             select {
                 font-size: medium;
             }
+            .highslide-wrapper .highslide-html-content {
+			    width: auto;
+			}
 		</style>
 	</head>
 	<body ondragstart="return false" draggable="false"
@@ -560,7 +753,7 @@
 						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
 						<td><input id="txtDatea"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id='lblNoa' class="lbl"> </a></td>
-						<td><input id="txtNoa"  type="text"  class="txt c1"/></td>
+						<td><input id="txtNoa" type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblStype' class="lbl"> </a></td>
@@ -594,7 +787,7 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblTitle' class="lbl"> </a></td>
-						<td colspan="5"><input id="txtITitle"  type="text"  class="txt c1"/></td>
+						<td colspan="5"><input id="txtTitle"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblContents' class="lbl"> </a></td>
@@ -602,26 +795,58 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblImga' class="lbl"> </a></td>
-						<td colspan="2"><a class='lblLanguage1'> </a><span style="float: left;"> </span><input type="file" id="btnImga1" value="選擇檔案"/></td>
-						<td colspan="2"><a class='lblLanguage2'> </a><span style="float: left;"> </span><input type="file" id="btnImga2" value="選擇檔案"/></td>
+						<td colspan="2">
+							<a id="lblImga1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
+							<input type="file" id="btnImga1" class="btnImg" value="選擇檔案"/>
+							<input id="txtImga1"  type="hidden"/><input id="txtImga1name"  type="hidden"/>
+						</td>
+						<td colspan="2">
+							<a id="lblImga2" class='lblLanguage2 lblImgShowDown'> </a><span style="float: left;"> </span>
+							<input type="file" id="btnImga2" class="btnImg" value="選擇檔案"/>
+							<input id="txtImga2"  type="hidden"/><input id="txtImga2name"  type="hidden"/>
+						</td>
 						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgaplace" class="txt c2"> </select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblImgb' class="lbl"> </a></td>
-						<td colspan="2"><a class='lblLanguage1'> </a><span style="float: left;"> </span><input type="file" id="btnImgb1" value="選擇檔案"/></td>
-						<td colspan="2"><a class='lblLanguage2'> </a><span style="float: left;"> </span><input type="file" id="btnImgb2" value="選擇檔案"/></td>
+						<td colspan="2">
+							<a id="lblImgb1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
+							<input type="file" id="btnImgb1" class="btnImg" value="選擇檔案"/>
+							<input id="txtImgb1"  type="hidden"/><input id="txtImgb1name"  type="hidden"/>
+						</td>
+						<td colspan="2">
+							<a id="lblImgb2" class='lblLanguage2 lblImgShowDown'> </a><span style="float: left;"> </span>
+							<input type="file" id="btnImgb2" class="btnImg" value="選擇檔案"/>
+							<input id="txtImgb2"  type="hidden"/><input id="txtImgb2name"  type="hidden"/>
+						</td>
 						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgbplace" class="txt c2"> </select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblImgc' class="lbl"> </a></td>
-						<td colspan="2"><a class='lblLanguage1'> </a><span style="float: left;"> </span><input type="file" id="btnImgc1" value="選擇檔案"/></td>
-						<td colspan="2"><a class='lblLanguage2'> </a><span style="float: left;"> </span><input type="file" id="btnImgc2" value="選擇檔案"/></td>
+						<td colspan="2">
+							<a id="lblImgc1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
+							<input type="file" id="btnImgc1" class="btnImg" value="選擇檔案"/>
+							<input id="txtImgc1"  type="hidden"/><input id="txtImgc1name"  type="hidden"/>
+						</td>
+						<td colspan="2">
+							<a id="lblImgc2" class='lblLanguage2 lblImgShowDown'> </a><span style="float: left;"> </span>
+							<input type="file" id="btnImgc2" class="btnImg" value="選擇檔案"/>
+							<input id="txtImgc2"  type="hidden"/><input id="txtImgc2name"  type="hidden"/>
+						</td>
 						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgcplace" class="txt c2"> </select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblImgd' class="lbl"> </a></td>
-						<td colspan="2"><a class='lblLanguage1'> </a><span style="float: left;"> </span><input type="file" id="btnImgd1" value="選擇檔案"/></td>
-						<td colspan="2"><a class='lblLanguage2'> </a><span style="float: left;"> </span><input type="file" id="btnImgd2" value="選擇檔案"/></td>
+						<td colspan="2">
+							<a id="lblImgd1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
+							<input type="file" id="btnImgd1" class="btnImg" value="選擇檔案"/>
+							<input id="txtImgd1"  type="hidden"/><input id="txtImgd1name"  type="hidden"/>
+						</td>
+						<td colspan="2">
+							<a id="lblImgd2" class='lblLanguage2 lblImgShowDown'> </a><span style="float: left;"> </span>
+							<input type="file" id="btnImgd2" class="btnImg" value="選擇檔案"/>
+							<input id="txtImgd2"  type="hidden"/><input id="txtImgd2name"  type="hidden"/>
+						</td>
 						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgdplace" class="txt c2"> </select></td>
 					</tr>
 					<tr>
@@ -629,6 +854,9 @@
 						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
 						<td><input id="txtWorker2"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr style="display: none;">
+						<td colspan="7"><div style="width:100%;" id="FileList"> </div></td>
 					</tr>
 				</table>
 			</div>
@@ -641,7 +869,6 @@
 						<td><a id='lblTitle_s'> </a></td>
 						<td style="width:300px;"><a class='lblLanguage1_s'> </a></td>
 						<td style="width:300px;"><a class='lblLanguage2_s'> </a></td>
-						
 					</tr>
 					<tr style='background:#cad3ff;'>
 						<td align="center">
@@ -650,8 +877,20 @@
 						</td>
 						<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 						<td><input type="text" id="txtTitle.*" class="txt c1" /></td>
-						<td><input type="file" id="btnAtt1.*" value="選擇檔案"/></td>
-						<td><input type="file" id="btnAtt2.*" value="選擇檔案"/></td>
+						<td style="text-align: left;">
+							<span style="float: left;"> </span>
+							<input type="file" id="btnAtt1.*" class="btnAtt" value="選擇檔案"/>
+							<input id="txtAtt1.*"  type="hidden"/>
+							<input id="txtAtt1name.*"  type="hidden"/>
+							<a id="lblAtt1.*" class='lblDownload lbl btn'> </a>
+						</td>
+						<td style="text-align: left;">
+							<span style="float: left;"> </span>
+							<input type="file" id="btnAtt2.*" class="btnAtt" value="選擇檔案"/>
+							<input id="txtAtt2.*"  type="hidden"/>
+							<input id="txtAtt2name.*"  type="hidden"/>
+							<a id="lblAtt2.*" class='lblDownload lbl btn'> </a>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -678,6 +917,7 @@
 				</tbody>
 			</table>
 		</div>
+		<iframe id="xdownload" style="display:none;"> </iframe>
 		<input id="q_sys" type="hidden" />
 	</body>
 </html>
