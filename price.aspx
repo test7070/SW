@@ -60,8 +60,8 @@
 
 			currentData.prototype = {
 				data : [],
-				exclude : ['chkEnda','txtWorker','txtWorker2'], //bbm
-				excludes : ['chkEnda'], //bbs
+				exclude : ['txtNoa','txtWorker','txtWorker2'], //bbm
+				excludes : [], //bbs
 				copy : function() {
 					this.data = new Array();
 					for (var i in fbbm) {
@@ -173,7 +173,7 @@
 		        if (q_cur > 0 && q_cur < 4)
 		            return;
 
-		        q_box('price_s.aspx', q_name + '_s', "550px", "520px", q_getMsg("popSeek"));
+		        q_box('price_s.aspx', q_name + '_s', "550px", "250px", q_getMsg("popSeek"));
 		    }
 
 		    function bbsAssign() {
@@ -224,6 +224,7 @@
 		    
 		    function bbschange() {
 		    	$('.lblLanguage_s').html('繁<BR>簡').css('line-height','23px');
+		    	$('.typeb').show();
 		    	$('.typec').hide();
 		    	$('.unit').hide();
 		    	$('.spec').hide();
@@ -252,10 +253,12 @@
 						$('#lblProduct_s').text('名稱');
 						$('#lblAprice_s').text('收盤價');
 						$('.unit').show();
+						$('.typeb').hide();
 						break;
 					case 'shipping'://航運價格指數
 						$('#lblProduct_s').text('商品名稱');
 						$('#lblAprice_s').text('收盤價');
+						$('.typeb').hide();
 						break;
 					case 'cn'://大陸
 						break;
@@ -291,8 +294,10 @@
 					curData.paste();
 				}
 		        $('#txtNoa').val('AUTO');
-				$('#txtDatea').val(q_date()).focus();
+				$('#txtDatea').val(q_date());
+				$('#cmbArea').focus();
 				ChangeGB();
+				bbschange();
 		    }
 
 		    function btnModi() {
@@ -301,6 +306,7 @@
 		        _btnModi();
 		        $('#cmbArea').focus();
 		        ChangeGB();
+		        bbschange();
 		    }
 
 		    function btnPrint() {
@@ -402,7 +408,7 @@
 	        	//取得目前行
 				var rows_b_seq=dec(row)+dec(topdown);
 				if(bbsbbt=='bbs'){
-					q_gridAddRow(bbsHtm, 'tbbs', 'txtNo2', 1);
+					q_gridAddRow(bbsHtm, 'tbbs', 'txtNoq', 1);
 					//目前行的資料往下移動
 					for (var i = q_bbsCount-1; i >=rows_b_seq; i--) {
 						for (var j = 0; j <fbbs.length; j++) {
@@ -622,7 +628,7 @@
 					<td align="center" style="width:20px;"> </td>
 					<td align="center" style="width:20px;"> </td>
 					<td align="center" style="width:120px;"><a id='lblTypea_s'> </a></td>
-					<td align="center" style="width:120px;"><a id='lblTypeb_s'> </a></td>
+					<td align="center" style="width:120px;" class="typeb"><a id='lblTypeb_s'> </a></td>
 					<td align="center" style="width:120px;" class="typec"><a id='lblTypec_s'> </a></td>
 					<td align="center" style="width:150px;"><a id='lblProduct_s'> </a></td>
 					<td align="center" style="width:120px;" class="unit"><a id='lblUnit_s'> </a></td>
@@ -643,9 +649,9 @@
 						<input type="text" id="txtTypea.*" class="txt c1" /><BR>
 						<input type="text" id="txtTypea2.*" class="txt c1 ChangeGB" />
 					</td>
-					<td >
-						<input type="text" id="txtTypeb.*" class="txt c1" /><BR>
-						<input type="text" id="txtTypeb2.*" class="txt c1 ChangeGB" />
+					<td  class="typeb">
+						<input type="text" id="txtTypeb.*" class="txt c1 typeb" /><BR>
+						<input type="text" id="txtTypeb2.*" class="txt c1 typeb ChangeGB" />
 					</td>
 					<td class="typec">
 						<input type="text" id="txtTypec.*" class="txt c1 typec" /><BR>

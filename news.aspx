@@ -410,10 +410,12 @@
 
             function refresh(recno) {
                 _refresh(recno);
-                n_typeNow[0].typea=abbm[q_recno].typea;
-                n_typeNow[0].typeb=abbm[q_recno].typeb;
-                n_typeNow[0].typec=abbm[q_recno].typec;
-                n_typeNow[0].typed=abbm[q_recno].typed;
+                if(abbm[q_recno]){
+	                n_typeNow[0].typea=abbm[q_recno].typea;
+	                n_typeNow[0].typeb=abbm[q_recno].typeb;
+	                n_typeNow[0].typec=abbm[q_recno].typec;
+	                n_typeNow[0].typed=abbm[q_recno].typed;
+				}
                 Typeachange();  
                 ShowImglbl();
                 ChangeGB();
