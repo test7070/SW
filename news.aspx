@@ -248,6 +248,14 @@
 						$('#'+txtGB).val(toSimp($('#'+txtBIG5).val()));
 					});
 					
+					$('.ChangeGBm').attr('title',"點擊滑鼠左鍵，轉簡體。")
+					$('.ChangeGBm').click(function() {
+						var txtGB = replaceAll($(this).attr('id'),'lbl','txt');
+						var txtBIG5 = replaceAll($(this).attr('id'),'lbl','txt');
+						txtBIG5=replaceAll(txtBIG5,'2m','1m')
+						$('#'+txtGB).val(toSimp($('#'+txtBIG5).val()));
+					});
+					
 					$('.ChangeGBs').attr('title',"點擊滑鼠右鍵，轉簡體。")
 					$('.ChangeGBs').bind('contextmenu', function(e) {
 						/*滑鼠右鍵*/
@@ -581,7 +589,7 @@
             }
             .dview {
                 float: left;
-                width: 400px; 
+                width: 330px; 
                 border-width: 0px; 
             }
             .tview {
@@ -601,7 +609,7 @@
             }
             .dbbm {
                 float: left;
-                width: 850px;
+                width: 870px;
                 /*margin: -1px;        
                 border: 1px black solid;*/
                 border-radius: 5px;
@@ -650,6 +658,10 @@
             }
             .txt.c2 {
                 width: 50%;
+                float: left;
+            }
+            .txt.c3 {
+                width: 83%;
                 float: left;
             }
             .txt.num {
@@ -751,8 +763,8 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td align="center" style="width:100px; color:black;"><a id='vewDatea'> </a></td>
-						<td align="center" style="width:100px; color:black;"><a id='vewSss'> </a></td>
+						<td align="center" style="width:90px; color:black;"><a id='vewDatea'> </a></td>
+						<td align="center" style="width:80px; color:black;"><a id='vewSss'> </a></td>
 						<td align="center" style="width:170px; color:black;"><a id='vewTitle'> </a></td>
 					</tr>
 					<tr>
@@ -766,11 +778,11 @@
 			<div class='dbbm' >
 				<table class="tbbm"  id="tbbm">
 					<tr style="height:1px;">
-						<td style="width: 100px"> </td>
+						<td style="width: 110px"> </td>
 						<td style="width: 180px"> </td>
-						<td style="width: 100px"> </td>
+						<td style="width: 110px"> </td>
 						<td style="width: 180px"> </td>
-						<td style="width: 100px"> </td>
+						<td style="width: 110px"> </td>
 						<td style="width: 180px"> </td>
 						<td style="width: 10px"> </td>
 					</tr>
@@ -847,7 +859,18 @@
 							<input type="file" id="btnImga2" class="btnImg" value="選擇檔案"/>
 							<input id="txtImga2"  type="hidden"/><input id="txtImga2name"  type="hidden"/>
 						</td>
-						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgaplace" class="txt c2"> </select></td>
+						<td style="display: none;"><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgaplace" class="txt c2"> </select></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblImgamemo' class="lbl"> </a></td>
+						<td colspan="2">
+							<a class='lblLanguage1'> </a><span style="float: left;"> </span>
+							<input id="txtImga1memo"  type="text"  class="txt c3"/>
+						</td>
+						<td colspan="2">
+							<a id="lblImga2memo" class='lblLanguage2 lbl btn ChangeGBm'> </a><span style="float: left;"> </span>
+							<input id="txtImga2memo"  type="text"  class="txt c3"/>
+						</td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblImgb' class="lbl"> </a></td>
@@ -861,9 +884,20 @@
 							<input type="file" id="btnImgb2" class="btnImg" value="選擇檔案"/>
 							<input id="txtImgb2"  type="hidden"/><input id="txtImgb2name"  type="hidden"/>
 						</td>
-						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgbplace" class="txt c2"> </select></td>
+						<td style="display: none;"><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgbplace" class="txt c2"> </select></td>
 					</tr>
 					<tr>
+						<td><span> </span><a id='lblImgbmemo' class="lbl"> </a></td>
+						<td colspan="2">
+							<a class='lblLanguage1'> </a><span style="float: left;"> </span>
+							<input id="txtImgb1memo"  type="text"  class="txt c3"/>
+						</td>
+						<td colspan="2">
+							<a id="lblImgb2memo" class='lblLanguage2 lbl btn ChangeGBm'> </a><span style="float: left;"> </span>
+							<input id="txtImgb2memo"  type="text"  class="txt c3"/>
+						</td>
+					</tr>
+					<tr style="display: none;">
 						<td><span> </span><a id='lblImgc' class="lbl"> </a></td>
 						<td colspan="2">
 							<a id="lblImgc1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
@@ -877,7 +911,18 @@
 						</td>
 						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgcplace" class="txt c2"> </select></td>
 					</tr>
-					<tr>
+					<tr style="display: none;">
+						<td><span> </span><a id='lblImgcmemo' class="lbl"> </a></td>
+						<td colspan="2">
+							<a class='lblLanguage1'> </a><span style="float: left;"> </span>
+							<input id="txtImgc1memo"  type="text"  class="txt c3"/>
+						</td>
+						<td colspan="2">
+							<a id="lblImgc2memo" class='lblLanguage2 lbl btn ChangeGBm'> </a><span style="float: left;"> </span>
+							<input id="txtImgc2memo"  type="text"  class="txt c3"/>
+						</td>
+					</tr>
+					<tr style="display: none;">
 						<td><span> </span><a id='lblImgd' class="lbl"> </a></td>
 						<td colspan="2">
 							<a id="lblImgd1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
@@ -890,6 +935,17 @@
 							<input id="txtImgd2"  type="hidden"/><input id="txtImgd2name"  type="hidden"/>
 						</td>
 						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgdplace" class="txt c2"> </select></td>
+					</tr>
+					<tr style="display: none;">
+						<td><span> </span><a id='lblImgdmemo' class="lbl"> </a></td>
+						<td colspan="2">
+							<a class='lblLanguage1'> </a><span style="float: left;"> </span>
+							<input id="txtImgd1memo"  type="text"  class="txt c3"/>
+						</td>
+						<td colspan="2">
+							<a id="lblImgd2memo" class='lblLanguage2 lbl btn ChangeGBm'> </a><span style="float: left;"> </span>
+							<input id="txtImgd2memo"  type="text"  class="txt c3"/>
+						</td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>

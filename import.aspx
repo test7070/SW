@@ -22,11 +22,11 @@
 		    }
 		    
 		    q_tables = 's';
-		    var q_name = "price";
+		    var q_name = "import";
 		    var q_readonly = ['txtNoa', 'txtWorker', 'txtWorker2'];
 		    var q_readonlys = [];
-		    var bbmNum = [['txtFloata', 10, 4,1]];
-		    var bbsNum = [];//['txtHprice', 10, 2,1],['txtLprice', 10, 2,1],['txtAprice', 10, 2,1]
+		    var bbmNum = [];
+		    var bbsNum = [];
 		    var bbmMask = [];
 		    var bbsMask = [];
 		    q_sqlCount = 6;
@@ -37,7 +37,7 @@
 		    q_desc = 1;
 		    aPop = new Array();
 		    
-		    brwCount2 = 4;
+		    brwCount2 = 3;
 
 		    $(document).ready(function () {
 		        bbmKey = ['noa'];
@@ -102,17 +102,17 @@
 				paste : function() {
 					for (var i in this.data) {
 						$('#' + this.data[i].field).val(this.data[i].value);
-					}				
+					}
 				}
 			};
 			var curData = new currentData();
 
 		    function mainPost() {
-		        bbmMask = [['txtDatea', '9999/99/99']];
+		        bbmMask = [['txtMon', '9999/99']];
 		        q_mask(bbmMask);
 		        
-		        q_cmbParse("cmbArea", q_getPara('price.area'));
-		        $('#cmbArea').change(function() {
+		        q_cmbParse("cmbCountry", q_getPara('import.country'));
+		        $('#cmbCountry').change(function() {
 		        	bbschange();
 				});
 		        
@@ -141,13 +141,13 @@
 
 		    function btnOk() {
 		        Lock(1,{opacity:0});
-            	if($('#txtDatea').val().length==0){
-            		alert('請輸入'+q_getMsg("lblDatea"));
+            	if($('#txtMon').val().length==0){
+            		alert('請輸入'+q_getMsg("lblMon"));
             		Unlock(1);
             		return;
             	}
-            	if($('#cmbArea').val().length==0){
-            		alert('請輸入'+q_getMsg("lblArea"));
+            	if($('#cmbCountry').val().length==0){
+            		alert('請輸入'+q_getMsg("lblCountry"));
             		Unlock(1);
             		return;
             	}
@@ -169,25 +169,14 @@
 		        if (q_cur > 0 && q_cur < 4)
 		            return;
 
-		        q_box('price_s.aspx', q_name + '_s', "550px", "250px", q_getMsg("popSeek"));
+		        q_box('import_s.aspx', q_name + '_s', "550px", "250px", q_getMsg("popSeek"));
 		    }
 
 		    function bbsAssign() {
 		        for (var i = 0; i < q_bbsCount; i++) {
 		            $('#lblNo_' + i).text(i + 1);
 		            if (!$('#btnMinus_' + i).hasClass('isAssign')) {
-		                $('#txtHprice_'+i).change(function() {
-		                	t_IdSeq = -1;
-							q_bodyId($(this).attr('id'));
-							b_seq = t_IdSeq;
-		                	q_tr('txtAprice_'+b_seq,q_div(q_add(q_float('txtHprice_'+b_seq),q_float('txtLprice_'+b_seq)),2));
-						});
-						$('#txtLprice_'+i).change(function() {
-		                	t_IdSeq = -1;
-							q_bodyId($(this).attr('id'));
-							b_seq = t_IdSeq;
-		                	q_tr('txtAprice_'+b_seq,q_div(q_add(q_float('txtHprice_'+b_seq),q_float('txtLprice_'+b_seq)),2));
-						});
+		            	
 		            }
 		        }
 		        _bbsAssign();
@@ -220,57 +209,18 @@
 		    
 		    function bbschange() {
 		    	$('.lblLanguage_s').html('繁<BR>簡').css('line-height','23px');
+		    	$('.typea').show();
 		    	$('.typeb').show();
-		    	$('.typec').hide();
-		    	$('.unit').hide();
-		    	$('.spec').hide();
-		    	$('.size').hide();
-		    	$('.hprice').hide();
-		    	$('.lprice').hide();
-		    	$('#lblTypea_s').text('市場');
-		    	$('#lblTypeb_s').text('類別');
-		    	$('#lblTypec_s').text('種類');
-		    	$('#lblProduct_s').text('品項');
-		    	$('#lblUnit_s').text('報價單位');
-		    	$('#lblSpec_s').text('規格/材質');
-		    	$('#lblSize_s').text('尺寸');
-		    	$('#lblHprice_s').text('最高價');
-		    	$('#lblLprice_s').text('最低價');
-		    	$('#lblAprice_s').text('均價');
-		        switch ($('#cmbArea').val()) {
+		    	$('.cnimount').hide();
+		        switch ($('#cmbCountry').val()) {
 					case 'tw'://台灣
-						$('.typec').show();
-						$('.spec').show();
-						$('.size').show();
-						$('.hprice').show();
-						$('.lprice').show();
-						break;
-					case 'lme'://LME期貨
-						$('#lblProduct_s').text('名稱');
-						$('#lblAprice_s').text('收盤價');
-						$('.unit').show();
-						$('.typeb').hide();
-						break;
-					case 'shipping'://航運價格指數
-						$('#lblProduct_s').text('商品名稱');
-						$('#lblAprice_s').text('收盤價');
-						$('.typeb').hide();
+						$('.cnimount').show();
 						break;
 					case 'cn'://大陸
 						break;
 					case 'jp'://日本
-						break;
-					case 'kr'://韓國
-						break;
-					case 'in'://印度
-						break;
-					case 'cis'://獨聯體及東南亞
-						break;
-					case 'me'://中東
-						break;
-					case 'am'://美洲
-						break;
-					case 'eu'://歐盟
+					$('.typea').hide();
+		    		$('.typeb').hide();
 						break;
 		            default:
 		                break;
@@ -290,8 +240,8 @@
 					curData.paste();
 				}
 		        $('#txtNoa').val('AUTO');
-				$('#txtDatea').val(q_date());
-				$('#cmbArea').focus();
+				$('#txtMon').val(q_date().substr(0,7));
+				$('#cmbCountry').focus();
 				ChangeGB();
 				bbschange();
 		    }
@@ -300,7 +250,7 @@
 		        if (emp($('#txtNoa').val()))
 		            return;
 		        _btnModi();
-		        $('#cmbArea').focus();
+		        $('#cmbCountry').focus();
 		        ChangeGB();
 		        bbschange();
 		    }
@@ -322,9 +272,8 @@
 		            return;
 		        }
 		        q_nowf();
-		        as['datea'] = abbm2['datea'];
-		        as['area'] = abbm2['area'];
-		        as['floata'] = abbm2['floata'];
+		        as['mon'] = abbm2['mon'];
+		        as['country'] = abbm2['country'];
 		        return true;
 		    }
 
@@ -337,11 +286,11 @@
 		        _readonly(t_para, empty);
 		        if (t_para) {
 		        	$('#checkCopy').removeAttr('disabled');
-		        	$('#txtDatea').datepicker( 'destroy' );
+		        	//$('#txtMon').datepicker( 'destroy' );
 		        }else{
 					$('#checkCopy').attr('disabled', 'disabled');
-					$('#txtDatea').removeClass('hasDatepicker')
-					$('#txtDatea').datepicker({ dateFormat: 'yy/mm/dd' });
+					//$('#txtMon').removeClass('hasDatepicker')
+					//$('#txtMon').datepicker({ dateFormat: 'yy/mm/dd' });
 				}
 		    }
 
@@ -565,13 +514,13 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td align="center" style="width:100px; color:black;"><a id='vewDatea'> </a></td>
-						<td align="center" style="width:200px; color:black;"><a id='vewArea'> </a></td>
+						<td align="center" style="width:100px; color:black;"><a id='vewMon'> </a></td>
+						<td align="center" style="width:200px; color:black;"><a id='vewCountry'> </a></td>
 					</tr>
 					<tr>
 						<td ><input id="chkBrow.*" type="checkbox" /></td>
-						<td id="datea" style="text-align: center;">~datea</td>
-						<td id="area=price.area" style="text-align: center;">~area=price.area</td>
+						<td id="mon" style="text-align: center;">~mon</td>
+						<td id="country=import.country" style="text-align: center;">~country=import.country</td>
 					</tr>
 				</table>
 			</div>
@@ -584,9 +533,9 @@
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
+						<td><span> </span><a id='lblMon' class="lbl"> </a></td>
 						<td>
-							<input id="txtDatea"  type="text"  class="txt c1"/>
+							<input id="txtMon"  type="text"  class="txt c1"/>
 							<input id="txtNoa"  type="text"  class="txt c1" style="display: none;"/>
 						</td>
 						<td>
@@ -595,8 +544,8 @@
 						</td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblArea' class="lbl"> </a></td>
-						<td><select id="cmbArea" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblCountry' class="lbl"> </a></td>
+						<td><select id="cmbCountry" class="txt c1"> </select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblFloata' class="lbl"> </a></td>
@@ -623,16 +572,15 @@
 					<td  align="center" style="width:30px;"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:20px;"> </td>
 					<td align="center" style="width:20px;"> </td>
-					<td align="center" style="width:120px;"><a id='lblTypea_s'> </a></td>
+					<td align="center" style="width:120px;" class="typea"><a id='lblTypea_s'> </a></td>
 					<td align="center" style="width:120px;" class="typeb"><a id='lblTypeb_s'> </a></td>
 					<td align="center" style="width:120px;" class="typec"><a id='lblTypec_s'> </a></td>
 					<td align="center" style="width:150px;"><a id='lblProduct_s'> </a></td>
-					<td align="center" style="width:120px;" class="unit"><a id='lblUnit_s'> </a></td>
-					<td align="center" style="width:150px;" class="spec"><a id='lblSpec_s'> </a></td>
-					<td align="center" style="width:150px;" class="size"><a id='lblSize_s'> </a></td>
-					<td align="center" style="width:100px;" class="hprice"><a id='lblHprice_s'> </a></td>
-					<td align="center" style="width:100px;" class="lprice"><a id='lblLprice_s'> </a></td>
-					<td align="center" style="width:100px;" ><a id='lblAprice_s'> </a></td>
+					<td align="center" style="width:100px;"><a id='lblImount_s'> </a></td>
+					<td align="center" style="width:100px;"><a id='lblImoney_s'> </a></td>
+					<td align="center" style="width:100px;"><a id='lblEmount_s'> </a></td>
+					<td align="center" style="width:100px;"><a id='lblEmoney_s'> </a></td>
+					<td align="center" style="width:100px;" class="cnimount"><a id='lblCnimount_s'> </a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center">
@@ -641,11 +589,11 @@
 					</td>
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 					<td><a class="lblLanguage_s" style="font-weight: bold;text-align: center;display: block;"> </a></td>
-					<td >
-						<input type="text" id="txtTypea.*" class="txt c1" /><BR>
-						<input type="text" id="txtTypea2.*" class="txt c1 ChangeGB" />
+					<td class="typea">
+						<input type="text" id="txtTypea.*" class="txt c1 typea" /><BR>
+						<input type="text" id="txtTypea2.*" class="txt c1  typea ChangeGB" />
 					</td>
-					<td  class="typeb">
+					<td class="typeb">
 						<input type="text" id="txtTypeb.*" class="txt c1 typeb" /><BR>
 						<input type="text" id="txtTypeb2.*" class="txt c1 typeb ChangeGB" />
 					</td>
@@ -657,21 +605,11 @@
 						<input type="text" id="txtProduct.*" class="txt c1" /><BR>
 						<input type="text" id="txtProduct2.*" class="txt c1 ChangeGB" />
 					</td>
-					<td class="unit" >
-						<input type="text" id="txtUnit.*" class="txt c1 unit" /><BR>
-						<input type="text" id="txtUnit2.*" class="txt c1 unit ChangeGB" />
-					</td>
-					<td class="spec">
-						<input type="text" id="txtSpec.*" class="txt c1 spec" />
-						<input type="text" id="txtSpec2.*" class="txt c1 spec ChangeGB" />
-					</td>
-					<td class="size">
-						<input type="text" id="txtSize.*" class="txt c1 size" />
-						<input type="text" id="txtSize2.*" class="txt c1 size ChangeGB" />
-					</td>
-					<td class="hprice"><input type="text" id="txtHprice.*" class="txt num c1 hprice" /></td>
-					<td class="lprice"><input type="text" id="txtLprice.*" class="txt num c1 lprice" /></td>
-					<td ><input type="text" id="txtAprice.*" class="txt num c1" /></td>
+					<td ><input type="text" id="txtImount.*" class="txt num c1" /></td>
+					<td ><input type="text" id="txtImoney.*" class="txt num c1" /></td>
+					<td ><input type="text" id="txtEmount.*" class="txt num c1" /></td>
+					<td ><input type="text" id="txtEmoney.*" class="txt num c1" /></td>
+					<td class="cnimount"><input type="text" id="txtCnimount.*" class="txt num c1 cnimount" /></td>
 				</tr>
 			</table>
 		</div>
