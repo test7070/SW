@@ -12,13 +12,14 @@
 		<link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
 		<script src="css/jquery/ui/jquery.ui.core.js"></script>
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
-		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
+		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
 		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide.packed.js"></script>
 		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide-with-html.packed.js"></script>
 		<link rel="stylesheet" type="text/css" href="http://59.125.143.170/highslide/highslide.css" /> 
 		<script type="text/javascript"> hs.graphicsDir = 'http://59.125.143.170/highslide/graphics/'; hs.showCredits = false; hs.outlineType = 'rounded-white'; hs.outlineWhileAnimating = true; </script>
+		<script type="text/javascript" src="http://59.125.143.170/script/WFU-ts-mix.js"></script>
+		<script type="text/javascript" src="http://59.125.143.170/script/tongwen-ts.js"></script>
 		<script type="text/javascript">
-		
 			q_tables = 't';
             var q_name = "news";
             var q_readonly = ['txtNoa','txtWorker','txtWorker2'];
@@ -36,7 +37,7 @@
             brwList = [];
             brwNowPage = 0;
             brwKey = 'noa';
-			brwCount2 =13;
+			brwCount2 =18;
 			aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea', 'txtSssno,txtNamea', 'sss_b.aspx']);
             				
             $(document).ready(function() {
@@ -236,6 +237,27 @@
 					});
 				});
 			}
+			
+			function ChangeGB() {
+				if(q_cur==1 || q_cur==2){
+					$('.ChangeGB').attr('title',"點擊滑鼠左鍵，轉簡體。")
+					$('.ChangeGB').click(function() {
+						var txtGB = replaceAll($(this).attr('id'),'lbl','txt');
+						var txtBIG5 = replaceAll($(this).attr('id'),'lbl','txt');
+						txtBIG5=txtBIG5.substr(0,txtBIG5.length-1);
+						$('#'+txtGB).val(toSimp($('#'+txtBIG5).val()));
+					});
+					
+					$('.ChangeGBs').attr('title',"點擊滑鼠右鍵，轉簡體。")
+					$('.ChangeGBs').bind('contextmenu', function(e) {
+						/*滑鼠右鍵*/
+						e.preventDefault();
+						var txtGB = $(this).attr('id');
+						var txtBIG5 = replaceAll($(this).attr('id'),'2_','_');
+						$('#'+txtGB).val(toSimp($('#'+txtBIG5).val()));
+					});
+				}
+			}
             
             function q_boxClose(s2) {
                 var ret;
@@ -306,7 +328,7 @@
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)// 1-3
                     return;
-                q_box('news_s.aspx', q_name + '_s', "500px", "310px", q_getMsg("popSeek"));
+                q_box('news_s.aspx', q_name + '_s', "500px", "410px", q_getMsg("popSeek"));
             }
 
             function btnIns() {
@@ -314,6 +336,7 @@
                 $('#txtTitle').focus();
                 $('#txtDatea').val(q_date());
                 ShowImglbl();
+                ChangeGB();
             }
 
             function btnModi() {
@@ -321,6 +344,8 @@
                     return;
                 _btnModi();
                 $('#txtTitle').focus();
+                ShowImglbl();
+                ChangeGB();
             }
 
             function btnPrint() {
@@ -391,6 +416,7 @@
                 n_typeNow[0].typed=abbm[q_recno].typed;
                 Typeachange();  
                 ShowImglbl();
+                ChangeGB();
             }
 
             function readonly(t_para, empty) {
@@ -403,7 +429,7 @@
                 	$('.btnImg').removeAttr('disabled', 'disabled');
                 	$('.btnAtt').removeAttr('disabled', 'disabled');
                 	$('#txtDatea').removeClass('hasDatepicker')
-					$('#txtDatea').datepicker();
+					$('#txtDatea').datepicker({ dateFormat: 'yy/mm/dd' });
                 }
             }
 
@@ -490,6 +516,7 @@
 					ShowImglbl();
 				});
 				ShowImglbl();
+				ChangeGB();
 			}
 
 			function bbtAssign() {
@@ -499,6 +526,7 @@
 				_bbtAssign();
 				$('.lblLanguage1_t').text('繁體');
                 $('.lblLanguage2_t').text('簡體');
+                ChangeGB();
 			}
 
             function q_appendData(t_Table) {
@@ -758,8 +786,6 @@
 					<tr>
 						<td><span> </span><a id='lblStype' class="lbl"> </a></td>
 						<td><select id="cmbStype" class="txt c1"> </select></td>
-						<td><span> </span><a id='lblIllustrate' class="lbl"> </a></td>
-						<td><input id="txtIllustrate"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id='lblRank' class="lbl"> </a></td>
 						<td><select id="cmbRank" class="txt c1"> </select></td>
 					</tr>
@@ -786,12 +812,26 @@
 						<td><select id="cmbTyped" class="txt c1"> </select></td>
 					</tr>
 					<tr>
+						<td><span> </span><a id='lblIllustrate' class="lbl"> </a></td>
+						<td><input id="txtIllustrate"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblIllustrate2' class="lbl btn ChangeGB"> </a></td>
+						<td><input id="txtIllustrate2"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
 						<td><span> </span><a id='lblTitle' class="lbl"> </a></td>
 						<td colspan="5"><input id="txtTitle"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
+						<td><span> </span><a id='lblTitle2' class="lbl btn ChangeGB"> </a></td>
+						<td colspan="5"><input id="txtTitle2"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
 						<td><span> </span><a id='lblContents' class="lbl"> </a></td>
 						<td colspan="5"><textarea id="txtContents" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblContents2' class="lbl btn ChangeGB"> </a></td>
+						<td colspan="5"><textarea id="txtContents2" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblImga' class="lbl"> </a></td>
@@ -867,6 +907,7 @@
 						<td style="width:20px;"><input id="btnPlus" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
 						<td style="width:80px;"><a id='lblNo_s'> </a></td>
 						<td><a id='lblTitle_s'> </a></td>
+						<td><a id='lblTitle2_s'> </a></td>
 						<td style="width:300px;"><a class='lblLanguage1_s'> </a></td>
 						<td style="width:300px;"><a class='lblLanguage2_s'> </a></td>
 					</tr>
@@ -877,6 +918,7 @@
 						</td>
 						<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 						<td><input type="text" id="txtTitle.*" class="txt c1" /></td>
+						<td><input type="text" id="txtTitle2.*" class="txt c1 ChangeGBs" /></td>
 						<td style="text-align: left;">
 							<span style="float: left;"> </span>
 							<input type="file" id="btnAtt1.*" class="btnAtt" value="選擇檔案"/>
@@ -901,6 +943,7 @@
 						<td style="width:20px;"><input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
 						<td style="width:80px;"><a id='lblNo_t'> </a></td>
 						<td><a id='lblTitle_t'> </a></td>
+						<td><a id='lblTitle2_t'> </a></td>
 						<td style="width:300px; text-align: center;"><a class='lblLanguage1_t'> </a></td>
 						<td style="width:300px; text-align: center;"><a class='lblLanguage2_t'> </a></td>
 					</tr>
@@ -911,6 +954,7 @@
 						</td>
 						<td><a id="lblNo..*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 						<td><input id="txtTitle..*" type="text" class="txt  c1"/></td>
+						<td><input id="txtTitle2..*" type="text" class="txt  c1 ChangeGBs"/></td>
 						<td><input id="txtWeb1..*" type="text" class="txt  c1"/></td>
 						<td><input id="txtWeb2..*" type="text" class="txt  c1"/></td>
 					</tr>
