@@ -62,6 +62,18 @@
             	bbmMask = [['txtDatea', '9999/99/99']];
                 q_mask(bbmMask);
                 
+                $.datepicker.regional['zh-TW']={
+				   dayNames:["星期日","星期一","星期二","星期三","星期四","星期五","星期六"],
+				   dayNamesMin:["日","一","二","三","四","五","六"],
+				   monthNames:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+				   monthNamesShort:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+				   prevText:"上月",
+				   nextText:"次月",
+				   weekHeader:"週"
+				};
+				//將預設語系設定為中文
+				$.datepicker.setDefaults($.datepicker.regional["zh-TW"]);
+                
                 $('.lblLanguage1').text('繁體').css('float','left');
                 $('.lblLanguage2').text('簡體').css('float','left');
                 $('.lblImgplace').text('位置').css('float','left');
@@ -851,12 +863,12 @@
 						<td><span> </span><a id='lblImga' class="lbl"> </a></td>
 						<td colspan="2">
 							<a id="lblImga1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
-							<input type="file" id="btnImga1" class="btnImg" value="選擇檔案"/>
+							<input type="file" id="btnImga1" class="btnImg" value="選擇檔案" accept="image/*"/>
 							<input id="txtImga1"  type="hidden"/><input id="txtImga1name"  type="hidden"/>
 						</td>
 						<td colspan="2">
 							<a id="lblImga2" class='lblLanguage2 lblImgShowDown'> </a><span style="float: left;"> </span>
-							<input type="file" id="btnImga2" class="btnImg" value="選擇檔案"/>
+							<input type="file" id="btnImga2" class="btnImg" value="選擇檔案" accept="image/*"/>
 							<input id="txtImga2"  type="hidden"/><input id="txtImga2name"  type="hidden"/>
 						</td>
 						<td style="display: none;"><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgaplace" class="txt c2"> </select></td>
@@ -876,12 +888,12 @@
 						<td><span> </span><a id='lblImgb' class="lbl"> </a></td>
 						<td colspan="2">
 							<a id="lblImgb1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
-							<input type="file" id="btnImgb1" class="btnImg" value="選擇檔案"/>
+							<input type="file" id="btnImgb1" class="btnImg" value="選擇檔案" accept="image/*"/>
 							<input id="txtImgb1"  type="hidden"/><input id="txtImgb1name"  type="hidden"/>
 						</td>
 						<td colspan="2">
 							<a id="lblImgb2" class='lblLanguage2 lblImgShowDown'> </a><span style="float: left;"> </span>
-							<input type="file" id="btnImgb2" class="btnImg" value="選擇檔案"/>
+							<input type="file" id="btnImgb2" class="btnImg" value="選擇檔案" accept="image/*"/>
 							<input id="txtImgb2"  type="hidden"/><input id="txtImgb2name"  type="hidden"/>
 						</td>
 						<td style="display: none;"><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgbplace" class="txt c2"> </select></td>
@@ -901,12 +913,12 @@
 						<td><span> </span><a id='lblImgc' class="lbl"> </a></td>
 						<td colspan="2">
 							<a id="lblImgc1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
-							<input type="file" id="btnImgc1" class="btnImg" value="選擇檔案"/>
+							<input type="file" id="btnImgc1" class="btnImg" value="選擇檔案" accept="image/*"/>
 							<input id="txtImgc1"  type="hidden"/><input id="txtImgc1name"  type="hidden"/>
 						</td>
 						<td colspan="2">
 							<a id="lblImgc2" class='lblLanguage2 lblImgShowDown'> </a><span style="float: left;"> </span>
-							<input type="file" id="btnImgc2" class="btnImg" value="選擇檔案"/>
+							<input type="file" id="btnImgc2" class="btnImg" value="選擇檔案" accept="image/*"/>
 							<input id="txtImgc2"  type="hidden"/><input id="txtImgc2name"  type="hidden"/>
 						</td>
 						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgcplace" class="txt c2"> </select></td>
@@ -926,12 +938,12 @@
 						<td><span> </span><a id='lblImgd' class="lbl"> </a></td>
 						<td colspan="2">
 							<a id="lblImgd1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
-							<input type="file" id="btnImgd1" class="btnImg" value="選擇檔案"/>
+							<input type="file" id="btnImgd1" class="btnImg" value="選擇檔案" accept="image/*"/>
 							<input id="txtImgd1"  type="hidden"/><input id="txtImgd1name"  type="hidden"/>
 						</td>
 						<td colspan="2">
 							<a id="lblImgd2" class='lblLanguage2 lblImgShowDown'> </a><span style="float: left;"> </span>
-							<input type="file" id="btnImgd2" class="btnImg" value="選擇檔案"/>
+							<input type="file" id="btnImgd2" class="btnImg" value="選擇檔案" accept="image/*"/>
 							<input id="txtImgd2"  type="hidden"/><input id="txtImgd2name"  type="hidden"/>
 						</td>
 						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgdplace" class="txt c2"> </select></td>
