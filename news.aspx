@@ -116,6 +116,7 @@
 					event.preventDefault();
 					if(q_cur==1 || q_cur==2){}else{return;}
 					var txtName = replaceAll($(this).attr('id'),'btn','txt');
+					var btnName = $(this).attr('id');
 					file = $(this)[0].files[0];
 					if(file){
 						Lock(1);
@@ -154,6 +155,9 @@
 							}, false);
 							oReq.upload.addEventListener("error",function(e) {
 								alert("資料上傳發生錯誤!");
+							}, false);
+							oReq.addEventListener("loadend", function(e) {
+								$('#'+btnName)[0].outerHTML=$('#'+btnName)[0].outerHTML;
 							}, false);
 								
 							oReq.timeout = 360000;

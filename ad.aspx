@@ -29,6 +29,7 @@
             brwNowPage = 0;
             brwKey = 'noa';
             //ajaxPath = ""; //  execute in Root
+            aPop = new Array(['txtCustno', '', 'cust', 'noa,comp', '0txtCustno,txtComp', '']);
 
             $(document).ready(function() {
                 bbmKey = ['noa'];
@@ -75,7 +76,9 @@
 					event.preventDefault();
 					if(q_cur==1 || q_cur==2){}else{return;}
 					var txtName = replaceAll($(this).attr('id'),'btn','txt');
+					var btnName = $(this).attr('id');
 					file = $(this)[0].files[0];
+					
 					if(file){
 						Lock(1);
 						var ext = '';
@@ -113,6 +116,9 @@
 							}, false);
 							oReq.upload.addEventListener("error",function(e) {
 								alert("資料上傳發生錯誤!");
+							}, false);
+							oReq.addEventListener("loadend", function(e) {
+								$('#'+btnName)[0].outerHTML=$('#'+btnName)[0].outerHTML;
 							}, false);
 								
 							oReq.timeout = 360000;
@@ -197,10 +203,10 @@
 					var txtimg=replaceAll($(this).attr('id'),'lbl','txt');
 					var lblimg=replaceAll($(this).attr('id'),'lbl','lbl');
 					if(!emp($('#'+txtimg).val())){
-						$('#'+lblimg).addClass('lbl btn highslide ').attr('href','../images/sw/ad/'+$('#'+txtimg).val())
+						$('#'+lblimg).addClass('btn highslide ').attr('href','../images/sw/ad/'+$('#'+txtimg).val())
 						.attr('onclick',"return hs.expand(this, { captionId: 'caption1', align: 'center',allowWidthReduction: true } )");
 					}else{
-						$('#'+lblimg).removeClass('lbl btn highslide ').removeAttr('href').removeAttr('onclick');
+						$('#'+lblimg).removeClass('btn highslide ').removeAttr('href').removeAttr('onclick');
 					}
 						
 					$('#'+lblimg).bind('contextmenu', function(e) {
@@ -287,7 +293,7 @@
 
             function btnIns() {
                 _btnIns();
-                $('#txtComp').focus();
+                $('#txtCustno').focus();
                 ShowImglbl();
             }
 
@@ -295,7 +301,7 @@
                 if (emp($('#txtNoa').val()))
                     return;
                 _btnModi();
-                $('#txtComp').focus();
+                $('#txtCustno').focus();
                 ShowImglbl();
             }
 
@@ -574,8 +580,9 @@
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblComp' class="lbl"> </a></td>
-						<td colspan="6">
+						<td><span> </span><a id='lblCust' class="lbl"> </a></td>
+						<td><input id="txtCustno"  type="text"  class="txt c1"/></td>
+						<td colspan="5">
 							<input id="txtComp"  type="text"  class="txt c1"/>
 							<input id="txtNoa"  type="text"  class="txt c1" style="display: none;"/>
 						</td>
