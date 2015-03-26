@@ -118,7 +118,7 @@
 								alert("資料上傳發生錯誤!");
 							}, false);
 							oReq.addEventListener("loadend", function(e) {
-								$('#'+btnName)[0].outerHTML=$('#'+btnName)[0].outerHTML;
+								$('#'+btnName).val('');
 							}, false);
 								
 							oReq.timeout = 360000;
