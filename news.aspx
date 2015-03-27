@@ -38,7 +38,7 @@
             brwNowPage = 0;
             brwKey = 'noa';
 			brwCount2 =18;
-			aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea', 'txtSssno,txtNamea', 'sss_b.aspx']);
+			aPop = new Array();//['txtSssno', 'lblSss', 'sss', 'noa,namea', 'txtSssno,txtNamea', 'sss_b.aspx']
             				
             $(document).ready(function() {
                 bbmKey = ['noa'];
@@ -47,7 +47,7 @@
                 q_brwCount();
                 q_gt(q_name, q_content, q_sqlCount, 1);
             });
-
+			q_desc=1;
             function main() {
                 if (dataErr) {
                     dataErr = false;
@@ -78,11 +78,21 @@
                 $('.lblLanguage2').text('簡體').css('float','left');
                 $('.lblImgplace').text('位置').css('float','left');
                 
-                q_cmbParse("cmbRank", "0@選擇等級,1,2,3,4,5,6,7,8,9,10");
+                q_cmbParse("cmbRank", "@選擇等級,1,2,3,4,5,6,7,8,9,10");
                 q_cmbParse("cmbImgaplace", ",0@右,1@下");
                 q_cmbParse("cmbImgbplace", ",0@右,1@下");
                 q_cmbParse("cmbImgcplace", ",0@右,1@下");
                 q_cmbParse("cmbImgdplace", ",0@右,1@下");
+				
+				q_gt('sss', '', 0, 0, 0, "sss");
+				
+				$('#combNamea').change(function() {
+					if(q_cur==1 || q_cur==2){
+						$('#txtSssno').val($('#combNamea').val());
+						$('#txtNamea').val($('#combNamea').find("option:selected").text());	
+					}
+					$('#combNamea')[0].selectedIndex=0;
+				});
 				
                 q_gt('newsstype', '', 0, 0, 0, "newsstype");
                 q_gt('newsarea', '', 0, 0, 0, "newsarea");
@@ -111,7 +121,30 @@
                 	Typeachange(); 
 				});*/
 				
-				for (var i=1;i<13;i++){
+				$("input[name='typea']").click(function() {
+					savetypea();
+					var t_values=$(this).val();
+					if($(this).prop('checked')){
+						//自動勾選上層
+						$("input[name='typea']").each(function() {
+							if(t_values.substr(0,$(this).val().length)==$(this).val()){
+									$(this).prop('checked',true);
+							}
+						});
+					}else{
+						//取消下層
+						$("input[name='typea']").each(function() {
+							if(t_values==$(this).val().substr(0,t_values.length) && t_values.length<$(this).val().length){
+									$(this).prop('checked',false);
+							}
+						});
+					}
+						savetypea();
+						readTypea();
+				});
+				
+				var levels=dec(replaceAll($("input[name='typea']").last().attr('id'),'typea',''));
+				for (var i=1;i<=levels;i++){
 					$('.typea'+i).hide();
 					$('#typea'+i).click(function() {
 						var className = $(this).attr('id');
@@ -237,7 +270,8 @@
 					}
 				});
 				
-				for (var i=1;i<10;i++){
+				var levels=dec(replaceAll($("input[name='typea']").last().attr('id'),'typea',''));
+				for (var i=1;i<=levels;i++){
 					$('.typea'+i).hide();
 					$('#typea'+i).each(function() {
 						var className = $(this).attr('id');
@@ -247,6 +281,40 @@
 							$('.'+className).hide();
 					});	
 				}
+			}
+			
+			//檢查階層是否完整
+			function checkTypea() {
+				//紀錄最高階層
+				var levels=[];
+				$("input[name='typea']").each(function() {
+					if(levels[dec($(this).val().substr(0,2))]==undefined)
+						levels[dec($(this).val().substr(0,2))]={level:0,check:false,counts:0,item:''}
+					if(levels[dec($(this).val().substr(0,2))].level<($(this).val().length/2))
+						levels[dec($(this).val().substr(0,2))].level=($(this).val().length/2);
+					if($(this).val().length==2)
+						levels[dec($(this).val().substr(0,2))].item=$('#item'+$(this).val()).text();
+				});
+				
+				//目前資料
+				var t_typea=$('#txtTypea').val().split(',');
+				for (var i=0;i<t_typea.length; i++){
+					if(levels[dec(t_typea[i].substr(0,2))].level==(t_typea[i].length/2))
+						levels[dec(t_typea[i].substr(0,2))].check=true;
+					levels[dec(t_typea[i].substr(0,2))].counts++;
+				}
+				var t_msg='';
+				for (var i=0;i<levels.length; i++){
+					if(levels[i]!=undefined){
+						if(levels[i].counts!=0 && !levels[i].check)
+							t_msg=t_msg+(t_msg.length>0?"\n":"")+levels[i].item+'子階層未選取!!';
+					}
+				}
+				if (t_msg.length>0){
+					alert(t_msg);
+					return false;
+				}else
+					return true;
 			}
 			
 			function ShowImglbl() {
@@ -325,10 +393,21 @@
                         q_boxClose2(s2);
                         break;
                 } 
+                b_pop='';
             }
             
             function q_gtPost(t_name) {
                 switch (t_name) {
+                	case 'sss':
+                		var as = _q_appendData("sss", "", true);
+						if (as[0] != undefined) {
+							var t_item = "@";
+							for (i = 0; i < as.length; i++) {
+								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].noa) + '@' + $.trim(as[i].namea);
+							}
+							q_cmbParse("combNamea", t_item);
+						}
+                		break;
                 	case 'newsstype':
                 		var as = _q_appendData("newsstype", "", true);
 						if (as[0] != undefined) {
@@ -397,6 +476,8 @@
                 ShowImglbl();
                 ChangeGB();
                 readTypea();
+                $('#chkWatermark').prop('checked',true);
+                $('#chkOnline').prop('checked',true);
             }
 
             function btnModi() {
@@ -419,21 +500,29 @@
                 Unlock(1);
             }
             
-            function btnOk() {
-            	Lock(1,{opacity:0});
-            	
-            	//儲存文章屬性
-            	var t_typea=''
+            //儲存文章屬性
+            function savetypea() {
+                var t_typea=''
             	$("input[name='typea']").each(function(index) {
             		if($(this).prop('checked'))
 						t_typea=t_typea+(t_typea.length>0?',':'')+$(this).val();
 				});
 				$('#txtTypea').val(t_typea);
+            } 
+            
+            function btnOk() {
+            	Lock(1,{opacity:0});
+            	savetypea();
+            	if(!checkTypea()){
+            		Unlock(1);
+                    return;
+            	}
             	
             	var t_err = '';
                 t_err = q_chkEmpField([['txtTitle', q_getMsg('lblTitle')],['txtContents', q_getMsg('lblContents')]
                 ,['txtSssno', q_getMsg('lblSss')],['txtNamea', q_getMsg('lblSss')],['txtDatea', q_getMsg('lblDatea')]
-                ,['cmbStype', q_getMsg('lblStype')],['txtTypea', q_getMsg('lblTypea')]]);
+                ,['cmbStype', q_getMsg('lblStype')],['txtTypea', q_getMsg('lblTypea')],['cmbArea', q_getMsg('lblArea')]
+                ,['cmbRank', q_getMsg('lblRank')]]);
                 
                 if (t_err.length > 0) {
                     alert(t_err);
@@ -859,10 +948,12 @@
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblSss' class="lbl btn"> </a></td>
+						<td><span> </span><a id='lblSss' class="lbl"> </a></td>
 						<td>
-							<input id="txtSssno"  type="text"  class="txt c1" style="width: 49%"/>
-							<input id="txtNamea"  type="text"  class="txt c1" style="width: 49%"/>
+							<!--<input id="txtSssno"  type="text"  class="txt c1" style="width: 49%"/>-->
+							<input id="txtSssno"  type="hidden"/>
+							<input id="txtNamea"  type="text"  class="txt c1" style="width: 150px;"/>
+							<select id="combNamea" class="txt c1" style="width: 20px;"> </select>
 						</td>
 						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
 						<td><input id="txtDatea"  type="text"  class="txt c1"/></td>
@@ -874,11 +965,7 @@
 						<td><select id="cmbStype" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblRank' class="lbl"> </a></td>
 						<td><select id="cmbRank" class="txt c1"> </select></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblArea' class="lbl"> </a></td>
-						<td><select id="cmbArea" class="txt c1"> </select></td>
-						<td colspan="4">
+						<td colspan="2">
 							<input id="chkOnline" type="checkbox" style="float: center;"/>
 							<a id='lblOnline' class="lbl" style="float: center;"> </a>
 							<input id="chkNewimg" type="checkbox" style="float: center;"/>
@@ -888,17 +975,47 @@
 						</td>
 					</tr>
 					<tr>
+						<td><span> </span><a id='lblIllustrate' class="lbl"> </a></td>
+						<td><input id="txtIllustrate"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblIllustrate2' class="lbl btn ChangeGB"> </a></td>
+						<td><input id="txtIllustrate2"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblTitle' class="lbl"> </a></td>
+						<td colspan="5"><input id="txtTitle"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblTitle2' class="lbl btn ChangeGB"> </a></td>
+						<td colspan="5"><input id="txtTitle2"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a class="lbl">內文關鍵字說明</a></td>
+						<td colspan="5"><a style="color: red;">{img01}</a>：為圖片一　<a style="color: red;">{img02}</a>：為圖片二　<a style="color: red;">{ad01}</a>：為浮水印廣告</td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblContents' class="lbl"> </a></td>
+						<td colspan="5"><textarea id="txtContents" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblContents2' class="lbl btn ChangeGB"> </a></td>
+						<td colspan="5"><textarea id="txtContents2" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblArea' class="lbl"> </a></td>
+						<td><select id="cmbArea" class="txt c1"> </select></td>
+					</tr>
+					<tr>
 						<td>
 							<span> </span><a id='lblTypea' class="lbl"> </a>
 							<input id="txtTypea" type="hidden"  class="txt c1"/>
 						</td>
-						<td colspan="4">
-							<input id="typea1" name="typea" type="checkbox" value="01"/>原料
+						<td colspan="5">
+							<input id="typea1" name="typea" type="checkbox" value="01"/><a id='item01'>原料</a>
 						</td>
 					</tr>
 					<tr class="typea1">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -916,13 +1033,13 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea2" name="typea" type="checkbox" value="02"/>半成品
+						<td colspan="5">
+							<input id="typea2" name="typea" type="checkbox" value="02"/><a id='item02'>半成品</a>
 						</td>
 					</tr>
 					<tr class="typea2">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -937,13 +1054,13 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea3" name="typea" type="checkbox" value="03"/>成品
+						<td colspan="5">
+							<input id="typea3" name="typea" type="checkbox" value="03"/><a id='item03'>成品</a>
 						</td>
 					</tr>
 					<tr class="typea3">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -1007,13 +1124,13 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea4" name="typea" type="checkbox" value="04"/>終端成品
+						<td colspan="5">
+							<input id="typea4" name="typea" type="checkbox" value="04"/><a id='item04'>終端成品</a>
 						</td>
 					</tr>
 					<tr class="typea4">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -1027,13 +1144,13 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea5" name="typea" type="checkbox" value="05"/>非鐵金屬
+						<td colspan="5">
+							<input id="typea5" name="typea" type="checkbox" value="05"/><a id='item05'>非鐵金屬</a>
 						</td>
 					</tr>
 					<tr class="typea5">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -1050,13 +1167,13 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea6" name="typea" type="checkbox" value="06"/>市場脈動
+						<td colspan="5">
+							<input id="typea6" name="typea" type="checkbox" value="06"/><a id='item06'>市場脈動</a>
 						</td>
 					</tr>
 					<tr class="typea6">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -1074,13 +1191,13 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea7" name="typea" type="checkbox" value="07"/>政策
+						<td colspan="5">
+							<input id="typea7" name="typea" type="checkbox" value="07"/><a id='item07'>政策</a>
 						</td>
 					</tr>
 					<tr class="typea7">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -1097,13 +1214,13 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea8" name="typea" type="checkbox" value="08"/>交通運輸
+						<td colspan="5">
+							<input id="typea8" name="typea" type="checkbox" value="08"/><a id='item08'>交通運輸</a>
 						</td>
 					</tr>
 					<tr class="typea8">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -1119,13 +1236,13 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea9" name="typea" type="checkbox" value="09"/>企業動態
+						<td colspan="5">
+							<input id="typea9" name="typea" type="checkbox" value="09"/><a id='item09'>企業動態</a>
 						</td>
 					</tr>
 					<tr class="typea9">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -1145,13 +1262,13 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea10" name="typea" type="checkbox" value="10"/>相關產業
+						<td colspan="5">
+							<input id="typea10" name="typea" type="checkbox" value="10"/><a id='item10'>相關產業</a>
 						</td>
 					</tr>
 					<tr class="typea10">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -1171,13 +1288,13 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea11" name="typea" type="checkbox" value="11"/>應用開發
+						<td colspan="5">
+							<input id="typea11" name="typea" type="checkbox" value="11"/><a id='item11'>應用開發</a>
 						</td>
 					</tr>
 					<tr class="typea11">
 						<td> </td>
-						<td colspan="4">
+						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width: 30px;"> </td>
@@ -1193,8 +1310,8 @@
 					</tr>
 					<tr>
 						<td> </td>
-						<td colspan="4">
-							<input id="typea12" name="typea" type="checkbox" value="12"/>其它
+						<td colspan="5">
+							<input id="typea12" name="typea" type="checkbox" value="12"/><a id='item12'>其它</a>
 						</td>
 					</tr>
 					<!--<tr class="typea">
@@ -1208,32 +1325,6 @@
 						<td><select id="cmbTyped" class="txt c1"> </select></td>
 					</tr>-->
 					<tr>
-						<td><span> </span><a id='lblIllustrate' class="lbl"> </a></td>
-						<td><input id="txtIllustrate"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id='lblIllustrate2' class="lbl btn ChangeGB"> </a></td>
-						<td><input id="txtIllustrate2"  type="text"  class="txt c1"/></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblTitle' class="lbl"> </a></td>
-						<td colspan="5"><input id="txtTitle"  type="text"  class="txt c1"/></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblTitle2' class="lbl btn ChangeGB"> </a></td>
-						<td colspan="5"><input id="txtTitle2"  type="text"  class="txt c1"/></td>
-					</tr>
-					<tr>
-						<td><span> </span><a class="lbl">內文關鍵字說明</a></td>
-						<td colspan="5"><a style="color: red;">{img01}</a>：為圖片一　<a style="color: red;">{img02}</a>：為圖片二　<a style="color: red;">{ad01}</a>：為浮水印廣告</td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblContents' class="lbl"> </a></td>
-						<td colspan="5"><textarea id="txtContents" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblContents2' class="lbl btn ChangeGB"> </a></td>
-						<td colspan="5"><textarea id="txtContents2" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
-					</tr>
-					<tr>
 						<td><span> </span><a id='lblImga' class="lbl"> </a></td>
 						<td colspan="2">
 							<a id="lblImga1" class='lblLanguage1 lblImgShowDown'> </a><span style="float: left;"> </span>
@@ -1245,7 +1336,7 @@
 							<input type="file" id="btnImga2" class="btnImg" value="選擇檔案" accept="image/*"/>
 							<input id="txtImga2"  type="hidden"/><input id="txtImga2name"  type="hidden"/>
 						</td>
-						<td style="display: none;"><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgaplace" class="txt c2"> </select></td>
+						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgaplace" class="txt c2"> </select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblImgamemo' class="lbl"> </a></td>
@@ -1270,7 +1361,7 @@
 							<input type="file" id="btnImgb2" class="btnImg" value="選擇檔案" accept="image/*"/>
 							<input id="txtImgb2"  type="hidden"/><input id="txtImgb2name"  type="hidden"/>
 						</td>
-						<td style="display: none;"><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgbplace" class="txt c2"> </select></td>
+						<td><a class="lblImgplace"> </a><span style="float: left;"> </span><select id="cmbImgbplace" class="txt c2"> </select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblImgbmemo' class="lbl"> </a></td>

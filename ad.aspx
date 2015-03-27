@@ -30,7 +30,8 @@
             brwKey = 'noa';
             //ajaxPath = ""; //  execute in Root
             aPop = new Array(['txtCustno', '', 'cust', 'noa,comp', '0txtCustno,txtComp', '']);
-
+			
+			q_desc=1;
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 q_brwCount();
@@ -317,8 +318,19 @@
 
             function btnOk() {
                 Lock(1,{opacity:0});
-            	if($('#txtComp').val().length==0){
-            		alert('請輸入'+q_getMsg("lblComp"));
+            	var t_err = '';
+                t_err = q_chkEmpField([['txtCustno', q_getMsg('lblCust')],['txtComp', q_getMsg('lblCust')]
+                ,['txtBdate', q_getMsg('lblBdate')],['txtEdate', q_getMsg('lblBdate')],['cmbTypea', q_getMsg('lblTypea')]
+                ,['txtImage1', q_getMsg('lblImage1')]]);
+                
+                if (t_err.length > 0) {
+                    alert(t_err);
+                    Unlock(1);
+                    return;
+                }
+                
+                if($('#txtWeb1').val().length==0 || $('#txtPage1').val().length==0){
+            		alert('請輸入'+q_getMsg("lblPage1")+'或'+q_getMsg("lblWeb1"));
             		Unlock(1);
             		return;
             	}
