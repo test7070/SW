@@ -9,25 +9,42 @@
 		<script src="../script/qbox.js" type="text/javascript"> </script>
 		<script src='../script/mask.js' type="text/javascript"> </script>
 		<link href="../qbox.css" rel="stylesheet" type="text/css" />
+		 <link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+		<script src="css/jquery/ui/jquery.ui.core.js"></script>
+		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
+		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
+		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide.packed.js"></script>
+		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide-with-html.packed.js"></script>
+		<link rel="stylesheet" type="text/css" href="http://59.125.143.170/highslide/highslide.css" /> 
+		<script type="text/javascript"> hs.graphicsDir = 'http://59.125.143.170/highslide/graphics/'; hs.showCredits = false; hs.outlineType = 'rounded-white'; hs.outlineWhileAnimating = true; </script>
 		<script type="text/javascript">
 			this.errorHandler = null;
 			function onPageError(error) {
 				alert("An error occurred:\r\n" + error.Message);
 			}
+			q_tables = 't';
 			var q_name = "cust";
 			var q_readonly = [];
-			var bbmNum = [];
+			var q_readonlys = [];
+			var q_readonlyt = [];
+			var bbmNum = [['txtCapital', 15, 0,1]];
+			var bbsNum = [];
+			var bbtNum = [];
 			var bbmMask = [];
+			var bbsMask = [];
+			var bbtMask = [];
 			q_sqlCount = 6;
 			brwCount = 6;
 			brwList = [];
 			brwNowPage = 0;
 			brwKey = 'noa';
-			brwCount2 = 20;
+			brwCount2 = 48;
 			aPop = new Array();
 			
 			$(document).ready(function() {
 				bbmKey = ['noa'];
+				bbsKey = ['noa', 'noq'];
+				bbtKey = ['noa', 'noq'];
                 q_brwCount();
                 q_gt(q_name, q_content, q_sqlCount, 1)
                 $('#txtNoa').focus
@@ -45,27 +62,37 @@
 
 			function mainPost() {
 				bbmMask = [['txtStartdate', '9999/99/99'],['txtKdate', '9999/99/99']];
+				bbtMask = [['txtBdate', '9999/99/99'],['txtEdate', '9999/99/99']];
 				q_mask(bbmMask);
 				
 				q_gt('custtype', '', 0, 0, 0, "custtype");
 				q_gt('country', '', 0, 0, 0, "country");
-				q_cmbParse("cmbCoin", '@無,NTD@台幣,RMB@人民幣,USD,美金');
+				q_cmbParse("cmbCoin", '@無,NTD@台幣,RMB@人民幣,USD@美金');
+				q_cmbParse("cmbBizscope", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
+				q_cmbParse("cmbTypea", '@選擇,10@繳款會員,11@　一般會員,12@　加買會員,20@業務附贈,21@　廣告附贈,22@　專案附贈,30@免費會員,31@　友情附贈,32@　內部員工','s');
 				
 				$('#btnCusts').click(function() {
-				 	if(q_cur==1){
-				 		return;
-				 	}else{
-						t_where = "noa='" + $('#txtNoa').val() + "'";
-						q_box("custs.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'custs', "95%", "650px", q_getMsg('btnCusts'));
-					}
+					$('.dbbs').css('top', $(this).offset().top+25);
+					$('.dbbs').css('left', 0);
+				 	$('.dbbs').show()
+				});
+				
+				$('#btnClosesCusts').click(function() {
+					$('.dbbs').hide();
+					$('.dbbt').hide();
+					t_bbt_id='';
+				});
+				
+				$('#btnClosesCustt').click(function() {
+					$('.dbbt').hide();
+					t_bbt_id='';
 				});
 				
 				$('#btnShip').click(function() {
 				 	if(q_cur==1){
 				 		return;
 				 	}else{
-						t_where = "noa='" + $('#txtNoa').val() + "'";
-						q_box("ship.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'ship', "95%", "650px", q_getMsg('btnShip'));
+				 		q_box("ship.aspx?;;;noa='" + $('#txtNoa').val() + "'", 'ship', "60%", "95%", q_getMsg("btnShip"));
 					}
 				});
 				
@@ -89,9 +116,70 @@
 						$('#txtInvotitle').val($('#txtComp').val());
 				});
 				
+				$('.btnImg').change(function() {
+					event.stopPropagation(); 
+					event.preventDefault();
+					if(q_cur==1 || q_cur==2){}else{return;}
+					var txtName = replaceAll($(this).attr('id'),'btn','txt');
+					var btnName = $(this).attr('id');
+					file = $(this)[0].files[0];
+					
+					if(file){
+						Lock(1);
+						var ext = '';
+						var extindex = file.name.lastIndexOf('.');
+						if(extindex>=0){
+							ext = file.name.substring(extindex,file.name.length);
+						}
+						$('#'+txtName+'name').val(file.name);
+						$('#'+txtName).val(guid()+Date.now()+ext);
+						
+						fr = new FileReader();
+						fr.fileName = $('#'+txtName).val();
+					    fr.readAsDataURL(file);
+					    fr.onprogress = function(e){
+							if ( e.lengthComputable ) { 
+								var per = Math.round( (e.loaded * 100) / e.total) ; 
+								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
+							}; 
+						}
+						fr.onloadstart = function(e){
+							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
+						}
+						fr.onloadend = function(e){
+							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
+							console.log(fr.fileName+':'+fr.result.length);
+							var oReq = new XMLHttpRequest();
+							oReq.upload.addEventListener("progress",function(e) {
+								if (e.lengthComputable) {
+									percentComplete = Math.round((e.loaded / e.total) * 100,0);
+									$('#FileList').children().last().find('progress').eq(1).attr('value',percentComplete);
+								}
+							}, false);
+							oReq.upload.addEventListener("load",function(e) {
+								Unlock(1);
+							}, false);
+							oReq.upload.addEventListener("error",function(e) {
+								alert("資料上傳發生錯誤!");
+							}, false);
+							oReq.addEventListener("loadend", function(e) {
+								$('#'+btnName).val('');
+							}, false);
+								
+							oReq.timeout = 360000;
+							oReq.ontimeout = function () { alert("Timed out!!!"); }
+							oReq.open("POST", 'cust_upload.aspx', true);
+							oReq.setRequestHeader("Content-type", "text/plain");
+							oReq.setRequestHeader("FileName", escape(fr.fileName));
+							oReq.send(fr.result);
+						};
+					}
+					ShowImglbl();
+				});
+				
 				for (var i=1;i<10;i++){
-					$('.btypes'+i).hide();
-					$('#btypes'+i).click(function() {
+					$('.bizscopes'+i).hide();
+					$('#bizscopes'+i).click(function() {
 						var className = $(this).attr('id');
 						if($(this).prop('checked'))
 							$('.'+className).show();
@@ -100,6 +188,62 @@
 					});	
 				}
 			}
+			
+			var guid = (function() {
+				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
+				//return function() {return s4() + s4() + '-' + s4() + '-' + s4() + '-' +s4() + '-' + s4() + s4() + s4();};
+				return function() {return s4() + s4() + s4() + s4();};
+			})();
+			
+			function ShowImglbl() {
+				$('.lblImgShowDown').each(function(){
+					var txtimg=replaceAll($(this).attr('id'),'lbl','txt');
+					var lblimg=replaceAll($(this).attr('id'),'lbl','lbl');
+					if(!emp($('#'+txtimg).val())){
+						$('#'+lblimg).addClass('btn highslide ').attr('href','../images/sw/cust/'+$('#'+txtimg).val())
+						.attr('onclick',"return hs.expand(this, { captionId: 'caption1', align: 'center',allowWidthReduction: true } )");
+					}else{
+						$('#'+lblimg).removeClass('btn highslide ').removeAttr('href').removeAttr('onclick');
+					}
+						
+					$('#'+lblimg).bind('contextmenu', function(e) {
+						/*滑鼠右鍵*/
+						e.preventDefault();
+                        if(txtimg.length>0)
+                        	$('#xdownload').attr('src','cust_download.aspx?FileName='+$('#'+txtimg+'name').val()+'&TempName='+$('#'+txtimg).val());
+                        else
+                        	alert('無資料...'+n);
+					});
+				});
+			}
+			
+			function readBizscope() {
+				var t_bizscopes=$('#txtBizscopes').val().split('##')[0],txttmp_bizscopes=$('#txtBizscopes').val().split('##')[1];
+				var txt_bizscopes=txttmp_bizscopes==undefined?[]:txttmp_bizscopes.split(',');
+				$("input[name='bizscopes']").prop('checked',false);
+				//核取
+				$("input[name='bizscopes']").each(function() {
+					if(t_bizscopes.indexOf($(this).val())>-1){
+						$(this).prop('checked',true);
+					}	
+				});
+				//其他
+				for(var i=0;i<txt_bizscopes.length;i++){
+					$('#textBizscopesother'+(i+1)).val(txt_bizscopes[i]);	
+				}
+				
+				for (var i=1;i<10;i++){
+					$('.bizscopes'+i).hide();
+					$('#bizscopes'+i).each(function() {
+						var className = $(this).attr('id');
+						if($(this).prop('checked'))
+							$('.'+className).show();
+						else
+							$('.'+className).hide();
+					});	
+				}
+			}
+			
 			function q_boxClose(s2) {
 				var ret;
 				switch (b_pop) {
@@ -117,7 +261,7 @@
 						if (as[0] != undefined) {
 							var t_item = "@";
 							for (i = 0; i < as.length; i++) {
-								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].noa) + '@' + $.trim(as[i].namea);
+								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].noa) + '@' + $.trim(as[i].typea);
 							}
 							q_cmbParse("cmbTypea", t_item);
 							if(abbm[q_recno])
@@ -153,6 +297,10 @@
 				_btnIns();
 				refreshBbm();
 				$('#txtNoa').focus();
+				ShowImglbl();
+				readBizscope();
+				bbtchange();
+				refreshclear();
 			}
 
 			function btnModi() {
@@ -161,6 +309,9 @@
 				_btnModi();
 				refreshBbm();
 				$('#txtComp').focus();
+				ShowImglbl();
+				readBizscope();
+				bbtchange();
 			}
 
 			function btnPrint() {
@@ -177,12 +328,26 @@
 				Lock(1,{opacity:0});
             	
             	$('#txtNoa').val($.trim($('#txtNoa').val())); 	
+            	$('#txtSerial').val($('#txtNoa').val());
             	
             	if($('#txtNoa').val().length==0){
             		alert('請輸入'+q_getMsg("lblNoa"));
             		Unlock(1);
             		return;
             	}
+            	
+            	//儲存營業項目 選項##其他文字
+            	var t_bizscopes='',txt_bizscopes='';
+            	$("input[name='bizscopes']").each(function(index) {
+            		if($(this).prop('checked'))
+						t_bizscopes=t_bizscopes+(t_bizscopes.length>0?',':'')+$(this).val();
+				});
+				
+            	$(".textBizscopes").each(function(index) {
+					txt_bizscopes=txt_bizscopes+$(this).val()+',';
+				});
+				txt_bizscopes=txt_bizscopes.substr(0,txt_bizscopes.length-1);//去逗號
+				$('#txtBizscopes').val(t_bizscopes+'##'+txt_bizscopes);
 				
 				wrServer($('#txtNoa').val());
 			}
@@ -195,12 +360,44 @@
 					xmlSql = q_preXml();
 
 				$('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val(key_value);
-				_btnOk(key_value, bbmKey[0], '', '', 2);
+				_btnOk(key_value, bbmKey[0], bbsKey[1], '', 2);
 			}
-
+			
+			function bbsSave(as) {
+		        if (!as['id']) {
+		            as[bbsKey[1]] = '';
+		            return;
+		        }
+		        q_nowf();
+		        
+		        return true;
+		    }
+		    
+		    function bbtSave(as) {
+				if (!as['id'] && !as['bdate']) {
+					as[bbtKey[1]] = '';
+					return;
+				}
+				q_nowf();
+				return true;
+			}
+			
+			var tmp_noa=$('#txtNoa').val();
 			function refresh(recno) {
 				_refresh(recno);
 				refreshBbm();
+				ShowImglbl();
+				readBizscope();
+				if(tmp_noa!=$('#txtNoa').val()){
+					refreshclear();
+					tmp_noa=$('#txtNoa').val();
+				}
+			}
+			
+			function refreshclear(){
+				$('.dbbs').hide();
+				$('.dbbt').hide();
+				t_bbt_id='';
 			}
 			
 			function refreshBbm(){
@@ -213,6 +410,23 @@
 			
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
+				if(t_para){
+					$("input[name='bizscopes']").attr('disabled', 'disabled');
+					$(".textBizscopes").attr('disabled', 'disabled');
+					$('.btnImg').attr('disabled', 'disabled');
+					$('#btnShip').removeAttr('disabled', 'disabled');
+					$('#txtStartdate').datepicker( 'destroy' );
+                	$('#txtKdate').datepicker( 'destroy' );
+				}else{
+					$("input[name='bizscopes']").removeAttr('disabled');
+					$(".textBizscopes").removeAttr('disabled');
+					$('.btnImg').removeAttr('disabled', 'disabled');
+					$('#btnShip').attr('disabled', 'disabled');
+					$('#txtStartdate').removeClass('hasDatepicker')
+					$('#txtStartdate').datepicker({ dateFormat: 'yy/mm/dd' });
+					$('#txtKdate').removeClass('hasDatepicker')
+					$('#txtKdate').datepicker({ dateFormat: 'yy/mm/dd' });
+				}
 			}
 
 			function btnMinus(id) {
@@ -229,6 +443,69 @@
 
 			function btnSeek() {
 				_btnSeek();
+			}
+			
+			var t_bbt_id='';
+			function bbsAssign() {
+		        for (var i = 0; i < q_bbsCount; i++) {
+		            $('#lblNo_' + i).text(i + 1);
+		            if (!$('#btnMinus_' + i).hasClass('isAssign')) {
+		            	$('#btnCustt_'+i).click(function() {
+		            		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							$('.dbbt').css('top', $('.dbbs').offset().top+$('.dbbs').height()+5);
+							$('.dbbt').css('left', $('.dbbs').width()-$('.dbbt').width());
+							t_bbt_id=$('#txtId_'+b_seq).val();
+							bbtchange();
+						 	$('.dbbt').show()
+						});
+		            }
+		        }
+		        _bbsAssign();
+		        bbtchange();
+		    }
+		    
+		    function bbtchange() {
+		    	if(t_bbt_id==''){
+		    		$('.dbbt').hide();
+		    		return;
+		    	}
+		    	
+		    	var datea_last=0;
+		    	for(var k=0;k<q_bbtCount;k++){
+					if($('#txtId__'+k).val()==t_bbt_id && !emp(t_bbt_id) && !emp($('#txtId__'+k).val()))
+						$(".bbtid__"+k).show();
+					else
+						$(".bbtid__"+k).hide();
+					if(!emp($('#txtId__'+k).val()))
+						datea_last=k;
+				}
+				for(var k=datea_last+1;k<q_bbtCount;k++){
+					$(".bbtid__"+k).show();
+				}
+		    }
+		    
+		    function bbtAssign() {
+				for (var i = 0; i < q_bbtCount; i++) {
+					$('#lblNo__' + i).text(i + 1);
+					if (!$('#btnMinut__' + i).hasClass('isAssign')) {
+						$('#txtBdate__'+i).change(function() {
+		            		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							$('#txtId__'+b_seq).val(t_bbt_id);
+						});
+						$('#txtEdate__'+i).change(function() {
+		            		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							$('#txtId__'+b_seq).val(t_bbt_id);
+						});
+					}
+				}
+				_bbtAssign();
+				bbtchange();
 			}
 
 			function btnTop() {
@@ -309,13 +586,32 @@
 				height: 35px;
 			}
 			.tbbm .conn{
-				  background: aliceblue;
+				  background: lightpink;
 			}
 			.tbbm .sconn{
-				  background: beige;
+				  background: aquamarine;
 			}
-			.tbbm .btypes{
-				  background: lavender;
+			.tbbm .bizscopes{
+				  /*background: lavender;*/
+				  background: antiquewhite;
+			}
+			.tbbm .bizscopeshead{
+				  background: antiquewhite;
+			}
+			.tbbm table{
+				  background: lightblue;
+			}
+			.tbbm table .head1{
+				    font-weight: bold;
+				    font-size: 20px;
+				    color: purple;
+			}
+			.tbbm table .head2{
+				    font-weight: bold;
+			}
+			.tbbm table .head3{
+				    font-weight: bold;
+				    color: brown;
 			}
 			.tbbm tr td {
 				/*width: 9%;*/
@@ -357,7 +653,10 @@
 				width: 65%;
 				float: left;
 			}
-			
+			.txt.c9 {
+				width: 20%;
+				float: left;
+			}
 			.txt.num {
 				text-align: right;
 			}
@@ -375,6 +674,40 @@
 				border-width: 1px;
 				padding: 0px;
 				margin: -1px;
+			}
+			.dbbs {
+                width: 1250px;
+            }
+            .tbbs{
+            	width: 100%;
+                background: aliceblue;
+            }
+            .tbbs a {
+                font-size: medium;
+            }
+            .dbbs .tbbs {
+				color: blue;
+			}
+			#dbbt {
+				width: 350px;
+			}
+			#tbbt {
+				margin: 0;
+				padding: 2px;
+				border: 2px pink double;
+				border-spacing: 1;
+				border-collapse: collapse;
+				font-size: medium;
+				color: blue;
+				background: pink;
+				width: 100%;
+			}
+			#tbbt tr {
+				height: 35px;
+			}
+			#tbbt tr td {
+				text-align: center;
+				border: 2px pink double;
 			}
 			input[type="text"], input[type="button"] {
 				font-size: medium;
@@ -437,6 +770,10 @@
 						<td>
 							<input id="chkIsshipcomp" type="checkbox"/>
 							<input id="btnShip" type="button" value="公司船名"/>
+						</td>
+						<td> 	</td>
+						<td>
+							<input id="btnCusts" type="button" value="使用者帳號維護"/>
 						</td>
 					</tr>
 					<tr>
@@ -554,243 +891,240 @@
 						</td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblBtype' class="lbl"> </a></td>
-						<td><select id="cmbBtype" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblBizscope' class="lbl"> </a></td>
+						<td><select id="cmbBizscope" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
 						<td><input id="txtMemo" type="text" class="txt c1"/></td>
 					</tr>
-					<tr class="btypes">
+					<tr class="bizscopes">
 						<td colspan="4" style="text-align: center;">
-							<span> </span><a id='lblBtypes' class="lbl" style="float: none;"> </a>
-							<input id="txtBtypes" type="hidden"/>
+							<span> </span><a id='lblBizscopes' class="lbl" style="float: none;"> </a>
+							<input id="txtBizscopes" type="hidden"/><!--存放下面選項-->
 						</td>
 						<td> </td>
 					</tr>
-					<tr class="btypes">
+					<tr class="bizscopeshead">
 						<td colspan="5">
-							<input id="btypes1" name="btypes" type="checkbox" value="A000"/> 鋼鐵生產廠商
+							<input id="bizscopes1" name="bizscopes" type="checkbox" value="A000"/>鋼鐵生產廠商
 						</td>
 					</tr>
-					<tr class="btypes btypes1">
+					<tr class="bizscopes bizscopes1">
 						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
-									<td colspan="3">碳鋼</td>								</tr>
+									<td colspan="3" class="head1">碳鋼</td>								</tr>
 								<tr>
-									<td> </td>
-									<td>[半成品]</td>
+									<td colspan="2" style="width: 165px;"  class="head2">[半成品]</td>
 									<td>
-										<input name="btypes" type="checkbox" value="A001"/> 扁 鋼 胚
-										<input name="btypes" type="checkbox" value="A002"/> 大 鋼 胚
-										<input name="btypes" type="checkbox" value="A003"/> 小 鋼 胚
-										<input name="btypes" type="checkbox" value="A004"/> 圓 胚
+										<input name="bizscopes" type="checkbox" value="A001"/>扁 鋼 胚
+										<input name="bizscopes" type="checkbox" value="A002"/>大 鋼 胚
+										<input name="bizscopes" type="checkbox" value="A003"/>小 鋼 胚
+										<input name="bizscopes" type="checkbox" value="A004"/>圓 胚
 									</td>
 								</tr>
 								<tr>
-									<td> </td>
-									<td>[成 品]熱 軋 － 長條類</td>
-									<td> </td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td> </td>
-									<td>
-										<input name="btypes" type="checkbox" value="A005"/> 鋼 筋
-										<input name="btypes" type="checkbox" value="A006"/> 角 鋼
-										<input name="btypes" type="checkbox" value="A007"/> 槽 鋼
-										<input name="btypes" type="checkbox" value="A008"/>直 棒 鋼
-										<input name="btypes" type="checkbox" value="A009"/>線材盤元
-										<input name="btypes" type="checkbox" value="A010"/>條鋼盤元
-										<input name="btypes" type="checkbox" value="A011"/>無縫鋼管
-									</td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td> </td>
-									<td>
-										<input name="btypes" type="checkbox" value="A012"/>扁 鋼
-										<input name="btypes" type="checkbox" value="A013"/>鋼 軌
-										<input name="btypes" type="checkbox" value="A014"/>異 形 鋼
-										<input name="btypes" type="checkbox" value="A015"/>鋼 板 樁
-										<input name="btypes" type="checkbox" value="A016"/>H 型 鋼
-									</td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td>熱 軋 － 平板類</td>
+									<td class="head2">[成 品]</td>
+									<td class="head3">熱 軋 － 長條類</td>
 									<td> </td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="A017"/>寬 厚 板
-										<input name="btypes" type="checkbox" value="A018"/>鋼捲(厚度2.0mm 以上)
-										<input name="btypes" type="checkbox" value="A019"/>鋼捲(厚度2.0mm 以下)
-										<input name="btypes" type="checkbox" value="A020"/>花紋鋼板
-										<input name="btypes" type="checkbox" value="A021"/>酸洗塗油板
+										<input name="bizscopes" type="checkbox" value="A005"/>鋼 筋
+										<input name="bizscopes" type="checkbox" value="A006"/>角 鋼
+										<input name="bizscopes" type="checkbox" value="A007"/>槽 鋼
+										<input name="bizscopes" type="checkbox" value="A008"/>直 棒 鋼
+										<input name="bizscopes" type="checkbox" value="A009"/>線材盤元
+										<input name="bizscopes" type="checkbox" value="A010"/>條鋼盤元
+										<input name="bizscopes" type="checkbox" value="A011"/>無縫鋼管
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="A022"/>酸洗塗油板
+										<input name="bizscopes" type="checkbox" value="A012"/>扁 鋼
+										<input name="bizscopes" type="checkbox" value="A013"/>鋼 軌
+										<input name="bizscopes" type="checkbox" value="A014"/>異 形 鋼
+										<input name="bizscopes" type="checkbox" value="A015"/>鋼 板 樁
+										<input name="bizscopes" type="checkbox" value="A016"/>H 型 鋼
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
-									<td>冷 軋 － 平板類</td>
+									<td class="head3">熱 軋 － 平板類</td>
 									<td> </td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="A023"/>霧面鋼捲SD
-										<input name="btypes" type="checkbox" value="A024"/>亮面鋼捲SB
-										<input name="btypes" type="checkbox" value="A025"/>全硬未退火鋼捲
+										<input name="bizscopes" type="checkbox" value="A017"/>寬 厚 板
+										<input name="bizscopes" type="checkbox" value="A018"/>鋼捲(厚度2.0mm 以上)
+										<input name="bizscopes" type="checkbox" value="A019"/>鋼捲(厚度2.0mm 以下)
+										<input name="bizscopes" type="checkbox" value="A020"/>花紋鋼板
+										<input name="bizscopes" type="checkbox" value="A021"/>酸洗塗油板
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
-									<td>鍍 面 － 平板類</td>
+									<td> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="A022"/>酸洗塗油板
+									</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td class="head3">冷 軋 － 平板類</td>
 									<td> </td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="A026"/>熱浸鍍鋅
-										<input name="btypes" type="checkbox" value="A026"/>熱浸鍍鋁鋅
-										<input name="btypes" type="checkbox" value="A027"/>彩色(彩塗)
-										<input name="btypes" type="checkbox" value="A028"/>電鍍鋅
-										<input name="btypes" type="checkbox" value="A029"/>馬口鐵(鍍錫)
-										<input name="btypes" type="checkbox" value="A030"/>電磁鋼(矽鋼片)
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3"><hr></td>
-								</tr>
-								<tr>
-									<td colspan="3">不 鏽 鋼</td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td>[半成品]</td>
-									<td>
-										<input name="btypes" type="checkbox" value="A031"/> 扁 鋼 胚
-										<input name="btypes" type="checkbox" value="A032"/> 大 鋼 胚
-										<input name="btypes" type="checkbox" value="A033"/> 小 鋼 胚
-										<input name="btypes" type="checkbox" value="A034"/> 圓 胚
+										<input name="bizscopes" type="checkbox" value="A023"/>霧面鋼捲SD
+										<input name="bizscopes" type="checkbox" value="A024"/>亮面鋼捲SB
+										<input name="bizscopes" type="checkbox" value="A025"/>全硬未退火鋼捲
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
-									<td>[成 品]熱 軋 － 長條類</td>
+									<td class="head3">鍍 面 － 平板類</td>
 									<td> </td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="A035"/> 角 鋼
-										<input name="btypes" type="checkbox" value="A036"/>扁 鋼
-										<input name="btypes" type="checkbox" value="A037"/>異 形 鋼
-										<input name="btypes" type="checkbox" value="A038"/>直 棒 鋼
-										<input name="btypes" type="checkbox" value="A039"/>無縫鋼管
-										<input name="btypes" type="checkbox" value="A040"/>線材盤元
-										<input name="btypes" type="checkbox" value="A041"/>條鋼盤元
-									</td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td>熱 軋 － 平板類</td>
-									<td> </td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td> </td>
-									<td>
-										<input name="btypes" type="checkbox" value="A042"/>寬 厚 板
-										<input name="btypes" type="checkbox" value="A043"/>黑皮鋼捲
-										<input name="btypes" type="checkbox" value="A044"/>酸洗退火板(原面)
-										<input name="btypes" type="checkbox" value="A045"/>花紋鋼板
-									</td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td>冷 軋 － 平板類</td>
-									<td> </td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td> </td>
-									<td>
-										<input name="btypes" type="checkbox" value="A046"/>鈍面鋼捲(2D)
-										<input name="btypes" type="checkbox" value="A047"/>霧面鋼捲(2B)
-										<input name="btypes" type="checkbox" value="A048"/>金面鋼捲(BA)
+										<input name="bizscopes" type="checkbox" value="A026"/>熱浸鍍鋅
+										<input name="bizscopes" type="checkbox" value="A027"/>熱浸鍍鋁鋅
+										<input name="bizscopes" type="checkbox" value="A028"/>彩色(彩塗)
+										<input name="bizscopes" type="checkbox" value="A029"/>電鍍鋅
+										<input name="bizscopes" type="checkbox" value="A030"/>馬口鐵(鍍錫)
+										<input name="bizscopes" type="checkbox" value="A031"/>電磁鋼(矽鋼片)
 									</td>
 								</tr>
 								<tr>
 									<td colspan="3"><hr></td>
 								</tr>
 								<tr>
-									<td colspan="3">合 金 鋼</td>
+									<td colspan="3" class="head1">不 鏽 鋼</td>
+								</tr>
+								<tr>
+									<td colspan="2" style="width: 165px;"  class="head2">[半成品]</td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="A032"/>扁 鋼 胚
+										<input name="bizscopes" type="checkbox" value="A033"/>大 鋼 胚
+										<input name="bizscopes" type="checkbox" value="A034"/>小 鋼 胚
+										<input name="bizscopes" type="checkbox" value="A035"/>圓 胚
+									</td>
+								</tr>
+								<tr>
+									<td class="head2">[成 品]</td>
+									<td class="head3">熱 軋 － 長條類</td>
+									<td> </td>
 								</tr>
 								<tr>
 									<td> </td>
-									<td>[半成品]</td>
+									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="A049"/> 扁 鋼 胚
-										<input name="btypes" type="checkbox" value="A050"/> 大 鋼 胚
-										<input name="btypes" type="checkbox" value="A051"/> 小 鋼 胚
-										<input name="btypes" type="checkbox" value="A052"/> 圓 胚
+										<input name="bizscopes" type="checkbox" value="A036"/>角 鋼
+										<input name="bizscopes" type="checkbox" value="A037"/>扁 鋼
+										<input name="bizscopes" type="checkbox" value="A038"/>異 形 鋼
+										<input name="bizscopes" type="checkbox" value="A039"/>直 棒 鋼
+										<input name="bizscopes" type="checkbox" value="A040"/>無縫鋼管
+										<input name="bizscopes" type="checkbox" value="A041"/>線材盤元
+										<input name="bizscopes" type="checkbox" value="A042"/>條鋼盤元
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
-									<td>[成 品]熱 軋 － 長條類</td>
+									<td class="head3">熱 軋 － 平板類</td>
 									<td> </td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="A053"/> 角 鋼
-										<input name="btypes" type="checkbox" value="A054"/>扁 鋼
-										<input name="btypes" type="checkbox" value="A055"/>異 形 鋼
-										<input name="btypes" type="checkbox" value="A056"/>直 棒 鋼
-										<input name="btypes" type="checkbox" value="A057"/>線材盤元
-										<input name="btypes" type="checkbox" value="A058"/>條鋼盤元
-										<input name="btypes" type="checkbox" value="A059"/>無縫鋼管
+										<input name="bizscopes" type="checkbox" value="A043"/>寬 厚 板
+										<input name="bizscopes" type="checkbox" value="A044"/>黑皮鋼捲
+										<input name="bizscopes" type="checkbox" value="A045"/>酸洗退火板(原面)
+										<input name="bizscopes" type="checkbox" value="A046"/>花紋鋼板
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
-									<td>熱 軋 － 平板類</td>
+									<td class="head3">冷 軋 － 平板類</td>
 									<td> </td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="A060"/>鋼捲
-										<input name="btypes" type="checkbox" value="A061"/>寬厚板
-										<input name="btypes" type="checkbox" value="A062"/>酸洗退火板
+										<input name="bizscopes" type="checkbox" value="A047"/>鈍面鋼捲(2D)
+										<input name="bizscopes" type="checkbox" value="A048"/>霧面鋼捲(2B)
+										<input name="bizscopes" type="checkbox" value="A049"/>金面鋼捲(BA)
+									</td>
+								</tr>
+								<tr>
+									<td colspan="3"><hr></td>
+								</tr>
+								<tr>
+									<td colspan="3" class="head1">合 金 鋼</td>
+								</tr>
+								<tr>
+									<td colspan="2" style="width: 165px;"  class="head2">[半成品]</td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="A050"/>扁 鋼 胚
+										<input name="bizscopes" type="checkbox" value="A051"/>大 鋼 胚
+										<input name="bizscopes" type="checkbox" value="A052"/>小 鋼 胚
+										<input name="bizscopes" type="checkbox" value="A053"/>圓 胚
+									</td>
+								</tr>
+								<tr>
+									<td class="head2">[成 品]</td>
+									<td class="head3">熱 軋 － 長條類</td>
+									<td> </td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="A054"/>角 鋼
+										<input name="bizscopes" type="checkbox" value="A055"/>扁 鋼
+										<input name="bizscopes" type="checkbox" value="A056"/>異 形 鋼
+										<input name="bizscopes" type="checkbox" value="A057"/>直 棒 鋼
+										<input name="bizscopes" type="checkbox" value="A058"/>線材盤元
+										<input name="bizscopes" type="checkbox" value="A059"/>條鋼盤元
+										<input name="bizscopes" type="checkbox" value="A060"/>無縫鋼管
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
-									<td>冷 軋 － 平板類</td>
+									<td class="head3">熱 軋 － 平板類</td>
 									<td> </td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="A063"/>鋼捲
-										<input name="btypes" type="checkbox" value="A064"/>複合板
+										<input name="bizscopes" type="checkbox" value="A061"/>鋼捲
+										<input name="bizscopes" type="checkbox" value="A062"/>寬厚板
+										<input name="bizscopes" type="checkbox" value="A063"/>酸洗退火板
+									</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td class="head3">冷 軋 － 平板類</td>
+									<td> </td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="A064"/>鋼捲
+										<input name="bizscopes" type="checkbox" value="A065"/>複合板
 									</td>
 								</tr>
 								<tr>
@@ -798,9 +1132,129 @@
 								</tr>
 								<tr>
 									<td colspan="3">
-										<input name="btypes" type="checkbox" value="A999" style="float: left;"/>
+										<input name="bizscopes" type="checkbox" value="A999" style="float: left;"/>
 										<a style="float: left;">其 他</a>
-										<span style="float: left;"> </span><input id="textBtypesother1" type="text" class="txt c2"/>
+										<span style="float: left;"> </span><input class="textBizscopes" id="textBizscopesother1" type="text" class="txt c9"/>
+										<span style="float: left;"> </span>(請填寫名稱)
+									</td>
+								</tr>
+								<tr>
+									<td colspan="3"><hr></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr class="bizscopeshead">
+						<td colspan="5">
+							<input id="bizscopes2" name="bizscopes" type="checkbox" value="B000"/> 產品製造業
+						</td>
+					</tr>
+					<tr class="bizscopes bizscopes2">
+						<td colspan="5">
+							<table style="width: 100%;">
+								<tr>
+									<td colspan="2" class="head1">以長條類鋼品為原料所製造的產品</td>
+								</tr>
+								<tr>
+									<td style="width: 165px;"> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="B001"/>鎖
+										<input name="bizscopes" type="checkbox" value="B002"/>鍛造零件
+										<input name="bizscopes" type="checkbox" value="B003"/>焊接鋼網
+										<input name="bizscopes" type="checkbox" value="B004"/>鍍鋅鐵線
+										<input name="bizscopes" type="checkbox" value="B005"/>預力鋼線
+										<input name="bizscopes" type="checkbox" value="B006"/>鋼線/鋼纜
+										<input name="bizscopes" type="checkbox" value="B007"/>螺絲/螺帽
+									</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="B008"/>揚聲器
+										<input name="bizscopes" type="checkbox" value="B009"/>手工具
+										<input name="bizscopes" type="checkbox" value="B010"/>千金頂
+										<input name="bizscopes" type="checkbox" value="B011"/>緊固件
+										<input name="bizscopes" type="checkbox" value="B012"/>五金線
+										<input name="bizscopes" type="checkbox" value="B013"/>焊材
+										<input name="bizscopes" type="checkbox" value="B014"/>捲釘
+										<input name="bizscopes" type="checkbox" value="B015"/>鐵條
+									</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="B016"/>齒輪
+										<input name="bizscopes" type="checkbox" value="B017"/>鏈條
+										<input name="bizscopes" type="checkbox" value="B018"/>彈簧
+										<input name="bizscopes" type="checkbox" value="B019"/>軸承
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2"><hr></td>
+								</tr>
+								<tr>
+									<td colspan="2" class="head1">以平板類鋼品為原料所製造的產品</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="B020"/>鋼管
+										<input name="bizscopes" type="checkbox" value="B021"/>貨櫃(集裝箱)
+										<input name="bizscopes" type="checkbox" value="B022"/>桶槽(容器)
+										<input name="bizscopes" type="checkbox" value="B023"/>船體/零件
+										<input name="bizscopes" type="checkbox" value="B024"/>車體/零件
+										<input name="bizscopes" type="checkbox" value="B025"/>三明治浪板
+									</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="B026"/>廠房浪板
+										<input name="bizscopes" type="checkbox" value="B027"/>運動器材
+										<input name="bizscopes" type="checkbox" value="B028"/>鋼製家俱
+										<input name="bizscopes" type="checkbox" value="B029"/>照明器材
+										<input name="bizscopes" type="checkbox" value="B030"/>電腦機殼
+										<input name="bizscopes" type="checkbox" value="B031"/>塘瓷鋼片
+									</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="B032"/>貼皮鋼片
+										<input name="bizscopes" type="checkbox" value="B033"/>API 油管
+										<input name="bizscopes" type="checkbox" value="B034"/>擴張網
+										<input name="bizscopes" type="checkbox" value="B035"/>T 型鋼
+										<input name="bizscopes" type="checkbox" value="B036"/>鋼結構
+										<input name="bizscopes" type="checkbox" value="B037"/>C 型鋼
+										<input name="bizscopes" type="checkbox" value="B038"/>隔屏
+										<input name="bizscopes" type="checkbox" value="B039"/>廚具
+									</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="B040"/>洋傘
+										<input name="bizscopes" type="checkbox" value="B041"/>模座
+										<input name="bizscopes" type="checkbox" value="B042"/>捲門
+										<input name="bizscopes" type="checkbox" value="B043"/>風管
+										<input name="bizscopes" type="checkbox" value="B044"/>家電
+										<input name="bizscopes" type="checkbox" value="B045"/>馬達
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2"><hr></td>
+								</tr>
+								<tr>
+									<td colspan="2" class="head1">其他金屬製品</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="B046"/>鋼管
+										<input name="bizscopes" type="checkbox" value="B047"/>輪圈
+										<input name="bizscopes" type="checkbox" value="B048"/>引擎
+										<input name="bizscopes" type="checkbox" value="B049"/>帷幕牆
+										<input name="bizscopes" type="checkbox" value="B050"/>鋁門窗
 									</td>
 								</tr>
 								<tr>
@@ -809,159 +1263,44 @@
 							</table>
 						</td>
 					</tr>
-					<tr class="btypes">
+					<tr class="bizscopeshead">
 						<td colspan="5">
-							<input id="btypes2" name="btypes" type="checkbox" value="B000"/> 產品製造業
+							<input id="bizscopes3" name="bizscopes" type="checkbox" value="C000"/> 裁剪 / 加工業
 						</td>
 					</tr>
-					<tr class="btypes btypes2">
+					<tr class="bizscopes bizscopes3">
 						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
-									<td colspan="2">以長條類鋼品為原料所製造的產品</td>
-								</tr>
-								<tr>
-									<td> </td>
+									<td style="width: 165px;"> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="B001"/> 鎖
-										<input name="btypes" type="checkbox" value="B002"/>鍛造零件
-										<input name="btypes" type="checkbox" value="B003"/>焊接鋼網
-										<input name="btypes" type="checkbox" value="B004"/>鍍鋅鐵線
-										<input name="btypes" type="checkbox" value="B005"/>預力鋼線
-										<input name="btypes" type="checkbox" value="B006"/>鋼線/鋼纜
-										<input name="btypes" type="checkbox" value="B007"/>螺絲/螺帽
+										<input name="bizscopes" type="checkbox" value="C001"/>酸洗
+										<input name="bizscopes" type="checkbox" value="C002"/>成型
+										<input name="bizscopes" type="checkbox" value="C003"/>粉末治金
+										<input name="bizscopes" type="checkbox" value="C004"/>鋼板切割
+										<input name="bizscopes" type="checkbox" value="C005"/>結構鍍鋅
+										<input name="bizscopes" type="checkbox" value="C006"/>鋼捲裁剪
+										<input name="bizscopes" type="checkbox" value="C007"/>表面處理
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="B008"/> 揚聲器
-										<input name="btypes" type="checkbox" value="B009"/>手工具
-										<input name="btypes" type="checkbox" value="B010"/>千金頂
-										<input name="btypes" type="checkbox" value="B011"/>緊固件
-										<input name="btypes" type="checkbox" value="B012"/>五金線
-										<input name="btypes" type="checkbox" value="B013"/>焊材
-										<input name="btypes" type="checkbox" value="B014"/>捲釘
-										<input name="btypes" type="checkbox" value="B015"/>鐵條
+										<input name="bizscopes" type="checkbox" value="C008"/>熱處理
+										<input name="bizscopes" type="checkbox" value="C009"/>鍛造
+										<input name="bizscopes" type="checkbox" value="C010"/>球化
+										<input name="bizscopes" type="checkbox" value="C011"/>沖壓
+										<input name="bizscopes" type="checkbox" value="C012"/>鑄造
+										<input name="bizscopes" type="checkbox" value="C013"/>冷抽
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="B016"/>齒輪
-										<input name="btypes" type="checkbox" value="B017"/>鏈條
-										<input name="btypes" type="checkbox" value="B018"/>彈簧
-										<input name="btypes" type="checkbox" value="B019"/>軸承
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2"><hr></td>
-								</tr>
-								<tr>
-									<td colspan="2">以平板類鋼品為原料所製造的產品</td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td>
-										<input name="btypes" type="checkbox" value="B020"/> 鋼管
-										<input name="btypes" type="checkbox" value="B021"/>貨櫃(集裝箱)
-										<input name="btypes" type="checkbox" value="B022"/>桶槽(容器)
-										<input name="btypes" type="checkbox" value="B023"/>船體/零件
-										<input name="btypes" type="checkbox" value="B024"/>車體/零件
-										<input name="btypes" type="checkbox" value="B025"/>三明治浪板
-									</td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td>
-										<input name="btypes" type="checkbox" value="B026"/> 廠房浪板
-										<input name="btypes" type="checkbox" value="B027"/>運動器材
-										<input name="btypes" type="checkbox" value="B028"/>鋼製家俱
-										<input name="btypes" type="checkbox" value="B029"/>照明器材
-										<input name="btypes" type="checkbox" value="B030"/>電腦機殼
-										<input name="btypes" type="checkbox" value="B031"/>塘瓷鋼片
-									</td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td>
-										<input name="btypes" type="checkbox" value="B032"/> 貼皮鋼片
-										<input name="btypes" type="checkbox" value="B033"/>API 油管
-										<input name="btypes" type="checkbox" value="B034"/>擴張網
-										<input name="btypes" type="checkbox" value="B035"/>T 型鋼
-										<input name="btypes" type="checkbox" value="B036"/>鋼結構
-										<input name="btypes" type="checkbox" value="B037"/>C 型鋼
-										<input name="btypes" type="checkbox" value="B038"/>隔屏
-										<input name="btypes" type="checkbox" value="B039"/>廚具
-									</td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td>
-										<input name="btypes" type="checkbox" value="B040"/> 洋傘
-										<input name="btypes" type="checkbox" value="B041"/>模座
-										<input name="btypes" type="checkbox" value="B042"/>捲門
-										<input name="btypes" type="checkbox" value="B043"/>風管
-										<input name="btypes" type="checkbox" value="B044"/>家電
-										<input name="btypes" type="checkbox" value="B045"/>馬達
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2"><hr></td>
-								</tr>
-								<tr>
-									<td colspan="2">其他金屬製品</td>
-								</tr>
-								<tr>
-									<td> </td>
-									<td>
-										<input name="btypes" type="checkbox" value="B046"/> 鋼管
-										<input name="btypes" type="checkbox" value="B047"/>輪圈
-										<input name="btypes" type="checkbox" value="B048"/>引擎
-										<input name="btypes" type="checkbox" value="B049"/>帷幕牆
-										<input name="btypes" type="checkbox" value="B050"/>鋁門窗
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2"><hr></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr class="btypes">
-						<td colspan="5">
-							<input id="btypes3" name="btypes" type="checkbox" value="C000"/> 裁剪 / 加工業
-						</td>
-					</tr>
-					<tr class="btypes btypes3">
-						<td colspan="5">
-							<table style="width: 100%;">
-								<tr>
-									<td>
-										<input name="btypes" type="checkbox" value="C001"/>酸洗
-										<input name="btypes" type="checkbox" value="C002"/>成型
-										<input name="btypes" type="checkbox" value="C003"/>粉末治金
-										<input name="btypes" type="checkbox" value="C004"/>鋼板切割
-										<input name="btypes" type="checkbox" value="C005"/>結構鍍鋅
-										<input name="btypes" type="checkbox" value="C006"/>鋼捲裁剪
-										<input name="btypes" type="checkbox" value="C007"/>表面處理
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<input name="btypes" type="checkbox" value="C008"/> 熱處理
-										<input name="btypes" type="checkbox" value="C009"/>鍛造
-										<input name="btypes" type="checkbox" value="C010"/>球化
-										<input name="btypes" type="checkbox" value="C011"/>沖壓
-										<input name="btypes" type="checkbox" value="C012"/>鑄造
-										<input name="btypes" type="checkbox" value="C013"/>冷抽
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<input name="btypes" type="checkbox" value="C999" style="float: left;"/>
+										<input name="bizscopes" type="checkbox" value="C999" style="float: left;"/>
 										<a style="float: left;">其 他</a>
-										<span style="float: left;"> </span><input id="textBtypesother2" type="text" class="txt c2"/>
+										<span style="float: left;"> </span><input class="textBizscopes" id="textBizscopesother2" type="text" class="txt c9"/>
+										<span style="float: left;"> </span>(請填寫名稱)
 									</td>
 								</tr>
 								<tr>
@@ -970,22 +1309,23 @@
 							</table>
 						</td>
 					</tr>
-					<tr class="btypes">
+					<tr class="bizscopeshead">
 						<td colspan="5">
-							<input id="btypes4" name="btypes" type="checkbox" value="D000"/> 買賣業
+							<input id="bizscopes4" name="bizscopes" type="checkbox" value="D000"/> 買賣業
 						</td>
 					</tr>
-					<tr class="btypes btypes4">
+					<tr class="bizscopes bizscopes4">
 						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
+									<td style="width: 165px;"> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="D001" style="float: left;"/>碳鋼
-										<input name="btypes" type="checkbox" value="D002" style="float: left;"/>不鏽鋼
-										<input name="btypes" type="checkbox" value="D003" style="float: left;"/>合金鋼
-										<input name="btypes" type="checkbox" value="D999" style="float: left;"/>其 它
-										<a style="float: left;">其 他</a>
-										<span style="float: left;"> </span><input id="textBtypesother3" type="text" class="txt c2"/>
+										<input name="bizscopes" type="checkbox" value="D001" style="float: left;"/><a style="float: left;">碳鋼</a>
+										<input name="bizscopes" type="checkbox" value="D002" style="float: left;"/><a style="float: left;">不鏽鋼</a>
+										<input name="bizscopes" type="checkbox" value="D003" style="float: left;"/><a style="float: left;">合金鋼</a>
+										<input name="bizscopes" type="checkbox" value="D999" style="float: left;"/><a style="float: left;">其 它</a>
+										<span style="float: left;"> </span><input class="textBizscopes" id="textBizscopesother3" type="text" class="txt c9"/>
+										<span style="float: left;"> </span>(請填寫名稱)
 									</td>
 								</tr>
 								<tr>
@@ -994,134 +1334,136 @@
 							</table>
 						</td>
 					</tr>
-					<tr class="btypes">
+					<tr class="bizscopeshead">
 						<td colspan="5">
-							<input id="btypes5" name="btypes" type="checkbox" value="E000"/> 原料 / 設備 / 耗材供應商(例：軋輥、耐火材、鐵合金、石料等)
+							<input id="bizscopes5" name="bizscopes" type="checkbox" value="E000"/> 原料 / 設備 / 耗材供應商(例：軋輥、耐火材、鐵合金、石料等)
 						</td>
 					</tr>
-					<tr class="btypes btypes5">
+					<tr class="bizscopes bizscopes5">
 						<td colspan="5">
 							<table style="width: 100%;">
 								<tr>
-									<td colspan="2">原料</td>
+									<td style="width: 165px;" class="head1">原料</td>
+									<td> </td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="E001"/>鈮
-										<input name="btypes" type="checkbox" value="E002"/>鈦
-										<input name="btypes" type="checkbox" value="E003"/>鋁
-										<input name="btypes" type="checkbox" value="E004"/>銅
-										<input name="btypes" type="checkbox" value="E005"/>鉛
-										<input name="btypes" type="checkbox" value="E006"/>鉬
-										<input name="btypes" type="checkbox" value="E007"/>鋯
+										<input name="bizscopes" type="checkbox" value="E001"/>鈮
+										<input name="bizscopes" type="checkbox" value="E002"/>鈦
+										<input name="bizscopes" type="checkbox" value="E003"/>鋁
+										<input name="bizscopes" type="checkbox" value="E004"/>銅
+										<input name="bizscopes" type="checkbox" value="E005"/>鉛
+										<input name="bizscopes" type="checkbox" value="E006"/>鉬
+										<input name="bizscopes" type="checkbox" value="E007"/>鋯
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="E008"/>球結礦
-										<input name="btypes" type="checkbox" value="E009"/>石料
-										<input name="btypes" type="checkbox" value="E010"/>生鐵
-										<input name="btypes" type="checkbox" value="E011"/>廢鋼
-										<input name="btypes" type="checkbox" value="E012"/>鉻鐵
-										<input name="btypes" type="checkbox" value="E013"/>釩鐵
-										<input name="btypes" type="checkbox" value="E014"/>錳鐵
+										<input name="bizscopes" type="checkbox" value="E008"/>球結礦
+										<input name="bizscopes" type="checkbox" value="E009"/>石料
+										<input name="bizscopes" type="checkbox" value="E010"/>生鐵
+										<input name="bizscopes" type="checkbox" value="E011"/>廢鋼
+										<input name="bizscopes" type="checkbox" value="E012"/>鉻鐵
+										<input name="bizscopes" type="checkbox" value="E013"/>釩鐵
+										<input name="bizscopes" type="checkbox" value="E014"/>錳鐵
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="E015"/>矽鐵(硅)
-										<input name="btypes" type="checkbox" value="E016"/>硼
-										<input name="btypes" type="checkbox" value="E017"/>鎳
-										<input name="btypes" type="checkbox" value="E018"/>熱鐵磚HBI
+										<input name="bizscopes" type="checkbox" value="E015"/>矽鐵(硅)
+										<input name="bizscopes" type="checkbox" value="E016"/>硼
+										<input name="bizscopes" type="checkbox" value="E017"/>鎳
+										<input name="bizscopes" type="checkbox" value="E018"/>熱鐵磚HBI
 									</td>
 								</tr>
 								<tr>
 									<td colspan="2"><hr></td>
 								</tr>
 								<tr>
-									<td colspan="2">設備 / 耗材</td>
+									<td class="head1">設備 / 耗材</td>
+									<td> </td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="E019"/>高爐
-										<input name="btypes" type="checkbox" value="E020"/>直接還原設備
-										<input name="btypes" type="checkbox" value="E021"/>連 鑄
-										<input name="btypes" type="checkbox" value="E022"/>精煉爐
-										<input name="btypes" type="checkbox" value="E023"/>電爐
-										<input name="btypes" type="checkbox" value="E024"/>轉爐
-										<input name="btypes" type="checkbox" value="E025"/>軋 輥 修 補
+										<input name="bizscopes" type="checkbox" value="E019"/>高爐
+										<input name="bizscopes" type="checkbox" value="E020"/>直接還原設備
+										<input name="bizscopes" type="checkbox" value="E021"/>連 鑄
+										<input name="bizscopes" type="checkbox" value="E022"/>精煉爐
+										<input name="bizscopes" type="checkbox" value="E023"/>電爐
+										<input name="bizscopes" type="checkbox" value="E024"/>轉爐
+										<input name="bizscopes" type="checkbox" value="E025"/>軋 輥 修 補
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="E026"/>軋 輥
-										<input name="btypes" type="checkbox" value="E027"/>耐 火 材
-										<input name="btypes" type="checkbox" value="E028"/>油封
-										<input name="btypes" type="checkbox" value="E029"/>軸承
-										<input name="btypes" type="checkbox" value="E030"/>冷卻床
-										<input name="btypes" type="checkbox" value="E031"/>酸液回收設備
-										<input name="btypes" type="checkbox" value="E032"/> 冷軋機
+										<input name="bizscopes" type="checkbox" value="E026"/>軋 輥
+										<input name="bizscopes" type="checkbox" value="E027"/>耐 火 材
+										<input name="bizscopes" type="checkbox" value="E028"/>油封
+										<input name="bizscopes" type="checkbox" value="E029"/>軸承
+										<input name="bizscopes" type="checkbox" value="E030"/>冷卻床
+										<input name="bizscopes" type="checkbox" value="E031"/>酸液回收設備
+										<input name="bizscopes" type="checkbox" value="E032"/> 冷軋機
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="E033"/>熱軋機
-										<input name="btypes" type="checkbox" value="E034"/>澆鑄粉
-										<input name="btypes" type="checkbox" value="E035"/>發 電
-										<input name="btypes" type="checkbox" value="E036"/>閥類
-										<input name="btypes" type="checkbox" value="E037"/>泵浦
-										<input name="btypes" type="checkbox" value="E038"/>起重機
-										<input name="btypes" type="checkbox" value="E039"/>空調設備
+										<input name="bizscopes" type="checkbox" value="E033"/>熱軋機
+										<input name="bizscopes" type="checkbox" value="E034"/>澆鑄粉
+										<input name="bizscopes" type="checkbox" value="E035"/>發 電
+										<input name="bizscopes" type="checkbox" value="E036"/>閥類
+										<input name="bizscopes" type="checkbox" value="E037"/>泵浦
+										<input name="bizscopes" type="checkbox" value="E038"/>起重機
+										<input name="bizscopes" type="checkbox" value="E039"/>空調設備
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="E040"/>機 械
-										<input name="btypes" type="checkbox" value="E041"/>環 保
-										<input name="btypes" type="checkbox" value="E042"/>檢 驗
-										<input name="btypes" type="checkbox" value="E043"/>冷卻油
-										<input name="btypes" type="checkbox" value="E044"/>溶劑
-										<input name="btypes" type="checkbox" value="E045"/>防鏽油
-										<input name="btypes" type="checkbox" value="E046"/>軋延油
+										<input name="bizscopes" type="checkbox" value="E040"/>機 械
+										<input name="bizscopes" type="checkbox" value="E041"/>環 保
+										<input name="bizscopes" type="checkbox" value="E042"/>檢 驗
+										<input name="bizscopes" type="checkbox" value="E043"/>冷卻油
+										<input name="bizscopes" type="checkbox" value="E044"/>溶劑
+										<input name="bizscopes" type="checkbox" value="E045"/>防鏽油
+										<input name="bizscopes" type="checkbox" value="E046"/>軋延油
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="E047"/>儀 表
-										<input name="btypes" type="checkbox" value="E048"/>鍛 造
-										<input name="btypes" type="checkbox" value="E049"/>成 形
-										<input name="btypes" type="checkbox" value="E050"/>裁 剪
-										<input name="btypes" type="checkbox" value="E051"/>退火
-										<input name="btypes" type="checkbox" value="E052"/>酸洗
-										<input name="btypes" type="checkbox" value="E053"/>張力重捲線
+										<input name="bizscopes" type="checkbox" value="E047"/>儀 表
+										<input name="bizscopes" type="checkbox" value="E048"/>鍛 造
+										<input name="bizscopes" type="checkbox" value="E049"/>成 形
+										<input name="bizscopes" type="checkbox" value="E050"/>裁 剪
+										<input name="bizscopes" type="checkbox" value="E051"/>退火
+										<input name="bizscopes" type="checkbox" value="E052"/>酸洗
+										<input name="bizscopes" type="checkbox" value="E053"/>張力重捲線
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="E054"/>調質機
-										<input name="btypes" type="checkbox" value="E055"/>加 熱 爐
-										<input name="btypes" type="checkbox" value="E056"/>研磨機
-										<input name="btypes" type="checkbox" value="E057"/>真空精練爐
-										<input name="btypes" type="checkbox" value="E058"/>集塵粉再回收設備
-										<input name="btypes" type="checkbox" value="E059"/>噴碳機
+										<input name="bizscopes" type="checkbox" value="E054"/>調質機
+										<input name="bizscopes" type="checkbox" value="E055"/>加 熱 爐
+										<input name="bizscopes" type="checkbox" value="E056"/>研磨機
+										<input name="bizscopes" type="checkbox" value="E057"/>真空精練爐
+										<input name="bizscopes" type="checkbox" value="E058"/>集塵粉再回收設備
+										<input name="bizscopes" type="checkbox" value="E059"/>噴碳機
 									</td>
 								</tr>
 								<tr>
 									<td> </td>
 									<td>
-										<input name="btypes" type="checkbox" value="E060"/>氧氣場
-										<input name="btypes" type="checkbox" value="E061"/>燒結工場
-										<input name="btypes" type="checkbox" value="E062"/>煉焦工場
-										<input name="btypes" type="checkbox" value="E063"/>電擊棒
+										<input name="bizscopes" type="checkbox" value="E060"/>氧氣場
+										<input name="bizscopes" type="checkbox" value="E061"/>燒結工場
+										<input name="bizscopes" type="checkbox" value="E062"/>煉焦工場
+										<input name="bizscopes" type="checkbox" value="E063"/>電擊棒
 									</td>
 								</tr>
 								<tr>
@@ -1129,10 +1471,214 @@
 								</tr>
 							</table>
 						</td>
+					</tr>
+					<tr class="bizscopeshead">
+						<td colspan="5">
+							<input id="bizscopes6" name="bizscopes" type="checkbox" value="F000"/> 買賣業
+						</td>
+					</tr>
+					<tr class="bizscopes bizscopes6">
+						<td colspan="5">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 165px;"> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="F001" style="float: left;"/><a style="float: left;">運輸</a>
+										<input name="bizscopes" type="checkbox" value="F002" style="float: left;"/><a style="float: left;">公証檢驗</a>
+										<input name="bizscopes" type="checkbox" value="F003" style="float: left;"/><a style="float: left;">報關/理貨</a>
+										<input name="bizscopes" type="checkbox" value="F004" style="float: left;"/><a style="float: left;">保險</a>
+										<input name="bizscopes" type="checkbox" value="F005" style="float: left;"/><a style="float: left;">電子商務</a>
+										<input name="bizscopes" type="checkbox" value="F006" style="float: left;"/><a style="float: left;">自動化</a>
+										<input name="bizscopes" type="checkbox" value="F007" style="float: left;"/><a style="float: left;">塗料</a>
+									</td>
+								</tr>
+								<tr>
+									<td style="width: 165px;"> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="F008" style="float: left;"/><a style="float: left;">金融機構</a>
+										<input name="bizscopes" type="checkbox" value="F009" style="float: left;"/><a style="float: left;">施工/設計</a>
+										<input name="bizscopes" type="checkbox" value="F010" style="float: left;"/><a style="float: left;">顧問</a>
+										<input name="bizscopes" type="checkbox" value="F011" style="float: left;"/><a style="float: left;">包裝</a>
+										<input name="bizscopes" type="checkbox" value="F999" style="float: left;"/><a style="float: left;">其 它</a>
+										<span style="float: left;"> </span><input class="textBizscopes" id="textBizscopesother4" type="text" class="txt c9"/>
+										<span style="float: left;"> </span>(請填寫名稱)
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2"><hr></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr class="bizscopeshead">
+						<td colspan="5">
+							<input id="bizscopes7" name="bizscopes" type="checkbox" value="G000"/> 鋼鐵工業副產品（例：水淬爐石、氧化鐵、焦油等）
+						</td>
+					</tr>
+					<tr class="bizscopes bizscopes7">
+						<td colspan="5">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 165px;"> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="G001" style="float: left;"/><a style="float: left;">水淬爐石</a>
+										<input name="bizscopes" type="checkbox" value="G002" style="float: left;"/><a style="float: left;">氧化鐵</a>
+										<input name="bizscopes" type="checkbox" value="G003" style="float: left;"/><a style="float: left;">焦油</a>
+										<input name="bizscopes" type="checkbox" value="G004" style="float: left;"/><a style="float: left;">高爐水泥</a>
+										<input name="bizscopes" type="checkbox" value="G999" style="float: left;"/><a style="float: left;">其 它</a>
+										<span style="float: left;"> </span><input class="textBizscopes" id="textBizscopesother5" type="text" class="txt c9"/>
+										<span style="float: left;"> </span>(請填寫名稱)
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2"><hr></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr class="bizscopeshead">
+						<td colspan="5">
+							<input id="bizscopes8" name="bizscopes" type="checkbox" value="H000"/>鋼鐵應用相關產業(例：建築、 造船、 汽車等)
+						</td>
+					</tr>
+					<tr class="bizscopes bizscopes8">
+						<td colspan="5">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 165px;"> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="H001" style="float: left;"/><a style="float: left;">建築</a>
+										<input name="bizscopes" type="checkbox" value="H002" style="float: left;"/><a style="float: left;">機械</a>
+										<input name="bizscopes" type="checkbox" value="H003" style="float: left;"/><a style="float: left;">造船</a>
+										<input name="bizscopes" type="checkbox" value="H004" style="float: left;"/><a style="float: left;">家電</a>
+										<input name="bizscopes" type="checkbox" value="H005" style="float: left;"/><a style="float: left;">汽車</a>
+										<input name="bizscopes" type="checkbox" value="H999" style="float: left;"/><a style="float: left;">其 它</a>
+										<span style="float: left;"> </span><input class="textBizscopes" id="textBizscopesother6" type="text" class="txt c9"/>
+										<span style="float: left;"> </span>(請填寫名稱)
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2"><hr></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr class="bizscopeshead">
+						<td colspan="5">
+							<input id="bizscopes9" name="bizscopes" type="checkbox" value="I000"/> 鋼鐵相關組織(例：公會、協會)
+						</td>
+					</tr>
+					<tr class="bizscopes bizscopes9">
+						<td colspan="5">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 165px;"> </td>
+									<td>
+										<input name="bizscopes" type="checkbox" value="I001" style="float: left;"/><a style="float: left;">公會</a>
+										<input name="bizscopes" type="checkbox" value="I002" style="float: left;"/><a style="float: left;">協會</a>
+										<input name="bizscopes" type="checkbox" value="I003" style="float: left;"/><a style="float: left;">研究中心</a>
+										<input name="bizscopes" type="checkbox" value="I999" style="float: left;"/><a style="float: left;">其 它</a>
+										<span style="float: left;"> </span><input class="textBizscopes" id="textBizscopesother7" type="text" class="txt c9"/>
+										<span style="float: left;"> </span>(請填寫名稱)
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2"><hr></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr class="bizscopeshead">
+						<td colspan="5">
+							<input style="float: left;" id="bizscopes10" name="bizscopes" type="checkbox" value="J000"/><a style="float: left;">其 它</a>
+							<span style="float: left;"> </span><input class="textBizscopes" id="textBizscopesother8" type="text" class="txt c9"/>
+							<span style="float: left;"> </span>(請填寫名稱)
+						</td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblImagea' class="lbl lblImgShowDown"> </a></td>
+						<td>
+							<input type="file" id="btnImagea" class="btnImg" value="選擇檔案" accept="image/*"/>
+							<input id="txtImagea"  type="hidden"/><input id="txtImageaname"  type="hidden"/>
+						</td>
+						<td><span> </span><a id='lblImageb' class="lbl lblImgShowDown"> </a></td>
+						<td>
+							<input type="file" id="btnImageb" class="btnImg" value="選擇檔案" accept="image/*"/>
+							<input id="txtImageb"  type="hidden"/><input id="txtImagebname"  type="hidden"/>
+						</td>
+					</tr>
+					<tr style="display: none;">
+						<td colspan="5"><div style="width:100%;" id="FileList"> </div></td>
 					</tr>
 				</table>
 			</div>
 		</div>
+		<div class='dbbs' style="position:absolute;display:none;">
+			<input id="btnClosesCusts" type="button" value="關閉" style=" float: right;"/>
+			<BR>
+			<table id="tbbs" class='tbbs' border="1" cellpadding='2' cellspacing='1'>
+				<tr style='color:white; background:#003366;' >
+					<td  align="center" style="width:30px;"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
+					<td align="center" style="width:20px;"> </td>
+					<td align="center" style="width:130px;"><a id='lblId_s'> </a></td>
+					<td align="center" style="width:130px;"><a id='lblPw_s'> </a></td>
+					<td align="center" style="width:40px;"><a id='lblGroupa_s'> </a></td>
+					<td align="center" style="width:40px;"><a id='lblGroupb_s'> </a></td>
+					<td align="center" style="width:100px;"><a id='lblConn_s'> </a></td>
+					<td align="center" style="width:150px;"><a id='lblEmail_s'> </a></td>
+					<td align="center" style="width:50px;"><a id='lblMaster_s'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblTypea_s'> </a></td>
+					<td align="center" style="width:50px;"><a id='lblSconn_s'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblCredit_s'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblTimes_s'> </a></td>
+					<td align="center"><a id='lblMemo_s'> </a></td>
+					<td align="center" style="width:35px;"><a id='lblCustt_s'> </a></td>
+				</tr>
+				<tr  style='background:#cad3ff;'>
+					<td align="center">
+						<input class="btn"  id="btnMinus.*" type="button" value='-' style=" font-weight: bold;" />
+						<input id="txtNoq.*" type="text" style="display: none;" />
+					</td>
+					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
+					<td ><input type="text" id="txtId.*" class="txt c1" /></td>
+					<td><input type="text" id="txtPw.*" class="txt c1" /></td>
+					<td align="center"><input id="chkGroupa.*" type="checkbox"/></td>
+					<td align="center"><input id="chkGroupb.*" type="checkbox"/></td>
+					<td><input type="text" id="txtConn.*" class="txt c1" /></td>
+					<td><input type="text" id="txtEmail.*" class="txt c1" /></td>
+					<td align="center"><input id="chkMaster.*" type="checkbox"/></td>
+					<td><select id="cmbTypea.*" class="txt c1"> </select></td>
+					<td align="center"><input id="chkSconn.*" type="checkbox"/></td>
+					<td><input type="text" id="txtCredit.*" class="txt num c1" /></td>
+					<td><input type="text" id="txtTimes.*" class="txt num c1" /></td>
+					<td><input type="text" id="txtMemo.*" class="txt c1" /></td>
+					<td align="center"><input class="btn"  id="btnCustt.*" type="button" value='.'/></td>
+				</tr>
+			</table>
+		</div>
+		<div id="dbbt" class="dbbt" style="position:absolute;display:none;">
+			<input id="btnClosesCustt" type="button" value="關閉" style=" float: right;"/>
+			<BR>
+			<table id="tbbt">
+				<tr class="head" style="color:white; background:#003366;">
+					<td style="width:20px;"><input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
+					<td style="width:120px; text-align: center;"><a id='lblBdate_t'> </a></td>
+					<td style="width:120px; text-align: center;"><a id='lblEdate_t'> </a></td>
+				</tr>
+				<tr class="bbtid..*">
+					<td>
+						<input id="btnMinut..*" type="button" style="font-size: medium; font-weight: bold;" value="－"/>
+						<input class="txt" id="txtNoq..*" type="text" style="display: none;"/>
+						<input class="txt" id="txtId..*" type="text" style="display: none;"/>
+						<!--<input class="txt" id="txtBtime..*" type="text" style="display: none;"/>
+						<input class="txt" id="txtEtime..*" type="text" style="display: none;"/>-->
+					</td>
+					<td><input id="txtBdate..*" type="text" class="txt c1"/></td>
+					<td><input id="txtEdate..*" type="text" class="txt c1"/></td>
+				</tr>
+			</table>
+		</div>
+		<iframe id="xdownload" style="display:none;"> </iframe>
 		<input id="q_sys" type="hidden" />
 	</body>
 </html>

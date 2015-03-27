@@ -86,12 +86,12 @@
 				
                 q_gt('newsstype', '', 0, 0, 0, "newsstype");
                 q_gt('newsarea', '', 0, 0, 0, "newsarea");
-                q_gt('newstypea', '', 0, 0, 0, "newstypea");
+                /*q_gt('newstypea', '', 0, 0, 0, "newstypea");
                 q_gt('newstypeb', '', 0, 0, 0, "newstypeb");
                 q_gt('newstypec', '', 0, 0, 0, "newstypec");
-                q_gt('newstyped', '', 0, 0, 0, "newstyped");
+                q_gt('newstyped', '', 0, 0, 0, "newstyped");*/
                 
-                $('#cmbTypea').change(function() {
+                /*$('#cmbTypea').change(function() {
                 	n_typeNow[0].typea=$('#cmbTypea').val()
                 	Typeachange(); 
 				});
@@ -109,7 +109,18 @@
 				$('#cmbTyped').change(function() {
 					n_typeNow[0].typed=$('#cmbTyped').val()
                 	Typeachange(); 
-				});
+				});*/
+				
+				for (var i=1;i<13;i++){
+					$('.typea'+i).hide();
+					$('#typea'+i).click(function() {
+						var className = $(this).attr('id');
+						if($(this).prop('checked'))
+							$('.'+className).show();
+						else
+							$('.'+className).hide();
+					});	
+				}
                 
                 $('.btnImg').change(function() {
 					event.stopPropagation(); 
@@ -211,6 +222,30 @@
 					q_cmbParse("cmbTyped", c_typed);
 					if(abbm[q_recno])
 						$('#cmbTyped').val(n_typeNow[0].typed);
+				}
+			}
+			
+			function readTypea() {
+				var t_typea=$('#txtTypea').val().split(',');
+				$("input[name='typea']").prop('checked',false);
+				//核取
+				$("input[name='typea']").each(function() {
+					for(var i=0;i<t_typea.length;i++){
+						if(t_typea[i]==$(this).val()){
+							$(this).prop('checked',true);
+						}	
+					}
+				});
+				
+				for (var i=1;i<10;i++){
+					$('.typea'+i).hide();
+					$('#typea'+i).each(function() {
+						var className = $(this).attr('id');
+						if($(this).prop('checked'))
+							$('.'+className).show();
+						else
+							$('.'+className).hide();
+					});	
 				}
 			}
 			
@@ -361,6 +396,7 @@
                 $('#txtDatea').val(q_date());
                 ShowImglbl();
                 ChangeGB();
+                readTypea();
             }
 
             function btnModi() {
@@ -370,6 +406,7 @@
                 $('#txtTitle').focus();
                 ShowImglbl();
                 ChangeGB();
+                readTypea();
             }
 
             function btnPrint() {
@@ -384,11 +421,25 @@
             
             function btnOk() {
             	Lock(1,{opacity:0});
-            	if($('#txtTitle').val().length==0){
-            		alert('請輸入'+q_getMsg("lblTitle"));
-            		Unlock(1);
-            		return;
-            	}
+            	
+            	//儲存文章屬性
+            	var t_typea=''
+            	$("input[name='typea']").each(function(index) {
+            		if($(this).prop('checked'))
+						t_typea=t_typea+(t_typea.length>0?',':'')+$(this).val();
+				});
+				$('#txtTypea').val(t_typea);
+            	
+            	var t_err = '';
+                t_err = q_chkEmpField([['txtTitle', q_getMsg('lblTitle')],['txtContents', q_getMsg('lblContents')]
+                ,['txtSssno', q_getMsg('lblSss')],['txtNamea', q_getMsg('lblSss')],['txtDatea', q_getMsg('lblDatea')]
+                ,['cmbStype', q_getMsg('lblStype')],['txtTypea', q_getMsg('lblTypea')]]);
+                
+                if (t_err.length > 0) {
+                    alert(t_err);
+                    Unlock(1);
+                    return;
+                }
             	
 				if(q_cur==1){
 					$('#txtWorker').val(r_name);
@@ -434,24 +485,29 @@
 
             function refresh(recno) {
                 _refresh(recno);
+                $('#txtContents').val(replaceAll($('#txtContents').val(),'chr(10)','\n'));
+            	$('#txtContents2').val(replaceAll($('#txtContents2').val(),'chr(10)','\n')) ;
                 if(abbm[q_recno]){
 	                n_typeNow[0].typea=abbm[q_recno].typea;
 	                n_typeNow[0].typeb=abbm[q_recno].typeb;
 	                n_typeNow[0].typec=abbm[q_recno].typec;
 	                n_typeNow[0].typed=abbm[q_recno].typed;
 				}
-                Typeachange();  
+                //Typeachange();  
                 ShowImglbl();
                 ChangeGB();
+                readTypea();
             }
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                 if(t_para){
+                	$("input[name='typea']").attr('disabled', 'disabled');
                 	$('.btnImg').attr('disabled', 'disabled');
                 	$('.btnAtt').attr('disabled', 'disabled');
                 	$('#txtDatea').datepicker( 'destroy' );
                 }else{
+                	$("input[name='typea']").removeAttr('disabled');
                 	$('.btnImg').removeAttr('disabled', 'disabled');
                 	$('.btnAtt').removeAttr('disabled', 'disabled');
                 	$('#txtDatea').removeClass('hasDatepicker')
@@ -794,12 +850,12 @@
 			<div class='dbbm' >
 				<table class="tbbm"  id="tbbm">
 					<tr style="height:1px;">
+						<td style="width: 130px"> </td>
+						<td style="width: 170px"> </td>
 						<td style="width: 110px"> </td>
-						<td style="width: 180px"> </td>
+						<td style="width: 170px"> </td>
 						<td style="width: 110px"> </td>
-						<td style="width: 180px"> </td>
-						<td style="width: 110px"> </td>
-						<td style="width: 180px"> </td>
+						<td style="width: 170px"> </td>
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
@@ -820,11 +876,9 @@
 						<td><select id="cmbRank" class="txt c1"> </select></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
-						<td><select id="cmbTypea" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblArea' class="lbl"> </a></td>
 						<td><select id="cmbArea" class="txt c1"> </select></td>
-						<td colspan="2">
+						<td colspan="4">
 							<input id="chkOnline" type="checkbox" style="float: center;"/>
 							<a id='lblOnline' class="lbl" style="float: center;"> </a>
 							<input id="chkNewimg" type="checkbox" style="float: center;"/>
@@ -833,14 +887,326 @@
 							<a id='lblWatermark' class="lbl" style="float: center;"> </a>
 						</td>
 					</tr>
-					<tr class="typea">
+					<tr>
+						<td>
+							<span> </span><a id='lblTypea' class="lbl"> </a>
+							<input id="txtTypea" type="hidden"  class="txt c1"/>
+						</td>
+						<td colspan="4">
+							<input id="typea1" name="typea" type="checkbox" value="01"/>原料
+						</td>
+					</tr>
+					<tr class="typea1">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="0101"/>鐵礦
+										<input name="typea" type="checkbox" value="0102"/>生鐵
+										<input name="typea" type="checkbox" value="0103"/>合金鐵
+										<input name="typea" type="checkbox" value="0104"/>廢鋼
+										<input name="typea" type="checkbox" value="0105"/>煤
+										<input name="typea" type="checkbox" value="0106"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea2" name="typea" type="checkbox" value="02"/>半成品
+						</td>
+					</tr>
+					<tr class="typea2">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="0201"/>扁鋼胚
+										<input name="typea" type="checkbox" value="0202"/>小鋼胚
+										<input name="typea" type="checkbox" value="0203"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea3" name="typea" type="checkbox" value="03"/>成品
+						</td>
+					</tr>
+					<tr class="typea3">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td colspan="3">
+										<input name="typea" type="checkbox" value="0301"/>碳鋼
+									</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td style="width: 60px;"> </td>
+									<td colspan="2"><input name="typea" type="checkbox" value="030101"/>板材</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td> </td>
+									<td style="width: 60px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="03010101"/>熱軋
+										<input name="typea" type="checkbox" value="03010102"/>冷軋
+										<input name="typea" type="checkbox" value="03010103"/>鋼板
+										<input name="typea" type="checkbox" value="03010104"/>鍍面
+										<input name="typea" type="checkbox" value="03010105"/>其它
+									</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td> </td>
+									<td><input name="typea" type="checkbox" value="030102"/>條鋼</td>
+									<td> </td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td> </td>
+									<td> </td>
+									<td>
+										<input name="typea" type="checkbox" value="03010201"/>鋼筋
+										<input name="typea" type="checkbox" value="03010202"/>線材
+										<input name="typea" type="checkbox" value="03010203"/>棒鋼
+										<input name="typea" type="checkbox" value="03010204"/>型鋼
+										<input name="typea" type="checkbox" value="03010205"/>其它
+									</td>
+								</tr>
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td colspan="3">
+										<input name="typea" type="checkbox" value="0302"/>合金鋼(含不鏽鋼)
+									</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td> </td>
+									<td colspan="2"><input name="typea" type="checkbox" value="030201"/>板材</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td> </td>
+									<td colspan="2"><input name="typea" type="checkbox" value="030202"/>條鋼</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea4" name="typea" type="checkbox" value="04"/>終端成品
+						</td>
+					</tr>
+					<tr class="typea4">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="0401"/>螺絲
+										<input name="typea" type="checkbox" value="0402"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea5" name="typea" type="checkbox" value="05"/>非鐵金屬
+						</td>
+					</tr>
+					<tr class="typea5">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="0501"/>銅
+										<input name="typea" type="checkbox" value="0502"/>鋁
+										<input name="typea" type="checkbox" value="0503"/>鋅
+										<input name="typea" type="checkbox" value="0504"/>鎳
+										<input name="typea" type="checkbox" value="0505"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea6" name="typea" type="checkbox" value="06"/>市場脈動
+						</td>
+					</tr>
+					<tr class="typea6">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="0601"/>市場供需
+										<input name="typea" type="checkbox" value="0602"/>行情波動
+										<input name="typea" type="checkbox" value="0603"/>產銷統計
+										<input name="typea" type="checkbox" value="0604"/>公司財報
+										<input name="typea" type="checkbox" value="0605"/>進出口資料
+										<input name="typea" type="checkbox" value="0606"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea7" name="typea" type="checkbox" value="07"/>政策
+						</td>
+					</tr>
+					<tr class="typea7">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="0701"/>稅率
+										<input name="typea" type="checkbox" value="0702"/>傾銷
+										<input name="typea" type="checkbox" value="0703"/>環保
+										<input name="typea" type="checkbox" value="0704"/>會議
+										<input name="typea" type="checkbox" value="0705"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea8" name="typea" type="checkbox" value="08"/>交通運輸
+						</td>
+					</tr>
+					<tr class="typea8">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="0801"/>船運
+										<input name="typea" type="checkbox" value="0802"/>陸運
+										<input name="typea" type="checkbox" value="0803"/>交通政策
+										<input name="typea" type="checkbox" value="0804"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea9" name="typea" type="checkbox" value="09"/>企業動態
+						</td>
+					</tr>
+					<tr class="typea9">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="0901"/>盤價
+										<input name="typea" type="checkbox" value="0902"/>盤勢預測
+										<input name="typea" type="checkbox" value="0903"/>營運進展
+										<input name="typea" type="checkbox" value="0904"/>人事異動
+										<input name="typea" type="checkbox" value="0905"/>財務危機
+										<input name="typea" type="checkbox" value="0906"/>突發事故
+										<input name="typea" type="checkbox" value="0907"/>投資
+										<input name="typea" type="checkbox" value="0908"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea10" name="typea" type="checkbox" value="10"/>相關產業
+						</td>
+					</tr>
+					<tr class="typea10">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="1001"/>造船
+										<input name="typea" type="checkbox" value="1002"/>汽車
+										<input name="typea" type="checkbox" value="1003"/>機械
+										<input name="typea" type="checkbox" value="1004"/>建築
+										<input name="typea" type="checkbox" value="1005"/>家電
+										<input name="typea" type="checkbox" value="1006"/>加工剪裁
+										<input name="typea" type="checkbox" value="1007"/>單軋業
+										<input name="typea" type="checkbox" value="1008"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea11" name="typea" type="checkbox" value="11"/>應用開發
+						</td>
+					</tr>
+					<tr class="typea11">
+						<td> </td>
+						<td colspan="4">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea" type="checkbox" value="1101"/>新技術
+										<input name="typea" type="checkbox" value="1102"/>新產品
+										<input name="typea" type="checkbox" value="1103"/>新設備
+										<input name="typea" type="checkbox" value="1104"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="4">
+							<input id="typea12" name="typea" type="checkbox" value="12"/>其它
+						</td>
+					</tr>
+					<!--<tr class="typea">
+						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
+						<td><select id="cmbTypea" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblTypeb' class="lbl"> </a></td>
 						<td><select id="cmbTypeb" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblTypec' class="lbl"> </a></td>
 						<td><select id="cmbTypec" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblTyped' class="lbl"> </a></td>
 						<td><select id="cmbTyped" class="txt c1"> </select></td>
-					</tr>
+					</tr>-->
 					<tr>
 						<td><span> </span><a id='lblIllustrate' class="lbl"> </a></td>
 						<td><input id="txtIllustrate"  type="text"  class="txt c1"/></td>
@@ -854,6 +1220,10 @@
 					<tr>
 						<td><span> </span><a id='lblTitle2' class="lbl btn ChangeGB"> </a></td>
 						<td colspan="5"><input id="txtTitle2"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a class="lbl">內文關鍵字說明</a></td>
+						<td colspan="5"><a style="color: red;">{img01}</a>：為圖片一　<a style="color: red;">{img02}</a>：為圖片二　<a style="color: red;">{ad01}</a>：為浮水印廣告</td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblContents' class="lbl"> </a></td>
