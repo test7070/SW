@@ -67,6 +67,7 @@
 				
 				q_gt('custtype', '', 0, 0, 0, "custtype");
 				q_gt('country', '', 0, 0, 0, "country");
+				q_cmbParse("cmbStatus", ','+q_getPara('cust.status'));
 				q_cmbParse("cmbCoin", '@無,NTD@台幣,RMB@人民幣,USD@美金');
 				q_cmbParse("cmbBizscope", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
 				q_cmbParse("cmbTypea", '@選擇,'+q_getPara('custs.typea'),'s');
@@ -114,6 +115,11 @@
 				$('#txtComp').change(function(e){
 					if(emp($('#txtComp').val()))
 						$('#txtInvotitle').val($('#txtComp').val());
+				});
+				
+				$('#btnCustu').change(function(e){
+					if(emp($('#txtNoa').val()))
+						q_box("custu.aspx?;;;serial='" + $('#txtNoa').val() + "'",'pluscust', "95%", "95%", '繳款');
 				});
 				
 				$('.btnImg').change(function() {
@@ -812,15 +818,18 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblStatus' class="lbl"> </a></td>
-						<td><input id="txtStatus" type="text" class="txt c1" disabled="disabled"/></td>
+						<td>
+							<select id="cmbStatus" class="txt c3"> </select>
+							<input id="btnCustu" type="button" value="繳款"/>
+						</td>
 						<td><span> </span><a id='lblUmmstatus' class="lbl"> </a></td>
-						<td><input id="txtUmmstatus" type="text" class="txt c1" disabled="disabled"/></td>
+						<td><input id="txtUmmstatus" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblInvoserial' class="lbl"> </a></td>
-						<td><input id="txtInvoserial" type="text" class="txt c1" disabled="disabled"/></td>
+						<td><input id="txtInvoserial" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblInvotitle' class="lbl"> </a></td>
-						<td><input id="txtInvotitle" type="text" class="txt c1" disabled="disabled"/></td>
+						<td><input id="txtInvotitle" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblCobtype' class="lbl"> </a></td>
