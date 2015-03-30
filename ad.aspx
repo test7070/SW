@@ -24,7 +24,7 @@
             var bbmMask = [];
             q_sqlCount = 6;
             brwCount = 6;
-            brwCount2 = 15;
+            brwCount2 = 16;
             brwList = [];
             brwNowPage = 0;
             brwKey = 'noa';
@@ -279,6 +279,41 @@
 
             function q_gtPost(t_name) {
                 switch (t_name) {
+                	case "get_custss":
+                		var as = _q_appendData("cust", "", true);
+                		var ass = _q_appendData("custs", "", true);
+						var rowslength=document.getElementById("table_custs").rows.length-1;
+						for (var j = 1; j < rowslength; j++) {
+							document.getElementById("table_custs").deleteRow(1);
+						}
+						var custs_typea=q_getPara('custs.typea').split(',');
+						if(as[0]!=undefined){
+							for (var i = 0; i < ass.length; i++) {
+								var custtypea='';
+								for (var j = 0; j< custs_typea.length; j++) {
+									if(custs_typea[0].split('@')[0]==ass[i].typea){
+										custtypea=$.trim(custs_typea[0].split('@')[1]);
+										break;	
+									}
+								}
+								
+								var tr = document.createElement("tr");
+								tr.id = "bbs_"+i;
+								tr.innerHTML= "<td align='center'>"+dec(i+1)+"</td>";
+								tr.innerHTML+= "<td align='center'>"+ass[i].id+"</td>";
+								tr.innerHTML+="<td align='center'>"+as[0].comp+"</td>";
+								tr.innerHTML+="<td align='center'>"+(ass[i].groupa=="true"?'是':'否')+"</td>";
+								tr.innerHTML+="<td align='center'>"+custtypea+"</td>";
+								tr.innerHTML+="<td align='center'>"+(ass[i].master=="true"?'是':'否')+"/"+(ass[i].sconn=="true"?'是':'否')+"</td>";
+								
+								var tmp = document.getElementById("custs_end");
+								tmp.parentNode.insertBefore(tr,tmp);
+							}
+							if(ass.length>0)
+								$('#div_custs').show();
+						}
+						
+                		break;
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
@@ -364,6 +399,9 @@
                 _refresh(recno);
                 ShowImglbl();
                 Typeachange();
+                $('#div_custs').hide();
+                var t_where = "where=^^ noa='"+$("#txtCustno").val()+"' ^^";
+				q_gt('cust', t_where, 0, 0, 0, "get_custss", r_accy);
             }
             
             function readonly(t_para, empty) {
@@ -694,6 +732,21 @@
 					</tr>
 				</table>
 			</div>
+		</div>
+		<div id="div_custs" style="width:720px; background-color: aliceblue; border: 2px solid aliceblue;">
+			<table id="table_custs" style="width:100%;" border="1" cellpadding='2'  cellspacing='0'>
+				<tr id='custs_head'>
+					<td style="background-color: plum;width: 20px;" align="center">序</td>
+					<td style="background-color: plum;width: 100px;" align="center">帳號</td>
+					<td style="background-color: plum;width: 280px;" align="center">公司名稱</td>
+					<td style="background-color: plum;width: 85px;" align="center">前端群組</td>
+					<td style="background-color: plum;width: 85px;" align="center">會員屬性</td>
+					<td style="background-color: plum;width: 150px;" align="center">主帳號/業務聯絡人</td>
+				</tr>
+				<tr id='custs_end' style="display: none;">
+					<td> </td>
+				</tr>
+			</table>
 		</div>
 		<iframe id="xdownload" style="display:none;"> </iframe>
 		<input id="q_sys" type="hidden" />

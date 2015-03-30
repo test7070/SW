@@ -69,7 +69,7 @@
 				q_gt('country', '', 0, 0, 0, "country");
 				q_cmbParse("cmbCoin", '@無,NTD@台幣,RMB@人民幣,USD@美金');
 				q_cmbParse("cmbBizscope", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
-				q_cmbParse("cmbTypea", '@選擇,10@繳款會員,11@　一般會員,12@　加買會員,20@業務附贈,21@　廣告附贈,22@　專案附贈,30@免費會員,31@　友情附贈,32@　內部員工','s');
+				q_cmbParse("cmbTypea", '@選擇,'+q_getPara('custs.typea'),'s');
 				
 				$('#btnCusts').click(function() {
 					$('.dbbs').css('top', $(this).offset().top+25);
