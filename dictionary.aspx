@@ -9,12 +9,12 @@
         <script src="../script/qbox.js" type="text/javascript"></script>
         <script src='../script/mask.js' type="text/javascript"></script>
         <link href="../qbox.css" rel="stylesheet" type="text/css" />
-        <link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
-		<script src="css/jquery/ui/jquery.ui.core.js"></script>
-		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
-		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
+        <script type="text/javascript" src="http://59.125.143.170/highslide/highslide.packed.js"></script>
+		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide-with-html.packed.js"></script>
+		<link rel="stylesheet" type="text/css" href="http://59.125.143.170/highslide/highslide.css" /> 
+		<script type="text/javascript"> hs.graphicsDir = 'http://59.125.143.170/highslide/graphics/'; hs.showCredits = false; hs.outlineType = 'rounded-white'; hs.outlineWhileAnimating = true; </script>
         <script type="text/javascript">    
-            var q_name = "shipping";
+            var q_name = "dictionary";
             var q_readonly = ['txtNoa','txtWorker','txtWorker2'];
             var bbmNum = [];
             var bbmMask = [];
@@ -27,7 +27,6 @@
             //ajaxPath = ""; //  execute in Root
             aPop = new Array();
 			
-			q_desc=1;
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 q_brwCount();
@@ -40,118 +39,117 @@
                     dataErr = false;
                     return;
                 }
-                mainForm(1);
+                mainForm(0);
                 // 1=Last  0=Top
             }
 			
-			var n_dockNow=[];
-			n_dockNow.push({custno:'',bdock:'',mdock:'',edock:''});
             function mainPost() {
-            	bbmMask = [['txtCldate', '9999/99/99']];
+            	bbmMask = [];
                 q_mask(bbmMask);
                 
-                $.datepicker.regional['zh-TW']={
-				   dayNames:["星期日","星期一","星期二","星期三","星期四","星期五","星期六"],
-				   dayNamesMin:["日","一","二","三","四","五","六"],
-				   monthNames:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
-				   monthNamesShort:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
-				   prevText:"上月",
-				   nextText:"次月",
-				   weekHeader:"週"
-				};
-				//將預設語系設定為中文
-				$.datepicker.setDefaults($.datepicker.regional["zh-TW"]);
+                q_cmbParse("cmbTypea", ','+q_getPara('dictionary.typea'));
                 
-                q_cmbParse("cmbShipline", '@全部,'+q_getPara('shipping.shipline'));
-                q_cmbParse("cmbBdock",'@無');
-                q_cmbParse("cmbMdock",'@無');
-                q_gt('cust', "where=^^ isnull(isshipcomp,0) =1 ^^", 0, 0, 0, "cust");
-                q_gt('dock', '', 0, 0, 0, "dock");
-                
-                $('#cmbCustno').change(function() {
-                	$('#txtComp').val($('#cmbCustno').find("option:selected").text());
-                	q_gt('ship', "where=^^ noa='"+$('#cmbCustno').val()+"' ^^", 0, 0, 0, "ship");
-				});
-                $('#cmbBarea').change(function() {
-                	dockChange('B');
-				});
-				$('#cmbMarea').change(function() {
-                	dockChange('M');
+                $('.btnImg').change(function() {
+					event.stopPropagation(); 
+					event.preventDefault();
+					if(q_cur==1 || q_cur==2){}else{return;}
+					var txtName = replaceAll($(this).attr('id'),'btn','txt');
+					var btnName = $(this).attr('id');
+					file = $(this)[0].files[0];
+					
+					if(file){
+						Lock(1);
+						var ext = '';
+						var extindex = file.name.lastIndexOf('.');
+						if(extindex>=0){
+							ext = file.name.substring(extindex,file.name.length);
+						}
+						$('#'+txtName+'name').val(file.name);
+						$('#'+txtName).val(guid()+Date.now()+ext);
+						
+						fr = new FileReader();
+						fr.fileName = $('#'+txtName).val();
+					    fr.readAsDataURL(file);
+					    fr.onprogress = function(e){
+							if ( e.lengthComputable ) { 
+								var per = Math.round( (e.loaded * 100) / e.total) ; 
+								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
+							}; 
+						}
+						fr.onloadstart = function(e){
+							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
+						}
+						fr.onloadend = function(e){
+							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
+							console.log(fr.fileName+':'+fr.result.length);
+							var oReq = new XMLHttpRequest();
+							oReq.upload.addEventListener("progress",function(e) {
+								if (e.lengthComputable) {
+									percentComplete = Math.round((e.loaded / e.total) * 100,0);
+									$('#FileList').children().last().find('progress').eq(1).attr('value',percentComplete);
+								}
+							}, false);
+							oReq.upload.addEventListener("load",function(e) {
+								Unlock(1);
+							}, false);
+							oReq.upload.addEventListener("error",function(e) {
+								alert("資料上傳發生錯誤!");
+							}, false);
+							oReq.addEventListener("loadend", function(e) {
+								$('#'+btnName).val('');
+							}, false);
+								
+							oReq.timeout = 360000;
+							oReq.ontimeout = function () { alert("Timed out!!!"); }
+							oReq.open("POST", 'dictionary_upload.aspx', true);
+							oReq.setRequestHeader("Content-type", "text/plain");
+							oReq.setRequestHeader("FileName", escape(fr.fileName));
+							oReq.send(fr.result);
+						};
+					}
+					ShowImglbl();
 				});
             }
             
-            function dockChange(dock) {
-            	if(dock!='' && docks!=undefined){
-	            	$("#cmb"+dock+"dock").text('');
-	            	var t_dock='@無';
-					for (i=0;i<docks.length;i++){
-						if(docks[i].area==$("#cmb"+dock+"area").val())
-							t_dock=t_dock+','+docks[i].dock+"@"+docks[i].dock;
+            var guid = (function() {
+				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
+				//return function() {return s4() + s4() + '-' + s4() + '-' + s4() + '-' +s4() + '-' + s4() + s4() + s4();};
+				return function() {return s4() + s4() + s4() + s4();};
+			})();
+			
+			function ShowImglbl() {
+				$('.lblImgShowDown').each(function(){
+					var txtimg=replaceAll($(this).attr('id'),'lbl','txt');
+					var lblimg=replaceAll($(this).attr('id'),'lbl','lbl');
+					if(!emp($('#'+txtimg).val())){
+						$('#'+lblimg).addClass('btn highslide ').attr('href','../images/sw/dictionary/'+$('#'+txtimg).val())
+						.attr('onclick',"return hs.expand(this, { captionId: 'caption1', align: 'center',allowWidthReduction: true } )");
+					}else{
+						$('#'+lblimg).removeClass('btn highslide ').removeAttr('href').removeAttr('onclick');
 					}
-					q_cmbParse("cmb"+dock+"dock", t_dock);
-				}
-				if(n_dockNow[0] && dock=='B')
-					$("#cmb"+dock+"dock").val(n_dockNow[0].bdock);
-				if(n_dockNow[0] && dock=='M')
-					$("#cmb"+dock+"dock").val(n_dockNow[0].mdock);
-			}
-
+						
+					$('#'+lblimg).bind('contextmenu', function(e) {
+						/*滑鼠右鍵*/
+						e.preventDefault();
+                        if(txtimg.length>0)
+                        	$('#xdownload').attr('src','dictionary_download.aspx?FileName='+$('#'+txtimg+'name').val()+'&TempName='+$('#'+txtimg).val());
+                        else
+                        	alert('無資料...'+n);
+					});
+				});
+           }
+            
             function q_boxClose(s2) {
                 var ret;
                 switch (b_pop) {
                     case q_name + '_s':
                         q_boxClose2(s2);
                         break;
-
                 }
             }
-			var area,docks;
+			
             function q_gtPost(t_name) {
                 switch (t_name) {
-                	case 'cust':
-                		var as = _q_appendData("cust", "", true);
-                		if (as[0] != undefined) {
-							var t_item = "@";
-							for (i = 0; i < as.length; i++) {
-								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].noa) + '@' + $.trim(as[i].nick!=''?as[i].nick:as[i].comp);
-							}
-							q_cmbParse("cmbCustno", t_item);
-							if(abbm[q_recno])
-								$("#cmbCustno").val(abbm[q_recno].custno);
-						}
-                		break;
-                	case 'ship':
-                			var as = _q_appendData("ship", "", true);
-                			if (as[0] != undefined) {
-                				$('#cmbShipname').text('');
-                				var t_item = "@";
-								for (i = 0; i < as.length; i++) {
-									t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].shipname) + '@' + $.trim(as[i].shipname);
-								}
-								q_cmbParse("cmbShipname", t_item);
-								if(abbm[q_recno])
-									$("#cmbShipname").val(abbm[q_recno].shipname);
-                			}
-                		break;
-                	case 'dock':
-                		area = _q_appendData("dock", "", true);
-                		if(area[0] != undefined){
-                			docks = _q_appendData("docks", "", true);
-							var t_item = "@";
-							for (i = 0; i < area.length; i++) {
-								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(area[i].area) + '@' + $.trim(area[i].area);
-							}
-							q_cmbParse("cmbBarea", t_item);
-							q_cmbParse("cmbMarea", t_item);
-							if(abbm[q_recno]){
-								$("#cmbBarea").val(abbm[q_recno].barea);
-								$("#cmbMarea").val(abbm[q_recno].marea);
-								dockChange('B');
-	                			dockChange('M');
-							}
-						}
-                		
-                		break;
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
@@ -162,26 +160,21 @@
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)// 1-3
                     return;
-                q_box('shipping_s.aspx', q_name + '_s', "500px", "350px", q_getMsg("popSeek"));
+                q_box('dictionary_s.aspx', q_name + '_s', "500px", "350px", q_getMsg("popSeek"));
             }
 
             function btnIns() {
                 _btnIns();
-                $('#txtCustno').focus();
-                $('#cmbBdock').text('');
-                $('#cmbMdock').text('');
-                $('#cmbShipname').text('');
-                n_dockNow[0].bdock='';
-	            n_dockNow[0].mdock='';
-                q_cmbParse("cmbBdock",'@無');
-                q_cmbParse("cmbMdock",'@無');
+                $('#cmbTypea').focus();
+                ShowImglbl();
             }
 
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
                 _btnModi();
-                $('#txtCustno').focus();
+                $('#cmbTypea').focus();
+                ShowImglbl();
             }
 
             function btnPrint() {
@@ -197,8 +190,8 @@
             function btnOk() {
                 Lock(1,{opacity:0});
             	var t_err = '';
-                t_err = q_chkEmpField([['txtCustno', q_getMsg('lblCust')],['cmbShipline', q_getMsg('lblShipline')]
-                ,['txtCldate', q_getMsg('lblCldate')],['txtVoyage', q_getMsg('lblVoyage')],['cmbShipname', q_getMsg('lblShipname')]]);
+                t_err = q_chkEmpField([['cmbTypea', q_getMsg('lblTypea')],['txtEname', q_getMsg('lblEname')]
+                ,['txtCname', q_getMsg('lblCname')],['txtMemo', q_getMsg('lblMemo')]]);
                 
                 if (t_err.length > 0) {
                     alert(t_err);
@@ -233,23 +226,15 @@
 
             function refresh(recno) {
                 _refresh(recno);
-                if(abbm[q_recno]){
-	                n_dockNow[0].bdock=abbm[q_recno].bdock;
-	                n_dockNow[0].mdock=abbm[q_recno].mdock;
-	                n_dockNow[0].custno=abbm[q_recno].custno;
-	                dockChange('B');
-	                dockChange('M');
-	                q_gt('ship', "where=^^ noa='"+abbm[q_recno].custno+"' ^^", 0, 0, 0, "ship");
-				}
+                ShowImglbl();
             }
             
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                  if(t_para){
-                	$('#txtCldate').datepicker( 'destroy' );
+                 	$('.btnImg').attr('disabled', 'disabled');
                 }else{
-					$('#txtCldate').removeClass('hasDatepicker')
-					$('#txtCldate').datepicker({ dateFormat: 'yy/mm/dd' });
+                	$('.btnImg').removeAttr('disabled', 'disabled');
                 }
             }
 
@@ -378,19 +363,11 @@
                 float: left;
             }
             .txt.c2 {
-                width: 38%;
+                width: 15%;
                 float: left;
             }
             .txt.c3 {
-                width: 60%;
-                float: left;
-            }
-            .txt.c4 {
-                width: 18%;
-                float: left;
-            }
-            .txt.c5 {
-                width: 80%;
+                width: 85%;
                 float: left;
             }
             .txt.c6 {
@@ -432,81 +409,86 @@
 				<table class="tview" id="tview"   border="1" cellpadding='2'  cellspacing='0' style="background-color: #FFFF66;">
 					<tr>
 						<td align="center" style="width:3%"><a id='vewChk'> </a></td>
-						<td align="center" style="width:15%"><a id='vewShipline'> </a></td>
-						<td align="center" style="width:10%"><a id='vewCldate'> </a></td>
-						<td align="center" style="width:35%"><a id='vewComp'> </a></td>
-						<td align="center" style="width:35%"><a id='vewShipname'> </a></td>
+						<td align="center" style="width:15%"><a id='vewTypea'> </a></td>
+						<td align="center" style="width:40%"><a id='vewEname'> </a></td>
+						<td align="center" style="width:40%"><a id='vewCname'> </a></td>
 					</tr>
 					<tr>
 						<td ><input id="chkBrow.*" type="checkbox" style=''/></td>
-						<td align="center" id='shipline'>~shipline</td>
-						<td align="center" id="cldate">~cldate</td>
-						<td align="center" id='comp'>~comp</td>
-						<td align="center" id='shipname'>~shipname</td>
+						<td align="center" id='typea'>~typea</td>
+						<td align="center" id="ename">~ename</td>
+						<td align="center" id='cname'>~cname</td>
 					</tr>
 				</table>
 			</div>
 			<div class='dbbm' style="float: left;">
 				<table class="tbbm"  id="tbbm"   border="0" cellpadding='2'  cellspacing='5'>
 					<tr style="height:1px;">
-						<td style="width: 130px"> </td>
-						<td style="width: 180px"> </td>
-						<td style="width: 130px"> </td>
-						<td style="width: 180px"> </td>
+						<td style="width: 140px"> </td>
+						<td style="width: 1100px"> </td>
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblShipline' class="lbl"> </a></td>
-						<td><select id="cmbShipline" class="txt c1"> </select></td>
-						<td><span> </span><a id='lblVoyage' class="lbl"> </a></td>
-						<td><input id="txtVoyage"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
+						<td><select id="cmbTypea" class="txt c2"> </select></td>
 						<td><input id="txtNoa"  type="text" style="display: none;"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblCust' class="lbl"> </a></td>
+						<td><span> </span><a id='lblEname' class="lbl"> </a></td>
+						<td><input id="txtEname"  type="text"  class="txt c1"/></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblCname' class="lbl"> </a></td>
+						<td><input id="txtCname"  type="text"  class="txt c1"/></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
+						<td><textarea id="txtMemo" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblImga1' class="lbl lblImgShowDown"> </a></td>
 						<td>
-							<select id="cmbCustno" class="txt c1"> </select>
-							<input id="txtComp"  type="text"  style="display: none;"/>
+							<input type="file" id="btnImga1" class="btnImg" value="選擇檔案" accept="image/*"/>
+							<input id="txtImga1"  type="hidden"/><input id="txtImga1name"  type="hidden"/>
 						</td>
-						<td><span> </span><a id='lblCldate' class="lbl"> </a></td>
-						<td><input id="txtCldate"  type="text"  class="txt c1"/></td>
 						<td> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblShipname' class="lbl"> </a></td>
-						<td><select id="cmbShipname" class="txt c1"> </select></td>
-						<td> </td>
-						<td> </td>
-						<td> </td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblBarea' class="lbl"> </a></td>
-						<td><select id="cmbBarea" class="txt c1"> </select></td>
-						<td><span> </span><a id='lblBdock' class="lbl"> </a></td>
-						<td><select id="cmbBdock" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblImgb1' class="lbl lblImgShowDown"> </a></td>
+						<td>
+							<input type="file" id="btnImgb1" class="btnImg" value="選擇檔案" accept="image/*"/>
+							<input id="txtImgb1"  type="hidden"/><input id="txtImgb1name"  type="hidden"/>
+						</td>
 						<td> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblMarea' class="lbl"> </a></td>
-						<td><select id="cmbMarea" class="txt c1"> </select></td>
-						<td><span> </span><a id='lblMdock' class="lbl"> </a></td>
-						<td><select id="cmbMdock" class="txt c1"> </select></td>
-						<td> </td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblEdock' class="lbl"> </a></td>
-						<td colspan="3"><input id="txtEdock"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblImgc1' class="lbl lblImgShowDown"> </a></td>
+						<td>
+							<input type="file" id="btnImgc1" class="btnImg" value="選擇檔案" accept="image/*"/>
+							<input id="txtImgc1"  type="hidden"/><input id="txtImgc1name"  type="hidden"/>
+						</td>
 						<td> </td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
-						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
+						<td><input id="txtWorker"  type="text"  class="txt c2"/></td>
+						<td> </td>
+					</tr>
+					<tr>
 						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
-						<td><input id="txtWorker2"  type="text"  class="txt c1"/></td>
+						<td><input id="txtWorker2"  type="text"  class="txt c2"/></td>
+						<td> </td>
+					</tr>
+					<tr style="display: none;">
+						<td colspan="2"><div style="width:100%;" id="FileList"> </div></td>
 					</tr>
 				</table>
 			</div>
 		</div>
+		<iframe id="xdownload" style="display:none;"> </iframe>
 		<input id="q_sys" type="hidden" />
 	</body>
 </html>
