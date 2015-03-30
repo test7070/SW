@@ -332,10 +332,10 @@
 					$('#'+lblimg).bind('contextmenu', function(e) {
 						/*滑鼠右鍵*/
 						e.preventDefault();
-                        if(txtimg.length>0)
+                        if($('#'+txtimg).val().length>0)
                         	$('#xdownload').attr('src','news_download.aspx?FileName='+$('#'+txtimg+'name').val()+'&TempName='+$('#'+txtimg).val());
                         else
-                        	alert('無資料...'+n);
+                        	alert('無資料...');
 					});
 				});
 				

@@ -13,30 +13,32 @@
 		<script src="css/jquery/ui/jquery.ui.core.js"></script>
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
 		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
-		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide.packed.js"></script>
+        <script type="text/javascript" src="http://59.125.143.170/highslide/highslide.packed.js"></script>
 		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide-with-html.packed.js"></script>
 		<link rel="stylesheet" type="text/css" href="http://59.125.143.170/highslide/highslide.css" /> 
 		<script type="text/javascript"> hs.graphicsDir = 'http://59.125.143.170/highslide/graphics/'; hs.showCredits = false; hs.outlineType = 'rounded-white'; hs.outlineWhileAnimating = true; </script>
+		<script type="text/javascript" src="http://59.125.143.170/script/WFU-ts-mix.js"></script>
+		<script type="text/javascript" src="http://59.125.143.170/script/tongwen-ts.js"></script>
         <script type="text/javascript">    
-            var q_name = "ad";
+            var q_name = "announce";
             var q_readonly = ['txtNoa','txtWorker','txtWorker2'];
             var bbmNum = [];
             var bbmMask = [];
             q_sqlCount = 6;
             brwCount = 6;
-            brwCount2 = 16;
+            brwCount2 = 5;
             brwList = [];
             brwNowPage = 0;
             brwKey = 'noa';
+            q_desc = 1;
             //ajaxPath = ""; //  execute in Root
-            aPop = new Array(['txtCustno', '', 'cust', 'noa,comp', '0txtCustno,txtComp', '']);
+            aPop = new Array();
 			
-			q_desc=1;
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 q_brwCount();
                 q_gt(q_name, q_content, q_sqlCount, 1)
-                $('#txtNoa').focus
+                $('#txtNoa').focus();
             });
 
             function main() {
@@ -47,9 +49,9 @@
                 mainForm(1);
                 // 1=Last  0=Top
             }
-
+			
             function mainPost() {
-            	bbmMask = [['txtBdate', '9999/99/99'],['txtEdate', '9999/99/99'],['txtVipedate', '9999/99/99'],['txtMon', '9999/99']];
+            	bbmMask = [['txtBdate', '9999/99/99'],['txtEdate', '9999/99/99']];
                 q_mask(bbmMask);
                 
                 $.datepicker.regional['zh-TW']={
@@ -64,15 +66,13 @@
 				//將預設語系設定為中文
 				$.datepicker.setDefaults($.datepicker.regional["zh-TW"]);
                 
-                q_cmbParse("cmbTypea", '@,'+q_getPara('ad.typea'));
-                q_cmbParse("cmbTypeb", '@,'+q_getPara('ad.typeb'));
-                q_cmbParse("cmbGroupa", '1,2,3');
+                q_cmbParse("cmbTypea", ','+q_getPara('announce.typea'));
+                q_cmbParse("cmbArea", ','+q_getPara('announce.area'));
                 
-                $('#cmbTypea').change(function() {
-                	Typeachange();
-				});
-				
-				$('.btnImg').change(function() {
+                $('.lblLanguage1').text('繁體');
+                $('.lblLanguage2').text('簡體');
+                
+                $('.btnImg').change(function() {
 					event.stopPropagation(); 
 					event.preventDefault();
 					if(q_cur==1 || q_cur==2){}else{return;}
@@ -124,7 +124,7 @@
 								
 							oReq.timeout = 360000;
 							oReq.ontimeout = function () { alert("Timed out!!!"); }
-							oReq.open("POST", 'ad_upload.aspx', true);
+							oReq.open("POST", 'announce_upload.aspx', true);
 							oReq.setRequestHeader("Content-type", "text/plain");
 							oReq.setRequestHeader("FileName", escape(fr.fileName));
 							oReq.send(fr.result);
@@ -133,13 +133,15 @@
 					ShowImglbl();
 				});
 				
-				$('.btnPage').change(function() {
+				$('.btnAtt').change(function() {
 					event.stopPropagation(); 
 					event.preventDefault();
 					if(q_cur==1 || q_cur==2){}else{return;}
 					var txtName = replaceAll($(this).attr('id'),'btn','txt');
+					var btnName = $(this).attr('id');
 					file = $(this)[0].files[0];
-					if(file && file.name.indexOf('.zip')>-1){
+					
+					if(file){
 						Lock(1);
 						var ext = '';
 						var extindex = file.name.lastIndexOf('.');
@@ -177,18 +179,18 @@
 							oReq.upload.addEventListener("error",function(e) {
 								alert("資料上傳發生錯誤!");
 							}, false);
+							oReq.addEventListener("loadend", function(e) {
+								$('#'+btnName).val('');
+							}, false);
 								
 							oReq.timeout = 360000;
 							oReq.ontimeout = function () { alert("Timed out!!!"); }
-							oReq.open("POST", 'page_upload.aspx', true);
+							oReq.open("POST", 'announce_upload.aspx', true);
 							oReq.setRequestHeader("Content-type", "text/plain");
 							oReq.setRequestHeader("FileName", escape(fr.fileName));
 							oReq.send(fr.result);
 						};
-					}else{
-						alert("非ZIP檔!");
 					}
-					
 					ShowImglbl();
 				});
             }
@@ -204,7 +206,7 @@
 					var txtimg=replaceAll($(this).attr('id'),'lbl','txt');
 					var lblimg=replaceAll($(this).attr('id'),'lbl','lbl');
 					if(!emp($('#'+txtimg).val())){
-						$('#'+lblimg).addClass('btn highslide ').attr('href','../images/sw/ad/'+$('#'+txtimg).val())
+						$('#'+lblimg).addClass('btn highslide ').attr('href','../images/sw/announce/'+$('#'+txtimg).val())
 						.attr('onclick',"return hs.expand(this, { captionId: 'caption1', align: 'center',allowWidthReduction: true } )");
 					}else{
 						$('#'+lblimg).removeClass('btn highslide ').removeAttr('href').removeAttr('onclick');
@@ -214,106 +216,52 @@
 						/*滑鼠右鍵*/
 						e.preventDefault();
                         if($('#'+txtimg).val().length>0)
-                        	$('#xdownload').attr('src','ad_download.aspx?FileName='+$('#'+txtimg+'name').val()+'&TempName='+$('#'+txtimg).val());
+                        	$('#xdownload').attr('src','announce_download.aspx?FileName='+$('#'+txtimg+'name').val()+'&TempName='+$('#'+txtimg).val());
                         else
                         	alert('無資料...');
 					});
 				});
 				
-				$('.PageDown').each(function(){
-					var txtpage=replaceAll($(this).attr('id'),'lbl','txt');
-					var lblpage=replaceAll($(this).attr('id'),'lbl','lbl');
-					if(!emp($('#'+txtpage).val())){
-						$('#'+lblpage).addClass('btn');
-					}else{
-						$('#'+lblpage).removeClass('btn');
-					}
-					$('#'+lblpage).click(function() {
-                        if(txtpage.length>0)
-                        	$('#xdownload').attr('src','page_download.aspx?FileName='+$('#'+txtpage+'name').val()+'&TempName='+$('#'+txtpage).val());
+				$('.lblAttShowDown').each(function(){
+					var txtimg=replaceAll($(this).attr('id'),'lbl','txt');
+					var lblimg=replaceAll($(this).attr('id'),'lbl','lbl');
+					if(!emp($('#'+txtimg).val()))
+						$('#'+lblimg).addClass('btn');
+						
+					$('#'+lblimg).bind('contextmenu', function(e) {
+						/*滑鼠右鍵*/
+						e.preventDefault();
+                        if($('#'+txtimg).val().length>0)
+                        	$('#xdownload').attr('src','announce_download.aspx?FileName='+$('#'+txtimg+'name').val()+'&TempName='+$('#'+txtimg).val());
                         else
-                        	alert('無資料...'+n);
+                        	alert('無資料...');
 					});
 				});
+           }
+           
+           function ChangeGB() {
+				if(q_cur==1 || q_cur==2){
+					$('.ChangeGB').attr('title',"點擊滑鼠左鍵，轉簡體。").addClass('btn');
+					$('.ChangeGB').click(function() {
+						var txtGB = replaceAll($(this).attr('id'),'lbl','txt');
+						var txtBIG5 = replaceAll($(this).attr('id'),'lbl','txt');
+						txtBIG5=txtBIG5.substr(0,txtBIG5.length-1)+((txtGB.indexOf('Title')>-1|| txtGB.indexOf('Memo')>-1)?'':'1');
+						$('#'+txtGB).val(toSimp($('#'+txtBIG5).val()));
+					});
+				}
 			}
             
-            function Typeachange() {
-				if($('#cmbTypea').val()!=''){
-					if($('#cmbTypea').val()=='1')
-						$('.typeb').show();
-					else
-						$('.typeb').hide();
-						
-					if($('#cmbTypea').val()=='4' || $('#cmbTypea').val()=='5')
-						$('.groupa').show();
-					else
-						$('.groupa').hide();
-						
-					if($('#cmbTypea').val()=='4')
-						$('.vip').show();
-					else
-						$('.vip').hide();
-						
-					if($('#cmbTypea').val()=='5')
-						$('#lblGroupa').text(q_getMsg('lblGroupa')+q_getMsg('lblWatermark'));
-					else
-						$('#lblGroupa').text(q_getMsg('lblGroupa'));
-					
-				}else{
-					$('.typeb').hide();
-					$('.groupa').hide();
-					$('.vip').hide();
-					$('#lblWatermark').hide();
-				}	
-			}
-
             function q_boxClose(s2) {
                 var ret;
                 switch (b_pop) {
                     case q_name + '_s':
                         q_boxClose2(s2);
                         break;
-
                 }
             }
-
+			
             function q_gtPost(t_name) {
                 switch (t_name) {
-                	case "get_custss":
-                		var as = _q_appendData("cust", "", true);
-                		var ass = _q_appendData("custs", "", true);
-						var rowslength=document.getElementById("table_custs").rows.length-1;
-						for (var j = 1; j < rowslength; j++) {
-							document.getElementById("table_custs").deleteRow(1);
-						}
-						var custs_typea=q_getPara('custs.typea').split(',');
-						if(as[0]!=undefined){
-							for (var i = 0; i < ass.length; i++) {
-								var custtypea='';
-								for (var j = 0; j< custs_typea.length; j++) {
-									if(custs_typea[0].split('@')[0]==ass[i].typea){
-										custtypea=$.trim(custs_typea[0].split('@')[1]);
-										break;	
-									}
-								}
-								
-								var tr = document.createElement("tr");
-								tr.id = "bbs_"+i;
-								tr.innerHTML= "<td align='center'>"+dec(i+1)+"</td>";
-								tr.innerHTML+= "<td align='center'>"+ass[i].id+"</td>";
-								tr.innerHTML+="<td align='center'>"+as[0].comp+"</td>";
-								tr.innerHTML+="<td align='center'>"+(ass[i].groupa=="true"?'是':'否')+"</td>";
-								tr.innerHTML+="<td align='center'>"+custtypea+"</td>";
-								tr.innerHTML+="<td align='center'>"+(ass[i].master=="true"?'是':'否')+"/"+(ass[i].sconn=="true"?'是':'否')+"</td>";
-								
-								var tmp = document.getElementById("custs_end");
-								tmp.parentNode.insertBefore(tr,tmp);
-							}
-							if(ass.length>0)
-								$('#div_custs').show();
-						}
-						
-                		break;
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
@@ -324,21 +272,23 @@
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)// 1-3
                     return;
-                q_box('ad_s.aspx', q_name + '_s', "500px", "300px", q_getMsg("popSeek"));
+                q_box('announce_s.aspx', q_name + '_s', "500px", "300px", q_getMsg("popSeek"));
             }
 
             function btnIns() {
                 _btnIns();
-                $('#txtCustno').focus();
+                $('#txtTitle').focus();
                 ShowImglbl();
+                ChangeGB();
             }
 
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
                 _btnModi();
-                $('#txtCustno').focus();
+                $('#txtTitle').focus();
                 ShowImglbl();
+                ChangeGB();
             }
 
             function btnPrint() {
@@ -354,22 +304,14 @@
             function btnOk() {
                 Lock(1,{opacity:0});
             	var t_err = '';
-                t_err = q_chkEmpField([['txtCustno', q_getMsg('lblCust')],['txtComp', q_getMsg('lblCust')]
-                ,['txtBdate', q_getMsg('lblBdate')],['txtEdate', q_getMsg('lblBdate')],['cmbTypea', q_getMsg('lblTypea')]
-                ,['txtImage1', q_getMsg('lblImage1')]]);
+                t_err = q_chkEmpField([['cmbTypea', q_getMsg('lblTypea')],['txtTitle', q_getMsg('lblTitle')],['txtMemo', q_getMsg('lblMemo')]]);
                 
                 if (t_err.length > 0) {
                     alert(t_err);
                     Unlock(1);
                     return;
                 }
-                
-                if($('#txtWeb1').val().length==0 && $('#txtPage1').val().length==0){
-            		alert('請輸入'+q_getMsg("lblPage1")+'或'+q_getMsg("lblWeb1"));
-            		Unlock(1);
-            		return;
-            	}
-            	
+                            	
 				if(q_cur==1){
 					$('#txtWorker').val(r_name);
 				}else{
@@ -398,29 +340,23 @@
             function refresh(recno) {
                 _refresh(recno);
                 ShowImglbl();
-                Typeachange();
-                $('#div_custs').hide();
-                var t_where = "where=^^ noa='"+$("#txtCustno").val()+"' ^^";
-				q_gt('cust', t_where, 0, 0, 0, "get_custss", r_accy);
+                ChangeGB();
             }
             
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                  if(t_para){
-                	$('.btnImg').attr('disabled', 'disabled');
-                	$('.btnPage').attr('disabled', 'disabled');
-                	$('#txtBdate').datepicker( 'destroy' );
-                	$('#txtEdate').datepicker( 'destroy' );
-                	$('#txtVipedate').datepicker( 'destroy' );
+                 	$('.btnImg').attr('disabled', 'disabled');
+                 	$('.btnAtt').attr('disabled', 'disabled');
+                 	$('#txtBdate').datepicker( 'destroy' );
+                 	$('#txtEdate').datepicker( 'destroy' );
                 }else{
                 	$('.btnImg').removeAttr('disabled', 'disabled');
-                	$('.btnPage').removeAttr('disabled', 'disabled');
+                	$('.btnAtt').removeAttr('disabled', 'disabled');
                 	$('#txtBdate').removeClass('hasDatepicker')
 					$('#txtBdate').datepicker({ dateFormat: 'yy/mm/dd' });
 					$('#txtEdate').removeClass('hasDatepicker')
 					$('#txtEdate').datepicker({ dateFormat: 'yy/mm/dd' });
-					$('#txtVipedate').removeClass('hasDatepicker')
-					$('#txtVipedate').datepicker({ dateFormat: 'yy/mm/dd' });
                 }
             }
 
@@ -482,9 +418,10 @@
             }
             .dview {
                 float: left;
-                width: 400px;
+                width: 1250px;
             }
             .tview {
+            	width:100%;
                 margin: 0;
                 padding: 2px;
                 border: 1px black double;
@@ -500,7 +437,7 @@
             }
             .dbbm {
                 float: left;
-                width: 840px;
+                width: 1250px;
                 margin: -1px;
                 border: 1px black solid;
                 border-radius: 5px;
@@ -548,23 +485,11 @@
                 float: left;
             }
             .txt.c2 {
-                width: 38%;
+                width: 25%;
                 float: left;
             }
             .txt.c3 {
-                width: 60%;
-                float: left;
-            }
-            .txt.c4 {
-                width: 18%;
-                float: left;
-            }
-            .txt.c5 {
-                width: 80%;
-                float: left;
-            }
-            .txt.c6 {
-                width: 50%;
+                width: 85%;
                 float: left;
             }
             .txt.num {
@@ -601,152 +526,177 @@
 			<div class="dview" id="dview" style="float: left; "  >
 				<table class="tview" id="tview"   border="1" cellpadding='2'  cellspacing='0' style="background-color: #FFFF66;">
 					<tr>
-						<td align="center" style="width:5%"><a id='vewChk'> </a></td>
-						<td align="center" style="width:28%"><a id='vewComp'> </a></td>
-						<td align="center" style="width:23%"><a id='vewTypea'> </a></td>
-						<td align="center" style="width:45%"><a id='vewBdate'> </a></td>
+						<td align="center" style="width:3%"><a id='vewChk'> </a></td>
+						<td align="center" style="width:60%"><a id='vewTitle'> </a></td>
+						<td align="center" style="width:20%"><a id='vewBdate'> </a></td>
+						<td align="center" style="width:15%"><a id='vewTypea'> </a></td>
 					</tr>
 					<tr>
-						<td >
-						<input id="chkBrow.*" type="checkbox" style=''/>
-						</td>
-						<td align="center" id='comp,6'>~comp,6</td>
-						<td align="center" id="typea=ad.typea">~typea=ad.typea</td>
+						<td ><input id="chkBrow.*" type="checkbox" style=''/></td>
+						<td align="center" id="title">~title</td>
 						<td align="center" id='bdate ~ edate'>~bdate ~ ~edate</td>
+						<td align="center" id='typea'>~typea</td>
 					</tr>
 				</table>
 			</div>
 			<div class='dbbm' style="float: left;">
 				<table class="tbbm"  id="tbbm"   border="0" cellpadding='2'  cellspacing='5'>
 					<tr style="height:1px;">
-						<td style="width: 160px"> </td>
-						<td style="width: 90px"> </td>
-						<td style="width: 90px"> </td>
-						<td style="width: 140px"> </td>
-						<td style="width: 90px"> </td>
-						<td style="width: 90px"> </td>
-						<td style="width: 90px"> </td>
-						<td style="width: 90px"> </td>
+						<td style="width: 150px"> </td>
+						<td style="width: 50px"> </td>
+						<td style="width: 400px"> </td>
+						<td style="width: 150px"> </td>
+						<td style="width: 50px"> </td>
+						<td style="width: 400px"> </td>
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblCust' class="lbl"> </a></td>
-						<td><input id="txtCustno"  type="text"  class="txt c1"/></td>
-						<td colspan="5">
-							<input id="txtComp"  type="text"  class="txt c1"/>
-							<input id="txtNoa"  type="text"  class="txt c1" style="display: none;"/>
-						</td>
+						<td><span> </span><a id='lblTitle' class="lbl"> </a></td>
+						<td><span> </span><a class='lbl lblLanguage1'> </a></td>
+						<td colspan="4"><input id="txtTitle"  type="text"  class="txt c1"/></td>
+						<td><input id="txtNoa"  type="text" style="display: none;"/> </td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td><span> </span><a id='lblTitle2' class='lbl lblLanguage2 ChangeGB'> </a></td>
+						<td colspan="4"><input id="txtTitle2"  type="text"  class="txt c1"/></td>
 						<td> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
-						<td><select id="cmbTypea" class="txt c1"> </select></td>
-						<td><span> </span><a id='lblTypeb' class="lbl typeb"> </a></td>
-						<td colspan="2"><select id="cmbTypeb" class="txt c1 typeb"> </select></td>
+						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
+						<td><span> </span><a class='lbl lblLanguage1'> </a></td>
+						<td colspan="4"><textarea id="txtMemo" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td><span> </span><a id='lblMemo2' class='lbl lblLanguage2 ChangeGB'> </a></td>
+						<td colspan="4"><textarea id="txtMemo2" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
 						<td> </td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblBdate' class="lbl"> </a></td>
-						<td colspan="2">
+						<td> </td>
+						<td>
 							<input id="txtBdate"  type="text"  class="txt c2"/>
-							<a style="float: left;">~</a>
+							<a style="float:left;">~</a>
 							<input id="txtEdate"  type="text"  class="txt c2"/>
 						</td>
+						<td><span> </span><a id='lblIsshowdate' class="lbl"> </a></td>
 						<td> </td>
+						<td><input id="chkIsshowdate" type="checkbox" style="float: center;"/></td>
 						<td> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblImage1' class="lbl lblImgShowDown"> </a></td>
-						<td colspan="2">
-							<input type="file" id="btnImage1" class="btnImg" value="選擇檔案" accept="image/*"/>
-							<input id="txtImage1"  type="hidden"/><input id="txtImage1name"  type="hidden"/>
+						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
+						<td> </td>
+						<td><select id="cmbTypea" class="txt c2"> </select></td>
+						<td><span> </span><a id='lblArea' class="lbl"> </a></td>
+						<td> </td>
+						<td><select id="cmbArea" class="txt c2"> </select></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblWeba' class="lbl"> </a></td>
+						<td><span> </span><a class='lbl lblLanguage1'> </a></td>
+						<td><input id="txtWeba1"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblWebtitlea' class="lbl"> </a></td>
+						<td><span> </span><a class='lbl lblLanguage1'> </a></td>
+						<td><input id="txtWebtitlea1"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td><span> </span><a class='lbl lblLanguage2'> </a></td>
+						<td><input id="txtWeba2"  type="text"  class="txt c1"/></td>
+						<td> </td>
+						<td><span> </span><a id='lblWebtitlea2' class='lbl lblLanguage2 ChangeGB'> </a></td>
+						<td><input id="txtWebtitlea2"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblWebb' class="lbl"> </a></td>
+						<td><span> </span><a class='lbl lblLanguage1'> </a></td>
+						<td><input id="txtWebb1"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblWebtitleb' class="lbl"> </a></td>
+						<td><span> </span><a class='lbl lblLanguage1'> </a></td>
+						<td><input id="txtWebtitleb1"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td><span> </span><a class='lbl lblLanguage2'> </a></td>
+						<td><input id="txtWebb2"  type="text"  class="txt c1"/></td>
+						<td> </td>
+						<td><span> </span><a id='lblWebtitleb2' class='lbl lblLanguage2 ChangeGB'> </a></td>
+						<td><input id="txtWebtitleb2"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblAtta' class="lbl"> </a></td>
+						<td><span> </span><a id='lblAtta1' class='lbl lblLanguage1 lblAttShowDown'> </a></td>
+						<td>
+							<input type="file" id="btnAtta1" class="btnAtt" value="選擇檔案" />
+							<input id="txtAtta1"  type="hidden"/><input id="txtAtta1name"  type="hidden"/>
 						</td>
-						<td><span> </span><a id='lblImage2' class="lbl lblImgShowDown"> </a></td>
-						<td colspan="2">
-							<input type="file" id="btnImage2" class="btnImg" value="選擇檔案" accept="image/*"/>
-							<input id="txtImage2"  type="hidden"/><input id="txtImage2name"  type="hidden"/>
+						<td><span> </span><a id='lblAtttitlea' class="lbl"> </a></td>
+						<td><span> </span><a class='lbl lblLanguage1'> </a></td>
+						<td><input id="txtAtttitlea1"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td><span> </span><a id='lblAtta2' class='lbl lblLanguage2 lblAttShowDown'> </a></td>
+						<td>
+							<input type="file" id="btnAtta2" class="btnAtt" value="選擇檔案" />
+							<input id="txtAtta2"  type="hidden"/><input id="txtAtta2name"  type="hidden"/>
 						</td>
+						<td> </td>
+						<td><span> </span><a id='lblAtttitlea2' class='lbl lblLanguage2 ChangeGB'> </a></td>
+						<td><input id="txtAtttitlea2"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblPage1' class="lbl PageDown"> </a></td>
-						<td colspan="2">
-							<input type="file" id="btnPage1" class="btnPage" value="選擇檔案" accept="application/x-zip-compressed"/>
-							<input id="txtPage1"  type="hidden"/><input id="txtPage1name"  type="hidden"/>
+						<td><span> </span><a id='lblAttb' class="lbl"> </a></td>
+						<td><span> </span><a id='lblAttb1' class='lbl lblLanguage1 lblAttShowDown'> </a></td>
+						<td>
+							<input type="file" id="btnAttb1" class="btnAtt" value="選擇檔案" />
+							<input id="txtAttb1"  type="hidden"/><input id="txtAttb1name"  type="hidden"/>
 						</td>
-						<td><span> </span><a id='lblPage2' class="lbl PageDown"> </a></td>
-						<td colspan="2">
-							<input type="file" id="btnPage2" class="btnPage" value="選擇檔案" accept="application/x-zip-compressed"/>
-							<input id="txtPage2"  type="hidden"/><input id="txtPage2name"  type="hidden"/>
+						<td><span> </span><a id='lblAtttitleb' class="lbl"> </a></td>
+						<td><span> </span><a class='lbl lblLanguage1'> </a></td>
+						<td><input id="txtAtttitleb1"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td><span> </span><a id='lblAttb2' class='lbl lblLanguage2 lblAttShowDown'> </a></td>
+						<td>
+							<input type="file" id="btnAttb2" class="btnAtt" value="選擇檔案" />
+							<input id="txtAttb2"  type="hidden"/><input id="txtAttb2name"  type="hidden"/>
 						</td>
+						<td> </td>
+						<td><span> </span><a id='lblAtttitleb2' class='lbl lblLanguage2 ChangeGB'> </a></td>
+						<td><input id="txtAtttitleb2"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblWeb1' class="lbl"> </a></td>
-						<td colspan="2"><input id="txtWeb1"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id='lblWeb2' class="lbl"> </a></td>
-						<td colspan="2"><input id="txtWeb2"  type="text"  class="txt c1"/></td>
-					</tr>
-					<tr class="groupa">
-						<td><span> </span><a id='lblGroupa' class="lbl"> </a></td>
-						<td><select id="cmbGroupa" class="txt c1"> </select></td>
-						<td><span> </span><a id='lblIsvip' class="lbl vip"> </a></td>
-						<td><input id="chkIsvip" type="checkbox" class="vip"/></td>
-						<td><span> </span><a id='lblVipedate' class="lbl vip"> </a></td>
-						<td><input id="txtVipedate"  type="text"  class="txt c1 vip"/></td>
-					</tr>
-					<tr>
-						<td rowspan="4"><span> </span><a id='lblMemo' class="lbl"> </a></td>
-						<td><span> </span><a id='lblMon' class="lbl"> </a></td>
-						<td><input id="txtMon"  type="text"  class="txt num c1"/></td>
-						<td><a id='lblMon2' class="lbl" style="float: left;"> </a><span> </span><a id='lblMoney' class="lbl"> </a></td>
-						<td><input id="txtMoney"  type="text"  class="txt num c1"/></td>
-						<td><a id='lblMoney2' class="lbl" style="float: left;"> </a></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblConn1' class="lbl"> </a></td>
-						<td><input id="txtConn1"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id='lblTel1' class="lbl"> </a></td>
-						<td><input id="txtTel1"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id='lblMobile1' class="lbl"> </a></td>
-						<td colspan="2"><input id="txtMobile1"  type="text"  class="txt c1"/></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblConn2' class="lbl"> </a></td>
-						<td><input id="txtConn2"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id='lblTel2' class="lbl"> </a></td>
-						<td><input id="txtTel2"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id='lblMobile2' class="lbl"> </a></td>
-						<td colspan="2"><input id="txtMobile2"  type="text"  class="txt c1"/></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblOuther' class="lbl"> </a></td>
-						<td colspan="6"><input id="txtMemo"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblImg1' class="lbl lblImgShowDown"> </a></td>
+						<td colspan="2">
+							<input type="file" id="btnImg1" class="btnImg" value="選擇檔案" accept="image/*"/>
+							<input id="txtImg1"  type="hidden"/><input id="txtImg1name"  type="hidden"/>
+						</td>
+						<td><span> </span><a id='lblImg2' class="lbl lblImgShowDown"> </a></td>
+						<td colspan="2">
+							<input type="file" id="btnImg2" class="btnImg" value="選擇檔案" accept="image/*"/>
+							<input id="txtImg2"  type="hidden"/><input id="txtImg2name"  type="hidden"/>
+						</td>
+						<td> </td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
-						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
+						<td colspan="2"><input id="txtWorker"  type="text"  class="txt c2"/></td>
 						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
-						<td><input id="txtWorker2"  type="text"  class="txt c1"/></td>
+						<td colspan="2"><input id="txtWorker2"  type="text"  class="txt c2"/></td>
+						<td> </td>
 					</tr>
 					<tr style="display: none;">
-						<td colspan="7"><div style="width:100%;" id="FileList"> </div></td>
+						<td colspan="2"><div style="width:100%;" id="FileList"> </div></td>
 					</tr>
 				</table>
 			</div>
-		</div>
-		<div id="div_custs" style="width:720px; background-color: aliceblue; border: 2px solid aliceblue;">
-			<table id="table_custs" style="width:100%;" border="1" cellpadding='2'  cellspacing='0'>
-				<tr id='custs_head'>
-					<td style="background-color: plum;width: 20px;" align="center">序</td>
-					<td style="background-color: plum;width: 100px;" align="center">帳號</td>
-					<td style="background-color: plum;width: 280px;" align="center">公司名稱</td>
-					<td style="background-color: plum;width: 85px;" align="center">前端群組</td>
-					<td style="background-color: plum;width: 85px;" align="center">會員屬性</td>
-					<td style="background-color: plum;width: 150px;" align="center">主帳號/業務聯絡人</td>
-				</tr>
-				<tr id='custs_end' style="display: none;">
-					<td> </td>
-				</tr>
-			</table>
 		</div>
 		<iframe id="xdownload" style="display:none;"> </iframe>
 		<input id="q_sys" type="hidden" />
