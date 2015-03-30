@@ -20,7 +20,7 @@
             var bbmMask = [];
             q_sqlCount = 6;
             brwCount = 6;
-            brwCount2 = 16;
+            brwCount2 = 8;
             brwList = [];
             brwNowPage = 0;
             brwKey = 'noa';
@@ -32,7 +32,7 @@
                 bbmKey = ['noa'];
                 q_brwCount();
                 q_gt(q_name, q_content, q_sqlCount, 1)
-                $('#txtNoa').focus
+                $('#txtNoa').focus();
             });
 
             function main() {
@@ -43,9 +43,11 @@
                 mainForm(1);
                 // 1=Last  0=Top
             }
-
+			
+			var n_dockNow=[];
+			n_dockNow.push({custno:'',bdock:'',mdock:'',edock:''});
             function mainPost() {
-            	bbmMask = [['txtEdate', '9999/99/99']];
+            	bbmMask = [['txtCldate', '9999/99/99']];
                 q_mask(bbmMask);
                 
                 $.datepicker.regional['zh-TW']={
@@ -60,10 +62,39 @@
 				//將預設語系設定為中文
 				$.datepicker.setDefaults($.datepicker.regional["zh-TW"]);
                 
-                q_cmbParse("cmbGroupa", '1,2,3');
+                q_cmbParse("cmbShipline", '@全部,'+q_getPara('shipping.shipline'));
+                q_cmbParse("cmbBdock",'@無');
+                q_cmbParse("cmbMdock",'@無');
+                q_gt('cust', "where=^^ isnull(isshipcomp,0) =1 ^^", 0, 0, 0, "cust");
+                q_gt('dock', '', 0, 0, 0, "dock");
                 
-                
+                $('#cmbCustno').change(function() {
+                	$('#txtComp').val($('#cmbCustno').find("option:selected").text());
+                	q_gt('ship', "where=^^ noa='"+$('#cmbCustno').val()+"' ^^", 0, 0, 0, "ship");
+				});
+                $('#cmbBarea').change(function() {
+                	dockChange('B');
+				});
+				$('#cmbMarea').change(function() {
+                	dockChange('M');
+				});
             }
+            
+            function dockChange(dock) {
+            	if(dock!='' && docks!=undefined){
+	            	$("#cmb"+dock+"dock").text('');
+	            	var t_dock='@無';
+					for (i=0;i<docks.length;i++){
+						if(docks[i].area==$("#cmb"+dock+"area").val())
+							t_dock=t_dock+','+docks[i].dock+"@"+docks[i].dock;
+					}
+					q_cmbParse("cmb"+dock+"dock", t_dock);
+				}
+				if(n_dockNow[0] && dock=='B')
+					$("#cmb"+dock+"dock").val(n_dockNow[0].bdock);
+				if(n_dockNow[0] && dock=='M')
+					$("#cmb"+dock+"dock").val(n_dockNow[0].mdock);
+			}
 
             function q_boxClose(s2) {
                 var ret;
@@ -74,10 +105,53 @@
 
                 }
             }
-
+			var area,docks;
             function q_gtPost(t_name) {
                 switch (t_name) {
-                	
+                	case 'cust':
+                		var as = _q_appendData("cust", "", true);
+                		if (as[0] != undefined) {
+							var t_item = "@";
+							for (i = 0; i < as.length; i++) {
+								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].noa) + '@' + $.trim(as[i].nick!=''?as[i].nick:as[i].comp);
+							}
+							q_cmbParse("cmbCustno", t_item);
+							if(abbm[q_recno])
+								$("#cmbCustno").val(abbm[q_recno].custno);
+						}
+                		break;
+                	case 'ship':
+                			var as = _q_appendData("ship", "", true);
+                			if (as[0] != undefined) {
+                				$('#cmbShipname').text('');
+                				var t_item = "@";
+								for (i = 0; i < as.length; i++) {
+									t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].shipname) + '@' + $.trim(as[i].shipname);
+								}
+								q_cmbParse("cmbShipname", t_item);
+								if(abbm[q_recno])
+									$("#cmbShipname").val(abbm[q_recno].shipname);
+                			}
+                		break;
+                	case 'dock':
+                		area = _q_appendData("dock", "", true);
+                		if(area[0] != undefined){
+                			docks = _q_appendData("docks", "", true);
+							var t_item = "@";
+							for (i = 0; i < area.length; i++) {
+								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(area[i].area) + '@' + $.trim(area[i].area);
+							}
+							q_cmbParse("cmbBarea", t_item);
+							q_cmbParse("cmbMarea", t_item);
+							if(abbm[q_recno]){
+								$("#cmbBarea").val(abbm[q_recno].barea);
+								$("#cmbMarea").val(abbm[q_recno].marea);
+								dockChange('B');
+	                			dockChange('M');
+							}
+						}
+                		
+                		break;
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
@@ -88,12 +162,19 @@
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)// 1-3
                     return;
-                q_box('shipping_s.aspx', q_name + '_s', "500px", "300px", q_getMsg("popSeek"));
+                q_box('shipping_s.aspx', q_name + '_s', "500px", "350px", q_getMsg("popSeek"));
             }
 
             function btnIns() {
                 _btnIns();
                 $('#txtCustno').focus();
+                $('#cmbBdock').text('');
+                $('#cmbMdock').text('');
+                $('#cmbShipname').text('');
+                n_dockNow[0].bdock='';
+	            n_dockNow[0].mdock='';
+                q_cmbParse("cmbBdock",'@無');
+                q_cmbParse("cmbMdock",'@無');
             }
 
             function btnModi() {
@@ -153,15 +234,23 @@
 
             function refresh(recno) {
                 _refresh(recno);
+                if(abbm[q_recno]){
+	                n_dockNow[0].bdock=abbm[q_recno].bdock;
+	                n_dockNow[0].mdock=abbm[q_recno].mdock;
+	                n_dockNow[0].custno=abbm[q_recno].custno;
+	                dockChange('B');
+	                dockChange('M');
+	                q_gt('ship', "where=^^ noa='"+abbm[q_recno].custno+"' ^^", 0, 0, 0, "ship");
+				}
             }
             
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                  if(t_para){
-                	$('#txtEdate').datepicker( 'destroy' );
+                	$('#txtCldate').datepicker( 'destroy' );
                 }else{
-					$('#txtEdate').removeClass('hasDatepicker')
-					$('#txtEdate').datepicker({ dateFormat: 'yy/mm/dd' });
+					$('#txtCldate').removeClass('hasDatepicker')
+					$('#txtCldate').datepicker({ dateFormat: 'yy/mm/dd' });
                 }
             }
 
@@ -223,9 +312,10 @@
             }
             .dview {
                 float: left;
-                width: 400px;
+                width: 1250px;
             }
             .tview {
+            	width:100%;
                 margin: 0;
                 padding: 2px;
                 border: 1px black double;
@@ -241,7 +331,7 @@
             }
             .dbbm {
                 float: left;
-                width: 840px;
+                width: 1250px;
                 margin: -1px;
                 border: 1px black solid;
                 border-radius: 5px;
@@ -342,18 +432,20 @@
 			<div class="dview" id="dview" style="float: left; "  >
 				<table class="tview" id="tview"   border="1" cellpadding='2'  cellspacing='0' style="background-color: #FFFF66;">
 					<tr>
-						<td align="center" style="width:5%"><a id='vewChk'> </a></td>
-						<td align="center" style="width:28%"><a id='vewComp'> </a></td>
-						<td align="center" style="width:23%"><a id='vewTypea'> </a></td>
-						<td align="center" style="width:45%"><a id='vewBdate'> </a></td>
+						<td align="center" style="width:3%"><a id='vewChk'> </a></td>
+						<td align="center" style="width:15%"><a id='vewShipline'> </a></td>
+						<td align="center" style="width:10%"><a id='vewCldate'> </a></td>
+						<td align="center" style="width:35%"><a id='vewComp'> </a></td>
+						<td align="center" style="width:35%"><a id='vewShipname'> </a></td>
 					</tr>
 					<tr>
 						<td >
 						<input id="chkBrow.*" type="checkbox" style=''/>
 						</td>
-						<td align="center" id='comp,6'>~comp,6</td>
-						<td align="center" id="typea=ad.typea">~typea=ad.typea</td>
-						<td align="center" id='bdate ~ edate'>~bdate ~ ~edate</td>
+						<td align="center" id='shipline'>~shipline</td>
+						<td align="center" id="cldate">~cldate</td>
+						<td align="center" id='comp'>~comp</td>
+						<td align="center" id='shipname'>~shipname</td>
 					</tr>
 				</table>
 			</div>
@@ -367,24 +459,48 @@
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
-						<td><select id="cmbTypea" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblShipline' class="lbl"> </a></td>
+						<td><select id="cmbShipline" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblVoyage' class="lbl"> </a></td>
+						<td><input id="txtVoyage"  type="text"  class="txt c1"/></td>
+						<td><input id="txtNoa"  type="text" style="display: none;"/></td>
+					</tr>
+					<tr>
 						<td><span> </span><a id='lblCust' class="lbl"> </a></td>
-						<td><input id="txtCustno"  type="text"  class="txt c1"/></td>
-						<td colspan="5">
-							<input id="txtComp"  type="text"  class="txt c1"/>
-							<input id="txtNoa"  type="text"  class="txt c1" style="display: none;"/>
+						<td>
+							<select id="cmbCustno" class="txt c1"> </select>
+							<input id="txtComp"  type="text"  style="display: none;"/>
 						</td>
+						<td><span> </span><a id='lblCldate' class="lbl"> </a></td>
+						<td><input id="txtCldate"  type="text"  class="txt c1"/></td>
 						<td> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
-						<td><select id="cmbTypea" class="txt c1"> </select></td>
-						<td><span> </span><a id='lblTypeb' class="lbl"> </a></td>
-						<td><select id="cmbTypeb" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblShipname' class="lbl"> </a></td>
+						<td><select id="cmbShipname" class="txt c1"> </select></td>
+						<td> </td>
+						<td> </td>
+						<td> </td>
 					</tr>
-					
-					
+					<tr>
+						<td><span> </span><a id='lblBarea' class="lbl"> </a></td>
+						<td><select id="cmbBarea" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblBdock' class="lbl"> </a></td>
+						<td><select id="cmbBdock" class="txt c1"> </select></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblMarea' class="lbl"> </a></td>
+						<td><select id="cmbMarea" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblMdock' class="lbl"> </a></td>
+						<td><select id="cmbMdock" class="txt c1"> </select></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblEdock' class="lbl"> </a></td>
+						<td colspan="3"><input id="txtEdock"  type="text"  class="txt c1"/></td>
+						<td> </td>
+					</tr>
 					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
 						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>

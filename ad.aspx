@@ -364,7 +364,7 @@
                     return;
                 }
                 
-                if($('#txtWeb1').val().length==0 || $('#txtPage1').val().length==0){
+                if($('#txtWeb1').val().length==0 && $('#txtPage1').val().length==0){
             		alert('請輸入'+q_getMsg("lblPage1")+'或'+q_getMsg("lblWeb1"));
             		Unlock(1);
             		return;
