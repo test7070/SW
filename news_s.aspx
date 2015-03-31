@@ -80,6 +80,7 @@
 				t_stype = $('#cmbStype').val();
 				t_typea = $('#cmbTypea').val();
 				t_area = $('#cmbArea').val();
+				t_title = $('#txtTitle').val();
 
 				t_bdate = t_bdate.length > 0 && t_bdate.indexOf("_") > -1 ? t_bdate.substr(0, t_bdate.indexOf("_")) : t_bdate;
 				t_edate = t_edate.length > 0 && t_edate.indexOf("_") > -1 ? t_edate.substr(0, t_edate.indexOf("_")) : t_edate;
@@ -87,6 +88,10 @@
 				var t_where = " 1=1 " + q_sqlPara2("noa", t_noa) + q_sqlPara2("datea", t_bdate, t_edate) 
 				+ q_sqlPara2("sssno", t_sssno) + q_sqlPara2("namea", t_namea) 
 				+ q_sqlPara2("stype", t_stype) + q_sqlPara2("typea", t_typea)+ q_sqlPara2("area", t_area);
+				
+				if (t_title.length>0){
+					t_where=t_where+" and (charindex('"+t_title+"',title)>0 or charindex('"+t_title+"',title2)>0 ) "
+				}
 
 				t_where = ' where=^^' + t_where + '^^ ';
 				return t_where;
@@ -123,6 +128,10 @@
 					&nbsp;
 					<input class="txt" id="txtNamea" type="text" style="width:115px; font-size:medium;" />
 					</td>
+				</tr>
+				<tr class='seek_tr'>
+					<td class='seek'  style="width:20%;"><a id='lblTitle'> </a></td>
+					<td><input class="txt" id="txtTitle" type="text" style="width:215px; font-size:medium;" /></td>
 				</tr>
 				<tr class='seek_tr'>
 					<td class='seek' style="width:30%;"><a id='lblStype'> </a></td>

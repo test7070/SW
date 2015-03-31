@@ -9,7 +9,7 @@
 		<script src="../script/qbox.js" type="text/javascript"> </script>
 		<script src='../script/mask.js' type="text/javascript"> </script>
 		<link href="../qbox.css" rel="stylesheet" type="text/css" />
-		 <link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+		<link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
 		<script src="css/jquery/ui/jquery.ui.core.js"></script>
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
 		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
@@ -71,6 +71,7 @@
 				q_cmbParse("cmbCoin", '@無,NTD@台幣,RMB@人民幣,USD@美金');
 				q_cmbParse("cmbBizscope", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
 				q_cmbParse("cmbTypea", '@選擇,'+q_getPara('custs.typea'),'s');
+				q_cmbParse("cmbCobtype", ',二聯,三聯');
 				
 				$('#btnCusts').click(function() {
 					$('.dbbs').css('top', $(this).offset().top+25);
@@ -117,9 +118,9 @@
 						$('#txtInvotitle').val($('#txtComp').val());
 				});
 				
-				$('#btnCustu').change(function(e){
-					if(emp($('#txtNoa').val()))
-						q_box("custu.aspx?;;;serial='" + $('#txtNoa').val() + "'",'pluscust', "95%", "95%", '繳款');
+				$('#btnCustu').click(function(e){
+					if(!emp($('#txtNoa').val()))
+						q_box("custu.aspx?;;;serial='" + $('#txtNoa').val() + "'",'custu', "95%", "95%", '繳款');
 				});
 				
 				$('.btnImg').change(function() {
@@ -421,6 +422,7 @@
 					$(".textBizscopes").attr('disabled', 'disabled');
 					$('.btnImg').attr('disabled', 'disabled');
 					$('#btnShip').removeAttr('disabled', 'disabled');
+					$('#btnCustu').removeAttr('disabled', 'disabled');
 					$('#txtStartdate').datepicker( 'destroy' );
                 	$('#txtKdate').datepicker( 'destroy' );
 				}else{
@@ -428,6 +430,7 @@
 					$(".textBizscopes").removeAttr('disabled');
 					$('.btnImg').removeAttr('disabled', 'disabled');
 					$('#btnShip').attr('disabled', 'disabled');
+					$('#btnCustu').attr('disabled', 'disabled');
 					$('#txtStartdate').removeClass('hasDatepicker')
 					$('#txtStartdate').datepicker({ dateFormat: 'yy/mm/dd' });
 					$('#txtKdate').removeClass('hasDatepicker')
@@ -656,7 +659,15 @@
 				float: left;
 			}
 			.txt.c3 {
-				width: 65%;
+				width: 66%;
+				float: left;
+			}
+			.txt.c4 {
+				width: 25%;
+				float: left;
+			}
+			.txt.c5 {
+				width: 70%;
 				float: left;
 			}
 			.txt.c9 {
@@ -833,9 +844,12 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblCobtype' class="lbl"> </a></td>
-						<td><input id="txtCobtype" type="text" class="txt c1"/></td>
+						<td><select id="cmbCobtype" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblInvoaddr' class="lbl"> </a></td>
-						<td><input id="txtInvoaddr" type="text" class="txt c1"/></td>
+						<td>
+							<input id="txtInvopost" type="text" class="txt c4"/><a style="float: left;">-</a>
+							<input id="txtInvoaddr" type="text" class="txt c5"/>
+						</td>
 					</tr>
 					<tr class="conn">
 						<td colspan="4" style="text-align: center;"><a class="lbl" style="float: none;">主帳號(型錄聯絡人)</a></td>

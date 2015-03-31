@@ -59,7 +59,7 @@
 			var n_typeb=[],n_typec=[],n_typed=[],n_typeNow=[];
 			n_typeNow.push({typea:'',typeb:'',typec:'',typed:''});
             function mainPost() {
-            	bbmMask = [['txtDatea', '9999/99/99']];
+            	bbmMask = [['txtDatea', '9999/99/99'],['txtTimea', '99:99']];
                 q_mask(bbmMask);
                 
                 $.datepicker.regional['zh-TW']={
@@ -473,6 +473,11 @@
                 _btnIns();
                 $('#txtTitle').focus();
                 $('#txtDatea').val(q_date());
+                var timeDate= new Date();
+                var tHours = timeDate.getHours();
+				var tMinutes = timeDate.getMinutes();
+				var tSeconds = timeDate.getSeconds();
+				$('#txtTimea').val(padL(tHours, '0', 2)+':'+padL(tMinutes, '0', 2));
                 ShowImglbl();
                 ChangeGB();
                 readTypea();
@@ -528,6 +533,32 @@
                     alert(t_err);
                     Unlock(1);
                     return;
+                }
+                
+                if($('#chkWatermark').prop('checked') && $('#txtContents').val().indexOf('{ad01}')==-1){
+                	var s_contents=$('#txtContents').val().split('。');
+                	var t_contents='';
+                	for(var i=0;i<s_contents.length;i++){
+                		t_contents=t_contents+s_contents[i];
+                		t_contents=t_contents+'。'+(i==1?'{ad01}':'');
+                	}
+                	if(t_contents.indexOf('{ad01}')==-1){
+                		t_contents=t_contents+'{ad01}';
+                	}
+                	$('#txtContents').val(t_contents);
+                }
+                
+                if($('#chkWatermark').prop('checked') && $('#txtContents2').val().indexOf('{ad01}')==-1){
+                	var s_contents2=$('#txtContents2').val().split('。');
+                	var t_contents2='';
+                	for(var i=0;i<s_contents2.length;i++){
+                		t_contents2=t_contents2+s_contents2[i];
+                		t_contents2=t_contents2+'。'+(i==1?'{ad01}':'');
+                	}
+                	if(t_contents2.indexOf('{ad01}')==-1){
+                		t_contents2=t_contents2+'{ad01}';
+                	}
+                	$('#txtContents2').val(t_contents2);
                 }
             	
 				if(q_cur==1){
@@ -957,14 +988,22 @@
 						</td>
 						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
 						<td><input id="txtDatea"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id='lblNoa' class="lbl"> </a></td>
-						<td><input id="txtNoa" type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblTimea' class="lbl"> </a></td>
+						<td><input id="txtTimea" type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblStype' class="lbl"> </a></td>
 						<td><select id="cmbStype" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblRank' class="lbl"> </a></td>
 						<td><select id="cmbRank" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblNoa' class="lbl"> </a></td>
+						<td><input id="txtNoa" type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblIllustrate' class="lbl"> </a></td>
+						<td><input id="txtIllustrate"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblIllustrate2' class="lbl btn ChangeGB"> </a></td>
+						<td><input id="txtIllustrate2"  type="text"  class="txt c1"/></td>
 						<td colspan="2">
 							<input id="chkOnline" type="checkbox" style="float: center;"/>
 							<a id='lblOnline' class="lbl" style="float: center;"> </a>
@@ -973,12 +1012,6 @@
 							<input id="chkWatermark" type="checkbox" style="float: center;"/>
 							<a id='lblWatermark' class="lbl" style="float: center;"> </a>
 						</td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblIllustrate' class="lbl"> </a></td>
-						<td><input id="txtIllustrate"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id='lblIllustrate2' class="lbl btn ChangeGB"> </a></td>
-						<td><input id="txtIllustrate2"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblTitle' class="lbl"> </a></td>

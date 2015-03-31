@@ -9,6 +9,10 @@
         <script src="../script/qbox.js" type="text/javascript"></script>
         <script src='../script/mask.js' type="text/javascript"></script>
         <link href="../qbox.css" rel="stylesheet" type="text/css" />
+        <link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+		<script src="css/jquery/ui/jquery.ui.core.js"></script>
+		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
+		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
         <script type="text/javascript" src="http://59.125.143.170/highslide/highslide.packed.js"></script>
 		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide-with-html.packed.js"></script>
 		<link rel="stylesheet" type="text/css" href="http://59.125.143.170/highslide/highslide.css" /> 
@@ -16,7 +20,7 @@
         <script type="text/javascript">    
             var q_name = "custu";
             var q_readonly = ['txtNoa','txtWorker','txtWorker2'];
-            var bbmNum = [];
+            var bbmNum = [['txtMoney', 15, 0,1],['txtInvomoney', 15, 0,1]];
             var bbmMask = [];
             q_sqlCount = 6;
             brwCount = 6;
@@ -79,14 +83,24 @@
 
             function btnIns() {
                 _btnIns();
-                $('#cmbTypea').focus();
+                $('#txtInvotitle').focus();
+                if (window.parent.q_name == 'cust') {
+                    var wParent = window.parent.document;
+                    $('#txtComp').val(wParent.getElementById("txtComp").value);
+                    $('#txtSerial').val(wParent.getElementById("txtNoa").value);
+                    $('#txtInvoserial').val(wParent.getElementById("txtInvoserial").value);
+                    $('#txtInvotitle').val(wParent.getElementById("txtInvotitle").value);
+                    $('#cmbCobtype').val(wParent.getElementById("cmbCobtype").value);
+                    $('#txtPost').val(wParent.getElementById("txtInvopost").value);
+                    $('#txtAddr').val(wParent.getElementById("txtInvoaddr").value);
+                }
             }
 
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
                 _btnModi();
-                $('#cmbTypea').focus();
+                $('#txtInvotitle').focus();
             }
 
             function btnPrint() {
@@ -102,8 +116,12 @@
             function btnOk() {
                 Lock(1,{opacity:0});
             	var t_err = '';
-                t_err = q_chkEmpField([['cmbTypea', q_getMsg('lblTypea')],['txtEname', q_getMsg('lblEname')]
-                ,['txtCname', q_getMsg('lblCname')],['txtMemo', q_getMsg('lblMemo')]]);
+                t_err = q_chkEmpField([['txtComp', q_getMsg('lblComp')],['txtSerial', q_getMsg('lblSerial')]
+                ,['txtDatea', q_getMsg('lblDatea')],['txtInvodate', q_getMsg('lblInvodate')]
+                ,['txtMoney', q_getMsg('lblMoney')],['txtInvomoney', q_getMsg('lblInvomoney')]
+                ,['cmbCobtype', q_getMsg('lblCobtype')],['cmbTypea', q_getMsg('lblTypea')]
+                ,['cmbAcc', q_getMsg('lblAcc')],['cmbKind', q_getMsg('lblKind')]
+                ]);
                 
                 if (t_err.length > 0) {
                     alert(t_err);
@@ -143,9 +161,13 @@
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                  if(t_para){
-                 	
+                 	$('#txtDatea').datepicker( 'destroy' );
+                 	$('#txtInvodate').datepicker( 'destroy' );
                 }else{
-                	
+                	$('#txtDatea').removeClass('hasDatepicker')
+					$('#txtDatea').datepicker({ dateFormat: 'yy/mm/dd' });
+					$('#txtInvodate').removeClass('hasDatepicker')
+					$('#txtInvodate').datepicker({ dateFormat: 'yy/mm/dd' });
                 }
             }
 
@@ -226,7 +248,7 @@
             }
             .dbbm {
                 float: left;
-                width: 900px;
+                width: 750px;
                 margin: -1px;
                 border: 1px black solid;
                 border-radius: 5px;
@@ -336,9 +358,9 @@
 				<table class="tbbm"  id="tbbm"   border="0" cellpadding='2'  cellspacing='5'>
 					<tr style="height:1px;">
 						<td style="width: 190px"> </td>
-						<td style="width: 250px"> </td>
-						<td style="width: 160px"> </td>
-						<td style="width: 250px"> </td>
+						<td style="width: 200px"> </td>
+						<td style="width: 150px"> </td>
+						<td style="width: 200px"> </td>
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
