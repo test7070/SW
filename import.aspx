@@ -224,10 +224,10 @@
 		    	$('.lblLanguage_s').html('繁<BR>簡').css('line-height','23px');
 		    	$('.typea').show();
 		    	$('.typeb').show();
-		    	$('.cnimount').hide();
+		    	$('.cn').hide();
 		        switch ($('#cmbCountry').val()) {
 					case 'tw'://台灣
-						$('.cnimount').show();
+						$('.cn').show();
 						break;
 					case 'cn'://大陸
 						break;
@@ -589,15 +589,18 @@
 					<td  align="center" style="width:30px;"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:20px;"> </td>
 					<td align="center" style="width:20px;"> </td>
-					<td align="center" style="width:120px;" class="typea"><a id='lblTypea_s'> </a></td>
-					<td align="center" style="width:120px;" class="typeb"><a id='lblTypeb_s'> </a></td>
+					<td align="center" style="width:100px;" class="typea"><a id='lblTypea_s'> </a></td>
+					<td align="center" style="width:100px;" class="typeb"><a id='lblTypeb_s'> </a></td>
 					<td align="center" style="width:120px;" class="typec"><a id='lblTypec_s'> </a></td>
-					<td align="center" style="width:150px;"><a id='lblProduct_s'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblImount_s'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblImoney_s'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblEmount_s'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblEmoney_s'> </a></td>
-					<td align="center" style="width:100px;" class="cnimount"><a id='lblCnimount_s'> </a></td>
+					<td align="center" style="width:120px;"><a id='lblProduct_s'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblImount_s'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblImoney_s'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblEmount_s'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblEmoney_s'> </a></td>
+					<td align="center" style="width:100px;" class="cn"><a id='lblCnimount_s'> </a></td>
+					<td align="center" style="width:100px;" class="cn"><a id='lblCnimoney_s'> </a></td>
+					<td align="center" style="width:100px;" class="cn"><a id='lblCnemount_s'> </a></td>
+					<td align="center" style="width:100px;" class="cn"><a id='lblCnemoney_s'> </a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center">
@@ -626,7 +629,10 @@
 					<td ><input type="text" id="txtImoney.*" class="txt num c1" /></td>
 					<td ><input type="text" id="txtEmount.*" class="txt num c1" /></td>
 					<td ><input type="text" id="txtEmoney.*" class="txt num c1" /></td>
-					<td class="cnimount"><input type="text" id="txtCnimount.*" class="txt num c1 cnimount" /></td>
+					<td class="cn"><input type="text" id="txtCnimount.*" class="txt num c1 cn" /></td>
+					<td class="cn"><input type="text" id="txtCnimoney.*" class="txt num c1 cn" /></td>
+					<td class="cn"><input type="text" id="txtCnemount.*" class="txt num c1 cn" /></td>
+					<td class="cn"><input type="text" id="txtCnemoney.*" class="txt num c1 cn" /></td>
 				</tr>
 			</table>
 		</div>
