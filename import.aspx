@@ -37,7 +37,7 @@
 		    q_desc = 1;
 		    aPop = new Array();
 		    
-		    brwCount2 = 3;
+		    brwCount2 = 5;
 
 		    $(document).ready(function () {
 		        bbmKey = ['noa'];
@@ -575,6 +575,10 @@
 					<tr>
 						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
 						<td><input id="txtWorker2"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
+						<td><input id="txtMemo"  type="text"  class="txt c1"/></td>
 					</tr>
 				</table>
 			</div>
