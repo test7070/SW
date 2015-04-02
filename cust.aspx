@@ -70,7 +70,8 @@
 				q_cmbParse("cmbStatus", ','+q_getPara('cust.status'));
 				q_cmbParse("cmbCoin", '@無,NTD@台幣,RMB@人民幣,USD@美金');
 				q_cmbParse("cmbBizscope", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
-				q_cmbParse("cmbTypea", '@選擇,'+q_getPara('custs.typea'),'s');
+				//q_cmbParse("cmbTypea", '@選擇,'+q_getPara('custs.typea'),'s');
+				//q_cmbParse("cmbTypea", '@選擇,'+q_getPara('custs.typea'),'t');
 				q_cmbParse("cmbCobtype", ',二聯,三聯');
 				
 				$('#btnCusts').click(function() {
@@ -499,13 +500,20 @@
 				for (var i = 0; i < q_bbtCount; i++) {
 					$('#lblNo__' + i).text(i + 1);
 					if (!$('#btnMinut__' + i).hasClass('isAssign')) {
-						$('#txtBdate__'+i).change(function() {
+						$('#txtBdate__'+i).blur(function() {
 		            		t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
 							$('#txtId__'+b_seq).val(t_bbt_id);
 						});
-						$('#txtEdate__'+i).change(function() {
+						$('#txtEdate__'+i).blur(function() {
+		            		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							$('#txtId__'+b_seq).val(t_bbt_id);
+						});
+						
+						$('#cmbTypea__'+i).blur(function() {
 		            		t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
@@ -514,6 +522,13 @@
 					}
 				}
 				_bbtAssign();
+				var t_typea='@選擇,'+q_getPara('custs.typea');
+				for (var i = 0; i < q_bbtCount; i++) {
+					q_cmbParse("cmbTypea__"+i, t_typea);
+					if(abbtNow[i])
+						$("#cmbTypea__"+i).val(abbtNow[i].typea);
+				}
+				
 				bbtchange();
 			}
 
@@ -706,7 +721,7 @@
 				color: blue;
 			}
 			#dbbt {
-				width: 350px;
+				width: 380px;
 			}
 			#tbbt {
 				margin: 0;
@@ -1650,7 +1665,7 @@
 					<td align="center" style="width:100px;"><a id='lblConn_s'> </a></td>
 					<td align="center" style="width:150px;"><a id='lblEmail_s'> </a></td>
 					<td align="center" style="width:50px;"><a id='lblMaster_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblTypea_s'> </a></td>
+					<!--<td align="center" style="width:80px;"><a id='lblTypea_s'> </a></td>-->
 					<td align="center" style="width:50px;"><a id='lblSconn_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblCredit_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblTimes_s'> </a></td>
@@ -1670,7 +1685,7 @@
 					<td><input type="text" id="txtConn.*" class="txt c1" /></td>
 					<td><input type="text" id="txtEmail.*" class="txt c1" /></td>
 					<td align="center"><input id="chkMaster.*" type="checkbox"/></td>
-					<td><select id="cmbTypea.*" class="txt c1"> </select></td>
+					<!--<td><select id="cmbTypea.*" class="txt c1"> </select></td>-->
 					<td align="center"><input id="chkSconn.*" type="checkbox"/></td>
 					<td><input type="text" id="txtCredit.*" class="txt num c1" /></td>
 					<td><input type="text" id="txtTimes.*" class="txt num c1" /></td>
@@ -1687,6 +1702,7 @@
 					<td style="width:20px;"><input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
 					<td style="width:120px; text-align: center;"><a id='lblBdate_t'> </a></td>
 					<td style="width:120px; text-align: center;"><a id='lblEdate_t'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblTypea_t'> </a></td>
 				</tr>
 				<tr class="bbtid..*">
 					<td>
@@ -1698,6 +1714,7 @@
 					</td>
 					<td><input id="txtBdate..*" type="text" class="txt c1"/></td>
 					<td><input id="txtEdate..*" type="text" class="txt c1"/></td>
+					<td><select id="cmbTypea..*" class="txt c1"> </select></td>
 				</tr>
 			</table>
 		</div>

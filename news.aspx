@@ -285,28 +285,102 @@
 			
 			//檢查階層是否完整
 			function checkTypea() {
-				//紀錄最高階層
+				//紀錄最高階層 
 				var levels=[];
 				$("input[name='typea']").each(function() {
 					if(levels[dec($(this).val().substr(0,2))]==undefined)
-						levels[dec($(this).val().substr(0,2))]={level:0,check:false,counts:0,item:''}
+						levels[dec($(this).val().substr(0,2))]={level:0,hcheck:true,lcheck:false,check:false,counts:0,item:'',child:[]}
 					if(levels[dec($(this).val().substr(0,2))].level<($(this).val().length/2))
 						levels[dec($(this).val().substr(0,2))].level=($(this).val().length/2);
-					if($(this).val().length==2)
+					if(($(this).val().length/2)==1)
 						levels[dec($(this).val().substr(0,2))].item=$('#item'+$(this).val()).text();
+					if(($(this).val().length/2)==2){
+						if(levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))]==undefined)
+							levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))]={lcheck:false,check:false,val:$(this).val(),child:[]};
+						levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].val=$(this).val();
+					}
+					if(($(this).val().length/2)==3){
+						if(levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))]==undefined)
+							levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))]={lcheck:false,check:false,val:$(this).val(),child:[]};
+						levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))].val=$(this).val();
+					}
+					if(($(this).val().length/2)==4){
+						if(levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))].child[dec($(this).val().substr(6,2))]==undefined)
+							levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))].child[dec($(this).val().substr(6,2))]={lcheck:false,check:false,val:$(this).val(),child:[]};
+						levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))].child[dec($(this).val().substr(6,2))].child.val=$(this).val();
+					}
 				});
 				
 				//目前資料
 				var t_typea=$('#txtTypea').val().split(',');
 				for (var i=0;i<t_typea.length; i++){
-					if(levels[dec(t_typea[i].substr(0,2))].level==(t_typea[i].length/2))
+					if((t_typea[i].length/2)==1 ){
 						levels[dec(t_typea[i].substr(0,2))].check=true;
+					}
+					if((t_typea[i].length/2)==2 ){
+						levels[dec(t_typea[i].substr(0,2))].child[dec(t_typea[i].substr(2,2))].check=true;
+					}
+					if((t_typea[i].length/2)==3 ){
+						levels[dec(t_typea[i].substr(0,2))].child[dec(t_typea[i].substr(2,2))].child[dec(t_typea[i].substr(4,2))].check=true;
+					}
+					if((t_typea[i].length/2)==4 ){
+						levels[dec(t_typea[i].substr(0,2))].child[dec(t_typea[i].substr(2,2))].child[dec(t_typea[i].substr(4,2))].child[dec(t_typea[i].substr(6,2))].check=true;
+					}
 					levels[dec(t_typea[i].substr(0,2))].counts++;
 				}
+				//寫入底層是否有資料
+				for (var i=0;i<levels.length; i++){
+					if(levels[i]!=undefined){
+						for (var j=0;j<levels[i].child.length; j++){
+							if(levels[i].child[j]!=undefined){
+								for (var k=0;k<levels[i].child[j].child.length; k++){
+									if(levels[i].child[j].child[k]!=undefined){
+										for (var l=0;l<levels[i].child[j].child[k].child.length; l++){
+											if(levels[i].child[j].child[k].child[l]!=undefined){												
+												//l
+												if(levels[i].child[j].child[k].child[l].check)
+													levels[i].child[j].child[k].lcheck=true;
+											}
+										}
+										//K
+										if(levels[i].child[j].child[k].check)
+											levels[i].child[j].lcheck=true;
+									}
+								}
+								//j
+								if(levels[i].child[j].check)
+									levels[i].lcheck=true;
+							}
+						}
+					}
+				}
+				
+				for (var i=0;i<levels.length; i++){
+					if(levels[i]!=undefined){
+						for (var j=0;j<levels[i].child.length; j++){
+							if(levels[i].child[j]!=undefined){
+								for (var k=0;k<levels[i].child[j].child.length; k++){
+									if(levels[i].child[j].child[k]!=undefined){
+										//K
+										if(levels[i].child[j].child[k].check!=levels[i].child[j].child[k].lcheck && levels[i].child[j].child[k].child.length!=0)
+											levels[i].hcheck=false;
+									}
+								}
+								//j
+								if(levels[i].child[j].check!=levels[i].child[j].lcheck && levels[i].child[j].child.length!=0)
+									levels[i].hcheck=false;
+							}
+						}
+						//i
+						if(levels[i].lcheck != levels[i].check && levels[i].child.length!=0)
+							levels[i].hcheck=false;
+					}
+				}
+				
 				var t_msg='';
 				for (var i=0;i<levels.length; i++){
 					if(levels[i]!=undefined){
-						if(levels[i].counts!=0 && !levels[i].check)
+						if(levels[i].counts!=0 && !levels[i].hcheck)
 							t_msg=t_msg+(t_msg.length>0?"\n":"")+levels[i].item+'子階層未選取!!';
 					}
 				}
@@ -942,11 +1016,7 @@
 			}
 		</style>
 	</head>
-	<body ondragstart="return false" draggable="false"
-	ondragenter="event.dataTransfer.dropEffect='none'; event.stopPropagation(); event.preventDefault();"
-	ondragover="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
-	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
-	>
+	<body>
 		<div style="overflow: auto;display:block;width:1050px;">
 			<!--#include file="../inc/toolbar.inc"-->
 		</div>

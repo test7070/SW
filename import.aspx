@@ -232,8 +232,8 @@
 					case 'cn'://大陸
 						break;
 					case 'jp'://日本
-					$('.typea').hide();
-		    		$('.typeb').hide();
+					//$('.typea').hide();
+		    		//$('.typeb').hide();
 						break;
 		            default:
 		                break;
