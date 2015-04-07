@@ -13,10 +13,10 @@
 		<script src="css/jquery/ui/jquery.ui.core.js"></script>
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
 		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
-        <script type="text/javascript" src="http://59.125.143.170/highslide/highslide.packed.js"></script>
-		<script type="text/javascript" src="http://59.125.143.170/highslide/highslide-with-html.packed.js"></script>
-		<link rel="stylesheet" type="text/css" href="http://59.125.143.170/highslide/highslide.css" /> 
-		<script type="text/javascript"> hs.graphicsDir = 'http://59.125.143.170/highslide/graphics/'; hs.showCredits = false; hs.outlineType = 'rounded-white'; hs.outlineWhileAnimating = true; </script>
+        <script type="text/javascript" src="../highslide/highslide.packed.js"></script>
+		<script type="text/javascript" src="../highslide/highslide-with-html.packed.js"></script>
+		<link rel="stylesheet" type="text/css" href="../highslide/highslide.css" /> 
+		<script type="text/javascript"> hs.graphicsDir = '../highslide/graphics/'; hs.showCredits = false; hs.outlineType = 'rounded-white'; hs.outlineWhileAnimating = true; </script>
         <script type="text/javascript">    
             var q_name = "custu";
             var q_readonly = ['txtNoa','txtWorker','txtWorker2'];

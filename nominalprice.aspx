@@ -13,8 +13,8 @@
 		<script src="css/jquery/ui/jquery.ui.core.js"></script>
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
 		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
-		<script type="text/javascript" src="http://59.125.143.170/script/WFU-ts-mix.js"></script>
-		<script type="text/javascript" src="http://59.125.143.170/script/tongwen-ts.js"></script>
+		<script type="text/javascript" src="../script/WFU-ts-mix.js"></script>
+		<script type="text/javascript" src="../script/tongwen-ts.js"></script>
 		<script type="text/javascript">
 		    this.errorHandler = null;
 		    function onPageError(error) {
