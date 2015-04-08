@@ -4,7 +4,7 @@
         {
          //   try
          //   {
-                string path = @"c:\inetpub\wwwroot\images\sw\ad\page\";
+                string path = @"c:\inetpub\wwwroot\doc\ad\page\";
                 string filename = HttpUtility.UrlDecode(Request.QueryString["FileName"]);
                 string tempname = HttpUtility.UrlDecode(Request.QueryString["TempName"]);
 

@@ -122,7 +122,7 @@
 					var txtimg=replaceAll($(this).attr('id'),'lbl','txt');
 					var lblimg=replaceAll($(this).attr('id'),'lbl','lbl');
 					if(!emp($('#'+txtimg).val())){
-						$('#'+lblimg).addClass('btn highslide ').attr('href','../images/sw/dictionary/'+$('#'+txtimg).val())
+						$('#'+lblimg).addClass('btn highslide ').attr('href','../doc/dictionary/'+$('#'+txtimg).val())
 						.attr('onclick',"return hs.expand(this, { captionId: 'caption1', align: 'center',allowWidthReduction: true } )");
 					}else{
 						$('#'+lblimg).removeClass('btn highslide ').removeAttr('href').removeAttr('onclick');

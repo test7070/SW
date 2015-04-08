@@ -396,13 +396,12 @@
 					var txtimg=replaceAll($(this).attr('id'),'lbl','txt');
 					var lblimg=replaceAll($(this).attr('id'),'lbl','lbl');
 					if(!emp($('#'+txtimg).val())){
-						$('#'+lblimg).addClass('lbl btn highslide ').attr('href','../images/sw/news/'+$('#'+txtimg).val())
+						$('#'+lblimg).addClass('lbl btn highslide ').attr('href','../doc/news/'+$('#'+txtimg).val())
 						.attr('onclick',"return hs.expand(this, { captionId: 'caption1', align: 'center',allowWidthReduction: true } )");
 					}else{
 						$('#'+lblimg).removeClass('lbl btn highslide ').removeAttr('href').removeAttr('onclick');
 					}
 						
-					
 					$('#'+lblimg).bind('contextmenu', function(e) {
 						/*滑鼠右鍵*/
 						e.preventDefault();
