@@ -613,8 +613,10 @@
                 	var s_contents=$('#txtContents').val().split('。');
                 	var t_contents='';
                 	for(var i=0;i<s_contents.length;i++){
-                		t_contents=t_contents+s_contents[i];
-                		t_contents=t_contents+'。'+(i==1?'{ad01}':'');
+                		if(s_contents[i]!=''){
+	                		t_contents=t_contents+s_contents[i];
+	                		t_contents=t_contents+'。'+(i==1?'{ad01}':'');
+                		}
                 	}
                 	if(t_contents.indexOf('{ad01}')==-1){
                 		t_contents=t_contents+'{ad01}';
@@ -626,8 +628,10 @@
                 	var s_contents2=$('#txtContents2').val().split('。');
                 	var t_contents2='';
                 	for(var i=0;i<s_contents2.length;i++){
-                		t_contents2=t_contents2+s_contents2[i];
-                		t_contents2=t_contents2+'。'+(i==1?'{ad01}':'');
+                		if(s_contents2[i]!=''){
+	                		t_contents2=t_contents2+s_contents2[i];
+	                		t_contents2=t_contents2+'。'+(i==1?'{ad01}':'');
+                		}
                 	}
                 	if(t_contents2.indexOf('{ad01}')==-1){
                 		t_contents2=t_contents2+'{ad01}';
