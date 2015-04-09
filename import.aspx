@@ -128,7 +128,14 @@
 		        $('#cmbCountry').change(function() {
 		        	bbschange();
 				});
-		        
+				
+		        $('.ChangeGBm').attr('title',"點擊滑鼠左鍵，轉簡體。")
+				$('.ChangeGBm').click(function() {
+					var txtGB = replaceAll($(this).attr('id'),'lbl','txt');
+					var txtBIG5 = replaceAll($(this).attr('id'),'lbl','txt');
+					txtBIG5=txtBIG5.substr(0,txtBIG5.length-1);
+					$('#'+txtGB).val(toSimp($('#'+txtBIG5).val()));
+				});
 		    }
 		    
 		    function q_boxClose(s2) {
@@ -569,16 +576,20 @@
 						</td>
 					</tr>
 					<tr>
+						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
+						<td colspan="2"><textarea id="txtMemo" cols="10" rows="5" style="width: 99%;height: 50px;"> </textarea></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblMemo2' class="lbl btn ChangeGBm"> </a></td>
+						<td colspan="2"><textarea id="txtMemo2" cols="10" rows="5" style="width: 99%;height: 50px;"> </textarea></td>
+					</tr>
+					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
 						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
 						<td><input id="txtWorker2"  type="text"  class="txt c1"/></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
-						<td><input id="txtMemo"  type="text"  class="txt c1"/></td>
 					</tr>
 				</table>
 			</div>
