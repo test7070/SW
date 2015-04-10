@@ -1242,7 +1242,8 @@
 									<td style="width: 30px;"> </td>
 									<td>
 										<input name="typea" type="checkbox" value="0401"/>螺絲
-										<input name="typea" type="checkbox" value="0402"/>其它
+										<input name="typea" type="checkbox" value="0402"/>鋼管
+										<input name="typea" type="checkbox" value="0403"/>其它
 									</td>
 								</tr>
 							</table>

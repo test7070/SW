@@ -288,11 +288,29 @@
 								$("#cmbCountry").val(abbm[q_recno].country);
 						}
 						break;	
+					case 'btnOkCustsId':
+						var as = _q_appendData("custs", "", true);
+						if (as[0] != undefined) {
+							alert(q_getMsg('lblId_s')+'重覆!!!');
+							Unlock(1);
+						}else{
+							wrServer($('#txtNoa').val());
+						}
+						break;
 					case q_name:
 						if (q_cur == 4)
 							q_Seek_gtPost();
 				 		break;
 				} /// end switch
+				
+				if(t_name.split('_')[0]=="checkCustsId"){
+					var n=t_name.split('_')[1];
+					var as = _q_appendData("custs", "", true);
+					if (as[0] != undefined) {
+						alert(q_getMsg('lblId_s')+'重覆!!!');
+						$('#txtId_'+n).val('');
+					}
+				}
 			}
 
 			function _btnSeek() {
@@ -357,7 +375,16 @@
 				txt_bizscopes=txt_bizscopes.substr(0,txt_bizscopes.length-1);//去逗號
 				$('#txtBizscopes').val(t_bizscopes+'##'+txt_bizscopes);
 				
-				wrServer($('#txtNoa').val());
+				//檢查會員帳號是否重複
+				var t_id='';
+				for (var i = 0; i < q_bbsCount; i++) {
+					if(!emp($('#txtId_'+i).val())){
+						t_id=(t_id.length>0?',':'')+("'"+$('#txtId_'+i).val()+"'");
+					}
+				}
+				t_where="where=^^ id in ("+t_id+") ^^";
+				q_gt('custs', t_where, 0, 0, 0, "btnOkCustsId", r_accy);
+				//wrServer($('#txtNoa').val());
 			}
 
 			function wrServer(key_value) {
@@ -469,6 +496,16 @@
 							t_bbt_id=$('#txtId_'+b_seq).val();
 							bbtchange();
 						 	$('.dbbt').show()
+						});
+						
+						$('#txtId_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							if(!emp($(this).val())){
+								t_where="where=^^ id='"+$(this).val()+"'^^";
+								q_gt('custs', t_where, 0, 0, 0, "checkCustsId_"+b_seq, r_accy);
+							}
 						});
 		            }
 		        }
