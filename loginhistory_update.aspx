@@ -2,9 +2,7 @@
     <script language="c#" runat="server">     
         public class ParaIn
         {
-            public int seq;
-            public string field, sendtime;
-            public string caseno, caseno2,cardno, po,miles,receivetime;
+            public string typea,id;
         }
         
         //連接字串   
@@ -29,22 +27,19 @@
                     System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter();
                     connSource.Open();
                     
-                    //更新資料
-                    string queryString = @"SET QUOTED_IDENTIFIER OFF declare @cmd nvarchar(max) 
-                        update loginhistory
-	                    set caseno=@caseno,caseno2=@caseno2,cardno=@cardno,po=@po,miles=@miles,receivetime=@receivetime
-	                    where seq=@seq and field=@field and sendtime=@sendtime";
-					";
+                    string queryString="";
+                    //清除資料
+                    if (itemIn.id=="all"){
+                    	queryString = @"SET QUOTED_IDENTIFIER OFF declare @cmd nvarchar(max)  
+                    	delete loginhistory ";
+                    }else{
+                    	queryString = @"SET QUOTED_IDENTIFIER OFF declare @cmd nvarchar(max)  
+                    	delete loginhistory where id=@id ";	
+                    }
+					
                     System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(queryString, connSource);
-                    cmd.Parameters.AddWithValue("@seq", itemIn.seq);
-                    cmd.Parameters.AddWithValue("@field", itemIn.field);
-                    cmd.Parameters.AddWithValue("@sendtime", itemIn.sendtime);
-                    cmd.Parameters.AddWithValue("@caseno", itemIn.caseno);
-                    cmd.Parameters.AddWithValue("@caseno2", itemIn.caseno2);
-                    cmd.Parameters.AddWithValue("@cardno", itemIn.cardno);
-                    cmd.Parameters.AddWithValue("@po", itemIn.po);
-                    cmd.Parameters.AddWithValue("@miles", itemIn.miles);
-                    cmd.Parameters.AddWithValue("@receivetime", itemIn.receivetime);
+                    cmd.Parameters.AddWithValue("@id", itemIn.id);                    
+                    
                     cmd.ExecuteNonQuery();
                     connSource.Close();
                 }

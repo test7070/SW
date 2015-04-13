@@ -326,7 +326,8 @@
 					if((t_typea[i].length/2)==4 ){
 						levels[dec(t_typea[i].substr(0,2))].child[dec(t_typea[i].substr(2,2))].child[dec(t_typea[i].substr(4,2))].child[dec(t_typea[i].substr(6,2))].check=true;
 					}
-					levels[dec(t_typea[i].substr(0,2))].counts++;
+					if(levels[dec(t_typea[i].substr(0,2))])
+						levels[dec(t_typea[i].substr(0,2))].counts++;
 				}
 				//寫入底層是否有資料
 				for (var i=0;i<levels.length; i++){
@@ -598,7 +599,7 @@
             	
             	var t_err = '';
                 t_err = q_chkEmpField([['txtTitle', q_getMsg('lblTitle')],['txtContents', q_getMsg('lblContents')]
-                ,['txtSssno', q_getMsg('lblSss')],['txtNamea', q_getMsg('lblSss')],['txtDatea', q_getMsg('lblDatea')]
+                ,['txtSssno', q_getMsg('lblSss')],['txtNamea', q_getMsg('lblSss')],['txtDatea', q_getMsg('lblDatea')],['txtTimea', q_getMsg('lblTimea')]
                 ,['cmbStype', q_getMsg('lblStype')],['txtTypea', q_getMsg('lblTypea')],['cmbArea', q_getMsg('lblArea')]
                 ,['cmbRank', q_getMsg('lblRank')]]);
                 
