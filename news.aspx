@@ -1275,6 +1275,12 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
+							<input id="typea13" name="typea" type="checkbox" value="13"/><a id='item13'>其它產品</a>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="5">
 							<input id="typea6" name="typea" type="checkbox" value="06"/><a id='item06'>市場脈動</a>
 						</td>
 					</tr>
