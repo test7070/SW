@@ -11,7 +11,7 @@
         <link href="../qbox.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript">    
             var q_name = "fileupload";
-            var q_readonly = ['txtNoa','txtWorker','txtDatea'];
+            var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtDatea'];
             var bbmNum = [];
             var bbmMask = [];
             q_sqlCount = 6;
@@ -221,9 +221,9 @@
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                  if(t_para){
-                 	$('.btnImg').attr('disabled', 'disabled');
+                 	$('#btnFiles').attr('disabled', 'disabled');
                 }else{
-                	$('.btnImg').removeAttr('disabled', 'disabled');
+                	$('#btnFiles').removeAttr('disabled', 'disabled');
                 }
             }
 
@@ -415,7 +415,7 @@
 				<table class="tbbm"  id="tbbm"   border="0" cellpadding='2'  cellspacing='5'>
 					<tr style="height:1px;">
 						<td style="width: 150px"> </td>
-						<td style="width: 430px"> </td>
+						<td style="width: 640px"> </td>
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
@@ -444,6 +444,11 @@
 					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
 						<td><input id="txtWorker"  type="text"  class="txt c2"/></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
+						<td><input id="txtWorker2"  type="text"  class="txt c2"/></td>
 						<td> </td>
 					</tr>
 					<tr style="display: none;">
