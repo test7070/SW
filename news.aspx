@@ -91,7 +91,7 @@
 						$('#txtSssno').val($('#combNamea').val());
 						$('#txtNamea').val($('#combNamea').find("option:selected").text());	
 					}
-					$('#combNamea')[0].selectedIndex=0;
+					$('#combNamea').get(0).selectedIndex=0;
 				});
 				
                 q_gt('newsstype', '', 0, 0, 0, "newsstype");

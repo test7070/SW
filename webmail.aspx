@@ -9,8 +9,12 @@
         <script src="../script/qbox.js" type="text/javascript"></script>
         <script src='../script/mask.js' type="text/javascript"></script>
         <link href="../qbox.css" rel="stylesheet" type="text/css" />
+        <link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+		<script src="css/jquery/ui/jquery.ui.core.js"></script>
+		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
+		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
         <script type="text/javascript">    
-            var q_name = "fileupload";
+            var q_name = "webmail";
             var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtDatea'];
             var bbmNum = [];
             var bbmMask = [];
@@ -21,9 +25,9 @@
             brwNowPage = 0;
             brwKey = 'noa';
             //ajaxPath = ""; //  execute in Root
-            q_desc = 1
             aPop = new Array();
 			
+			q_desc=1;
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 q_brwCount();
@@ -43,101 +47,74 @@
             function mainPost() {
             	bbmMask = [];
                 q_mask(bbmMask);
+                q_cmbParse("combChgtemplate", '@選擇範本');
                 
-                $('#btnFiles').change(function() {
-					event.stopPropagation(); 
-					event.preventDefault();
-					if(q_cur==1 || q_cur==2){}else{return;}
-					var txtName = replaceAll($(this).attr('id'),'btn','txt');
-					var btnName = $(this).attr('id');
-					file = $(this)[0].files[0];
-					
-					if(file){
-						Lock(1);
-						var ext = '';
-						var extindex = file.name.lastIndexOf('.');
-						if(extindex>=0){
-							ext = file.name.substring(extindex,file.name.length);
-						}
-						$('#'+txtName+'name').val(file.name);
-						$('#'+txtName).val(guid()+Date.now()+ext);
-						
-						fr = new FileReader();
-						fr.fileName = $('#'+txtName).val();
-					    fr.readAsDataURL(file);
-					    fr.onprogress = function(e){
-							if ( e.lengthComputable ) { 
-								var per = Math.round( (e.loaded * 100) / e.total) ; 
-								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
-							}; 
-						}
-						fr.onloadstart = function(e){
-							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
-						}
-						fr.onloadend = function(e){
-							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
-							console.log(fr.fileName+':'+fr.result.length);
-							var oReq = new XMLHttpRequest();
-							oReq.upload.addEventListener("progress",function(e) {
-								if (e.lengthComputable) {
-									percentComplete = Math.round((e.loaded / e.total) * 100,0);
-									$('#FileList').children().last().find('progress').eq(1).attr('value',percentComplete);
-								}
-							}, false);
-							oReq.upload.addEventListener("load",function(e) {
-								Unlock(1);
-							}, false);
-							oReq.upload.addEventListener("error",function(e) {
-								alert("資料上傳發生錯誤!");
-							}, false);
-							oReq.addEventListener("loadend", function(e) {
-								$('#'+btnName).val('');
-							}, false);
-								
-							oReq.timeout = 360000;
-							oReq.ontimeout = function () { alert("Timed out!!!"); }
-							oReq.open("POST", 'fileupload_upload.aspx', true);
-							oReq.setRequestHeader("Content-type", "text/plain");
-							oReq.setRequestHeader("FileName", escape(fr.fileName));
-							oReq.send(fr.result);
-						};
-					}
-					ShowDownlbl();
+                q_gt('webmail', "where=^^ isnull(template,0)='1' and noa!='"+$('#txtNoa').val()+"' ^^", 0, 0, 0, "gettemplateselect");
+                //$('#btnModi').hide();
+                
+                $('#combChgtemplate').change(function() {
+                	if($('#combChgtemplate').val()!='' && q_cur==1){
+                		q_gt('webmail', "where=^^ noa='"+$('#combChgtemplate').val()+"' ^^", 0, 0, 0, "gettemplate");
+                	}
+                	$('#combChgtemplate').get(0).selectedIndex=0;
+				});
+				
+				$('#lblEmailaddr').click(function() {
+					q_box('cust_b2.aspx','cust', "500px", "90%", q_getMsg("lblEmailaddr"));
 				});
             }
-            
-            var guid = (function() {
-				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
-				//return function() {return s4() + s4() + '-' + s4() + '-' + s4() + '-' +s4() + '-' + s4() + s4() + s4();};
-				return function() {return s4() + s4() + s4() + s4();};
-			})();
-			
-			function ShowDownlbl() {
-				if(!emp($('#txtFiles').val())){
-					$('#lblUrls').addClass('btn').text("http://www.steelworld.com.tw/doc/files/"+$('#txtFiles').val());
-				}else{
-					$('#lblUrls').removeClass('btn').text("無上傳資料");
-				}
-				
-				$('#lblUrls').click(function() {
-					if($('#txtFiles').val().length>0)
-						$('#xdownload').attr('src','fileupload_download.aspx?FileName='+$('#txtFilesname').val()+'&TempName='+$('#txtFiles').val());
-					else
-						alert('無資料...');
-				});
-			}
             
             function q_boxClose(s2) {
                 var ret;
                 switch (b_pop) {
+                	case 'cust':
+                		if (q_cur > 0 && q_cur < 4) {
+							b_ret = getb_ret();
+							if (!b_ret || b_ret.length == 0)
+								return;
+							var t_addr='',t_recipient='',t_unemail='';
+							for(var i=0;i<b_ret.length;i++){
+								if(b_ret[i].email.length>0){
+									t_addr=t_addr+(t_addr.length>0?',':'')+(b_ret[i].nick.length>0?b_ret[i].nick:b_ret[i].comp)+'<'+b_ret[i].email+'>';
+									t_recipient=t_recipient+(t_recipient.length>0?',':'')+b_ret[i].noa;
+								}else{
+									t_unemail=t_unemail+(t_unemail.length>0?',':'')+(b_ret[i].nick.length>0?b_ret[i].nick:b_ret[i].comp);
+								}
+							}
+							if(t_unemail.length)
+								alert("【"+t_unemail+"】無電子信箱!!");
+							$('#txtEmailaddr').val(t_addr);
+							$('#txtRecipient').val(t_recipient);
+						}
+                		break;
                     case q_name + '_s':
                         q_boxClose2(s2);
                         break;
+
                 }
+                b_pop='';
             }
 			
             function q_gtPost(t_name) {
                 switch (t_name) {
+                	case 'gettemplateselect':
+                		var as = _q_appendData("webmail", "", true);
+						if (as[0] != undefined) {
+							$('#combChgtemplate').text('');
+							var t_item = "@選擇範本";
+							for (i = 0; i < as.length; i++) {
+								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].noa) + '@' + $.trim(as[i].templatename);
+							}
+							q_cmbParse("combChgtemplate", t_item);
+						}
+                		break;
+                	case 'gettemplate':
+                		var as = _q_appendData("webmail", "", true);
+						if (as[0] != undefined) {
+							$('#txtSubject').val(as[0].subject);
+							$('#txtContents').val(as[0].contents);
+						}
+                		break;
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
@@ -148,22 +125,25 @@
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)// 1-3
                     return;
-                q_box('fileupload_s.aspx', q_name + '_s', "500px", "300px", q_getMsg("popSeek"));
+                q_box('webmail_s.aspx', q_name + '_s', "500px", "350px", q_getMsg("popSeek"));
             }
 
             function btnIns() {
                 _btnIns();
-                $('#txtMemo').focus();
                 $('#txtDatea').val(q_date());
-                ShowDownlbl();
+                $('#txtEmailaddr').focus();
+                
+                //重新抓取新的範本
+                q_gt('webmail', "where=^^ isnull(template,0)='1' and noa!='"+$('#txtNoa').val()+"' ^^", 0, 0, 0, "gettemplateselect");
             }
 
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
                 _btnModi();
-                $('#txtMemo').focus();
-                ShowDownlbl();
+                $('#txtEmailaddr').focus();
+                //重新抓取新的範本
+                q_gt('webmail', "where=^^ isnull(template,0)='1' and noa!='"+$('#txtNoa').val()+"' ^^", 0, 0, 0, "gettemplateselect");
             }
 
             function btnPrint() {
@@ -179,10 +159,18 @@
             function btnOk() {
                 Lock(1,{opacity:0});
             	var t_err = '';
-                t_err = q_chkEmpField([['txtMemo', q_getMsg('lblMemo')],['txtFiles', q_getMsg('lblFiles')]]);
+                t_err = q_chkEmpField([['txtSubject', q_getMsg('lblSubject')],['txtContents', q_getMsg('lblContents')]]);
                 
                 if (t_err.length > 0) {
                     alert(t_err);
+                    Unlock(1);
+                    return;
+                }
+                
+                if($('#chkTemplate').prop('checked') && emp($('#txtTemplatename').val())){
+                	t_err = '';
+                	t_err = q_chkEmpField([['txtTemplatename', q_getMsg('lblTemplatename')]]);
+                	alert(t_err);
                     Unlock(1);
                     return;
                 }
@@ -214,15 +202,14 @@
 
             function refresh(recno) {
                 _refresh(recno);
-                ShowDownlbl();
             }
             
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                  if(t_para){
-                 	$('#btnFiles').attr('disabled', 'disabled');
+                 	$('#combChgtemplate').attr('disabled', 'disabled');
                 }else{
-                	$('#btnFiles').removeAttr('disabled', 'disabled');
+					$('#combChgtemplate').removeAttr('disabled', 'disabled');
                 }
             }
 
@@ -281,11 +268,10 @@
 		<style type="text/css">
             #dmain {
                 overflow: hidden;
-                width: 800px;
             }
             .dview {
                 float: left;
-                width: 800px;
+                width: 1250px;
             }
             .tview {
             	width:100%;
@@ -304,7 +290,7 @@
             }
             .dbbm {
                 float: left;
-                width: 800px;
+                width: 1250px;
                 margin: -1px;
                 border: 1px black solid;
                 border-radius: 5px;
@@ -352,11 +338,19 @@
                 float: left;
             }
             .txt.c2 {
-                width: 15%;
+                width: 38%;
                 float: left;
             }
             .txt.c3 {
-                width: 85%;
+                width: 60%;
+                float: left;
+            }
+            .txt.c4 {
+                width: 18%;
+                float: left;
+            }
+            .txt.c5 {
+                width: 80%;
                 float: left;
             }
             .txt.c6 {
@@ -399,64 +393,58 @@
 					<tr>
 						<td align="center" style="width:3%"><a id='vewChk'> </a></td>
 						<td align="center" style="width:15%"><a id='vewDatea'> </a></td>
-						<td align="center" style="width:60%"><a id='vewMemo'> </a></td>
-						<td align="center" style="width:15%"><a id='vewWorker'> </a></td>
+						<td align="center" style="width:80%"><a id='vewSubject'> </a></td>
 					</tr>
 					<tr>
 						<td ><input id="chkBrow.*" type="checkbox" style=''/></td>
-						<td align="center" id='datea'>~datea</td>
-						<td align="center" id="memo">~memo</td>
-						<td align="center" id='worker'>~worker</td>
+						<td align="center" id="datea">~datea</td>
+						<td align="center" id='subject'>~subject</td>
 					</tr>
 				</table>
 			</div>
 			<div class='dbbm' style="float: left;">
 				<table class="tbbm"  id="tbbm"   border="0" cellpadding='2'  cellspacing='5'>
 					<tr style="height:1px;">
-						<td style="width: 150px"> </td>
-						<td style="width: 640px"> </td>
+						<td style="width: 130px"> </td>
+						<td style="width: 180px"> </td>
+						<td style="width: 130px"> </td>
+						<td style="width: 180px"> </td>
+						<td style="width: 130px"> </td>
+						<td style="width: 180px"> </td>
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
-						<td><input id="txtDatea"  type="text"  class="txt c1" style="width: 130px;"/></td>
-						<td><input id="txtNoa"  type="text" style="display: none;"/></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
-						<td><input id="txtMemo"  type="text"  class="txt c1"/></td>
+						<td><input id="txtDatea"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblEmailaddr' class="lbl btn"> </a></td>
+						<td><input id="txtEmailaddr"  type="text"  class="txt c1"/></td>
 						<td> </td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblFiles' class="lbl lblDown"> </a></td>
+						<td><select id="combChgtemplate" class="txt c1"> </select></td>
 						<td>
-							<input type="file" id="btnFiles" value="選擇檔案" />
-							<input id="txtFiles"  type="hidden"/><input id="txtFilesname"  type="hidden"/>
+							<input id="txtNoa"  type="text" style="display: none;"/>
+							<input id="txtRecipient"  type="hidden" />
 						</td>
-						<td> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblUrl' class="lbl"> </a></td>
-						<td><a id="lblUrls" class="lbl" style="float: left;"> </a></td>
+						<td><span> </span><a id='lblSubject' class="lbl"> </a></td>
+						<td colspan="5"><input id="txtSubject"  type="text"  class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblContents' class="lbl"> </a></td>
+						<td colspan="5"><textarea id="txtContents" cols="10" rows="10" style="width: 99%;height: 500px;"> </textarea></td>
 						<td> </td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
-						<td><input id="txtWorker"  type="text"  class="txt c2"/></td>
-						<td> </td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
-						<td><input id="txtWorker2"  type="text"  class="txt c2"/></td>
-						<td> </td>
-					</tr>
-					<tr style="display: none;">
-						<td colspan="2"><div style="width:100%;" id="FileList"> </div></td>
+						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblTemplate' class="lbl"> </a></td>
+						<td><input id="chkTemplate" type="checkbox" style="float: center;"/></td>
+						<td><span> </span><a id='lblTemplatename' class="lbl"> </a></td>
+						<td><input id="txtTemplatename"  type="text"  class="txt c3"/></td>
 					</tr>
 				</table>
 			</div>
 		</div>
-		<iframe id="xdownload" style="display:none;"> </iframe>
 		<input id="q_sys" type="hidden" />
 	</body>
 </html>
