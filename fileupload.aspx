@@ -102,8 +102,8 @@
 							oReq.send(fr.result);
 						};
 					}
+					ShowDownlbl();
 				});
-				ShowDownlbl();
             }
             
             var guid = (function() {
@@ -114,15 +114,13 @@
 			
 			function ShowDownlbl() {
 				if(!emp($('#txtFiles').val())){
-					$('#lblUrls').addClass('btn').text("http://www.steelworld.com.tw/files/"+$('#txtFiles').val());
+					$('#lblUrls').addClass('btn').text("http://www.steelworld.com.tw/doc/files/"+$('#txtFiles').val());
 				}else{
 					$('#lblUrls').removeClass('btn').text("無上傳資料");
 				}
 				
-				$('#lblUrls').bind('contextmenu', function(e) {
-					/*滑鼠右鍵*/
-					e.preventDefault();
-					if($('#'+txtflie).val().length>0)
+				$('#lblUrls').click(function() {
+					if($('#txtFiles').val().length>0)
 						$('#xdownload').attr('src','fileupload_download.aspx?FileName='+$('#txtFilesname').val()+'&TempName='+$('#txtFiles').val());
 					else
 						alert('無資料...');
@@ -440,7 +438,7 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblUrl' class="lbl"> </a></td>
-						<td><a id="lblUrls"> </a></td>
+						<td><a id="lblUrls" class="lbl" style="float: left;"> </a></td>
 						<td> </td>
 					</tr>
 					<tr>
