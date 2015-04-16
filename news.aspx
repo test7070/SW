@@ -1213,7 +1213,7 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td colspan="3">
-										<input name="typea" type="checkbox" value="0302"/>合金鋼(含不鏽鋼)
+										<input name="typea" type="checkbox" value="0302"/>特殊鋼(含不鏽鋼)
 									</td>
 								</tr>
 								<tr>
