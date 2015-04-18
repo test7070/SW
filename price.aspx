@@ -136,6 +136,19 @@
 					txtBIG5=txtBIG5.substr(0,txtBIG5.length-1);
 					$('#'+txtGB).val(toSimp($('#'+txtBIG5).val()));
 				});
+				
+				//上方插入空白行
+				$('#lblTop_row').mousedown(function(e) {
+					if (e.button == 0) {
+						q_bbs_addrow(row_bbsbbt, row_b_seq, 0);
+					}
+				});
+				//下方插入空白行
+				$('#lblDown_row').mousedown(function(e) {
+					if (e.button == 0) {
+						q_bbs_addrow(row_bbsbbt, row_b_seq, 1);
+					}
+				});
 		    }
 		    
 		    function q_boxClose(s2) {
@@ -196,12 +209,32 @@
 		        for (var i = 0; i < q_bbsCount; i++) {
 		            $('#lblNo_' + i).text(i + 1);
 		            if (!$('#btnMinus_' + i).hasClass('isAssign')) {
+		            	$('#btnMinus_'+i).bind('contextmenu',function(e) {
+							e.preventDefault();
+	                    	if(e.button==2){
+								////////////控制顯示位置
+								$('#div_row').css('top', e.pageY);
+								$('#div_row').css('left', e.pageX);
+								//////////////
+								t_IdSeq = -1;
+								q_bodyId($(this).attr('id'));
+								b_seq = t_IdSeq;
+								$('#div_row').show();
+								//顯示選單
+								row_b_seq = b_seq;
+								//儲存選取的row
+								row_bbsbbt = 'bbs';
+								//儲存要新增的地方
+							}
+                    	});
+                    	
 		                $('#txtHprice_'+i).change(function() {
 		                	t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
 		                	q_tr('txtAprice_'+b_seq,q_div(q_add(q_float('txtHprice_'+b_seq),q_float('txtLprice_'+b_seq)),2));
 						});
+						
 						$('#txtLprice_'+i).change(function() {
 		                	t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
@@ -419,6 +452,10 @@
 		        _btnCancel();
 		    }
 		    
+		    //判斷是bbs或bbt增加欄位
+			var row_bbsbbt = '';
+			//判斷第幾個row
+			var row_b_seq = '';
 		    //插入欄位
 			function q_bbs_addrow(bbsbbt,row,topdown){
 	        	//取得目前行
@@ -447,6 +484,9 @@
 						}
 					}
 				}
+				$('#div_row').hide();
+				row_bbsbbt = '';
+				row_b_seq = '';
 	        }
 		</script>
 		<style type="text/css">
@@ -573,6 +613,23 @@
             input[type="text"], input[type="button"], select {
                 font-size: medium;
             }
+            #div_row {
+				display: none;
+				width: 750px;
+				background-color: #ffffff;
+				position: absolute;
+				left: 20px;
+				z-index: 50;
+			}
+			.table_row tr td .lbl.btn {
+				color: #000000;
+				font-weight: bolder;
+				font-size: medium;
+				cursor: pointer;
+			}
+			.table_row tr td .lbl.btn:hover {
+				color: #FF8F19;
+			}
 		</style>
 	</head>
 	<body ondragstart="return false" draggable="false"
@@ -580,6 +637,16 @@
 	ondragover="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();">
 		<!--#include file="../inc/toolbar.inc"-->
+		<div id="div_row" style="position:absolute; top:300px; left:500px; display:none; width:150px; background-color: #ffffff; ">
+			<table id="table_row" class="table_row" style="width:100%;" border="1" cellpadding='1' cellspacing='0'>
+				<tr>
+					<td align="center" ><a id="lblTop_row" class="lbl btn">上方插入空白行</a></td>
+				</tr>
+				<tr>
+					<td align="center" ><a id="lblDown_row" class="lbl btn">下方插入空白行</a></td>
+				</tr>
+			</table>
+		</div>
 		<div id='dmain' >
 			<div class="dview" id="dview">
 				<table class="tview" id="tview">
