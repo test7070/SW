@@ -1297,7 +1297,8 @@
 										<input name="typea" type="checkbox" value="0603"/>產銷統計
 										<input name="typea" type="checkbox" value="0604"/>公司財報
 										<input name="typea" type="checkbox" value="0605"/>進出口資料
-										<input name="typea" type="checkbox" value="0606"/>其它
+										<input name="typea" type="checkbox" value="0606"/>建築
+										<input name="typea" type="checkbox" value="0607"/>其它
 									</td>
 								</tr>
 							</table>
