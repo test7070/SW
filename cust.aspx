@@ -70,6 +70,7 @@
 				q_cmbParse("cmbStatus", ','+q_getPara('cust.status'));
 				q_cmbParse("cmbCoin", '@無,NTD@台幣,RMB@人民幣,USD@美金');
 				q_cmbParse("cmbBizscope", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
+				q_cmbParse("cmbBizscope2", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
 				//q_cmbParse("cmbTypea", '@選擇,'+q_getPara('custs.typea'),'s');
 				//q_cmbParse("cmbTypea", '@選擇,'+q_getPara('custs.typea'),'t');
 				q_cmbParse("cmbCobtype", ',二聯,三聯');
@@ -970,6 +971,12 @@
 						<td><select id="cmbBizscope" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
 						<td><input id="txtMemo" type="text" class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblBizscope2' class="lbl"> </a></td>
+						<td><select id="cmbBizscope2" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblMemo2' class="lbl"> </a></td>
+						<td><input id="txtMemo2" type="text" class="txt c1"/></td>
 					</tr>
 					<tr class="bizscopes">
 						<td colspan="4" style="text-align: center;">

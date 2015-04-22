@@ -188,7 +188,7 @@
             	
             	//重新寫入noq
             	for (var i = 0; i < q_bbsCount; i++) {
-            		$('#txtNoq').val(('000'+(i+1)).substr(-3));
+            		$('#txtNoq_'+i).val(('000'+(i+1)).substr(-3));
             	}
             	
 				if(q_cur==1){
@@ -314,12 +314,14 @@
 		    function btnPrint() {
 		    	
 		    }
-
+			
+			var issave=false;
 		    function wrServer(key_value) {
 		        var i;
 
 		        $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val(key_value);
 		        _btnOk(key_value, bbmKey[0], bbsKey[1], '', 2);
+		        issave=true;
 		    }
 
 		    function bbsSave(as) {
@@ -347,6 +349,11 @@
 					$('#checkCopy').attr('disabled', 'disabled');
 					//$('#txtMon').removeClass('hasDatepicker')
 					//$('#txtMon').datepicker({ dateFormat: 'yy/mm/dd' });
+				}
+				if(issave){
+            		issave=false;
+            		var s2=new Array(q_name + '_s',"where=^^noa<='"+$('#txtNoa').val()+"' ^^ ");
+					q_boxClose2(s2);
 				}
 		    }
 
