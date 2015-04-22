@@ -66,14 +66,16 @@
 				q_mask(bbmMask);
 				
 				q_gt('custtype', '', 0, 0, 0, "custtype");
+				q_gt('bizscope', "where=^^right(noa,3)='000'^^", 0, 0, 0, "bizscope");
 				q_gt('country', '', 0, 0, 0, "country");
 				q_cmbParse("cmbStatus", ','+q_getPara('cust.status'));
 				q_cmbParse("cmbCoin", '@無,NTD@台幣,RMB@人民幣,USD@美金');
-				q_cmbParse("cmbBizscope", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
-				q_cmbParse("cmbBizscope2", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
+				//q_cmbParse("cmbBizscope", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
+				//q_cmbParse("cmbBizscope2", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
 				//q_cmbParse("cmbTypea", '@選擇,'+q_getPara('custs.typea'),'s');
 				//q_cmbParse("cmbTypea", '@選擇,'+q_getPara('custs.typea'),'t');
 				q_cmbParse("cmbCobtype", ',二聯,三聯');
+				q_cmbParse("cmbForeigns", ',0@台灣地區,1@台灣以外地區');
 				
 				$('#btnCusts').click(function() {
 					$('.dbbs').css('top', $(this).offset().top+25);
@@ -275,6 +277,21 @@
 							q_cmbParse("cmbTypea", t_item);
 							if(abbm[q_recno])
 								$("#cmbTypea").val(abbm[q_recno].typea);
+						}
+						break;
+					case 'bizscope':
+						var as = _q_appendData("bizscope", "", true);
+						if (as[0] != undefined) {
+							var t_item = "@";
+							for (i = 0; i < as.length; i++) {
+								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(as[i].noa) + '@' + $.trim(as[i].scope);
+							}
+							q_cmbParse("cmbBizscope", t_item);
+							q_cmbParse("cmbBizscope2", t_item);
+							if(abbm[q_recno]){
+								$("#cmbBizscope").val(abbm[q_recno].bizscope);
+								$("#cmbBizscope2").val(abbm[q_recno].bizscope2);
+							}
 						}
 						break;
 					case 'country':
@@ -494,7 +511,7 @@
 							b_seq = t_IdSeq;
 							$('.dbbt').css('top', $('.dbbs').offset().top+$('.dbbs').height()+5);
 							$('.dbbt').css('left', $('.dbbs').width()-$('.dbbt').width());
-							t_bbt_id=$('#txtId_'+b_seq).val();
+							t_bbt_id=$('#txtId_'+b_seq).val().toUpperCase();
 							bbtchange();
 						 	$('.dbbt').show()
 						});
@@ -503,9 +520,15 @@
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							if(!emp($(this).val())){
-								t_where="where=^^ id='"+$(this).val()+"'^^";
-								q_gt('custs', t_where, 0, 0, 0, "checkCustsId_"+b_seq, r_accy);
+							$(this).val($(this).val().toUpperCase());
+							if((/^[A-Z0-9]{6,20}$/g).test($(this).val())){
+								if(!emp($(this).val())){
+									t_where="where=^^ id='"+$(this).val()+"'^^";
+									q_gt('custs', t_where, 0, 0, 0, "checkCustsId_"+b_seq, r_accy);
+								}
+							}else{
+								alert(q_getMsg('lblId_s')+'請輸入6~20個英文或數字!!');
+								$(this).val('');
 							}
 						});
 		            }
@@ -817,7 +840,8 @@
 					<tr>
 						<td><span> </span><a id='lblSerial' class="lbl"> </a></td>
 						<td>
-							<input id="txtNoa" type="text" class="txt c1"/>
+							<input id="txtNoa" type="text" class="txt c1" style="width: 50%;"/>
+							<select id="cmbForeigns" class="txt c1" style="width: 50%;"> </select>
 							<input id="txtSerial" type="hidden"/>
 						</td>
 						<td><span> </span><a id='lblComp' class="lbl"> </a></td>
