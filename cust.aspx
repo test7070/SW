@@ -883,10 +883,13 @@
 						</td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblAddr' class="lbl"> </a><a style="float: right;">-</a><a id='lblCountry' class="lbl"> </a></td>
+						<td><span> </span><a id='lblAddr' class="lbl"> </a>
+							<a style="float: right;display: none;">-</a><a id='lblCountry' class="lbl" style="display: none;"> </a>
+						</td>
 						<td colspan='3'>
-							<select id="cmbCountry" class="txt c2"> </select><a style="float: left">-</a>
-							<input id="txtAddr" type="text" class="txt c3"/>
+							<select id="cmbCountry" class="txt c2" style="display: none;"> </select>
+							<a style="float: left;display: none;">-</a>
+							<input id="txtAddr" type="text" class="txt c1"/>
 						</td>
 					</tr>
 					<tr>
@@ -914,19 +917,25 @@
 						<td><input id="txtUmmstatus" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
+						<td><span> </span><a id='lblInvoname' class="lbl"> </a></td>
+						<td><input id="txtInvoname" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblInvoserial' class="lbl"> </a></td>
 						<td><input id="txtInvoserial" type="text" class="txt c1"/></td>
-						<td><span> </span><a id='lblInvotitle' class="lbl"> </a></td>
-						<td><input id="txtInvotitle" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
+						<td><span> </span><a id='lblInvotitle' class="lbl"> </a></td>
+						<td><input id="txtInvotitle" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblCobtype' class="lbl"> </a></td>
 						<td><select id="cmbCobtype" class="txt c1"> </select></td>
+					</tr>
+					<tr>
 						<td><span> </span><a id='lblInvoaddr' class="lbl"> </a></td>
 						<td>
 							<input id="txtInvopost" type="text" class="txt c4"/><a style="float: left;">-</a>
 							<input id="txtInvoaddr" type="text" class="txt c5"/>
 						</td>
+						<td><span> </span><a id='lblInvomemo' class="lbl"> </a></td>
+						<td><input id="txtInvomemo" type="text" class="txt c1"/></td>
 					</tr>
 					<tr class="conn">
 						<td colspan="4" style="text-align: center;"><a class="lbl" style="float: none;">主帳號(型錄聯絡人)</a></td>
