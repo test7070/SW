@@ -226,6 +226,29 @@
 								//儲存要新增的地方
 							}
                     	});
+                    	
+                    	$('#txtHmoney_'+i).change(function() {
+                    		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+                    		if(dec($('#txtHmoney_'+b_seq).val())<dec($('#txtLmoney_'+b_seq).val())
+                    		){
+                    			var tmp=$('#txtHmoney_'+b_seq).val();
+                    			$('#txtHmoney_'+b_seq).val($('#txtLmoney_'+b_seq).val());
+                    			$('#txtLmoney_'+b_seq).val(tmp);
+                    		}
+						});
+						$('#txtLmoney_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							if(dec($('#txtHmoney_'+b_seq).val())<dec($('#txtLmoney_'+b_seq).val())
+                    		){
+                    			var tmp=$('#txtHmoney_'+b_seq).val();
+                    			$('#txtHmoney_'+b_seq).val($('#txtLmoney_'+b_seq).val());
+                    			$('#txtLmoney_'+b_seq).val(tmp);
+                    		}
+						});
 		            }
 		        }
 		        _bbsAssign();

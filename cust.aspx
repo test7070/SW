@@ -59,7 +59,8 @@
 				mainForm(0);
 				
 			}
-
+			
+			var t_area=[],t_areas=[],t_areat=[];
 			function mainPost() {
 				bbmMask = [['txtStartdate', '9999/99/99'],['txtKdate', '9999/99/99']];
 				bbtMask = [['txtBdate', '9999/99/99'],['txtEdate', '9999/99/99']];
@@ -68,6 +69,12 @@
 				q_gt('custtype', '', 0, 0, 0, "custtype");
 				q_gt('bizscope', "where=^^right(noa,3)='000'^^", 0, 0, 0, "bizscope");
 				q_gt('country', '', 0, 0, 0, "country");
+				q_gt('area', '', 0, 0, 0, "area");
+				q_cmbParse("cmbAreasno",'@----------');
+				q_cmbParse("cmbIareasno",'@----------');
+				q_cmbParse("cmbAreatno",'@----------');
+				q_cmbParse("cmbIareatno",'@----------');
+				
 				q_cmbParse("cmbStatus", ','+q_getPara('cust.status'));
 				q_cmbParse("cmbCoin", '@無,NTD@台幣,RMB@人民幣,USD@美金');
 				//q_cmbParse("cmbBizscope", '@無,A000@鋼鐵生產廠商,B000@產品製造業,C000@裁剪 / 加工業,D000@買賣業,E000@原料 / 設備 / 耗材供應商,F000@買賣業,G000@鋼鐵工業副產品,H000@鋼鐵應用相關產業,I000@鋼鐵相關組織,J000@其 它');
@@ -125,6 +132,19 @@
 				$('#btnCustu').click(function(e){
 					if(!emp($('#txtNoa').val()))
 						q_box("custu.aspx?;;;serial='" + $('#txtNoa').val() + "'",'custu', "95%", "95%", '繳款');
+				});
+				
+				$('#cmbAreano').change(function() {
+					change_areas('A');
+				});
+				$('#cmbAreasno').change(function() {
+					change_areat('A');
+				});
+				$('#cmbIareano').change(function() {
+					change_areas('I');
+				});
+				$('#cmbIareasno').change(function() {
+					change_areat('I');
 				});
 				
 				$('.btnImg').change(function() {
@@ -267,6 +287,29 @@
 
 			function q_gtPost(t_name) {
 				switch (t_name) {
+					case 'area':
+						t_area = _q_appendData("area", "", true);
+						 var t_item = "@請選擇地區";
+						for ( i = 0; i < t_area.length; i++) {
+							t_item = t_item + (t_item.length > 0 ? ',' : '') + t_area[i].noa + '@' + t_area[i].area;
+						}
+						q_cmbParse("cmbAreano", t_item);
+						q_cmbParse("cmbIareano", t_item);
+						if(abbm[q_recno]){
+							$("#cmbAreano").val(abbm[q_recno].areano);
+							$("#cmbIareano").val(abbm[q_recno].iareano);
+						}
+						
+						q_gt('areas', '', 0, 0, 0, "areas");
+						break;
+					case 'areas':
+						t_areas = _q_appendData("areas", "", true);
+						q_gt('areat', '', 0, 0, 0, "areat");
+						break;
+					case 'areat':
+						t_areat = _q_appendData("areat", "", true);
+						refresh(q_recno);
+						break;
 					case 'custtype':
 						var as = _q_appendData("custtype", "", true);
 						if (as[0] != undefined) {
@@ -330,6 +373,79 @@
 					}
 				}
 			}
+			
+			function change_areas(typea) {
+				if(typea=='A'){//地址
+					if($('#cmbAreano').val()!=''){
+						//處理內容
+						$('#cmbAreasno').text('');
+						$('#cmbAreatno').text('');
+						q_cmbParse("cmbAreatno",'@----------');
+						var c_areas='@----------';
+						for (i=0;i<t_areas.length;i++){
+							if(t_areas[i].noa==$('#cmbAreano').val())
+								c_areas=c_areas+','+t_areas[i].noq+"@"+t_areas[i].city;
+						}
+						q_cmbParse("cmbAreasno", c_areas);
+					}else{
+						$('#cmbAreasno').text('');
+						$('#cmbAreatno').text('');
+						q_cmbParse("cmbAreasno",'@----------');
+						q_cmbParse("cmbAreatno",'@----------');
+					}
+				}else{//發票
+					if($('#cmbIareano').val()!=''){
+						//處理內容
+						$('#cmbIareasno').text('');
+						$('#cmbIareatno').text('');
+						q_cmbParse("cmbIareatno",'@----------');
+						var c_areas='@----------';
+						for (i=0;i<t_areas.length;i++){
+							if(t_areas[i].noa==$('#cmbIareano').val())
+								c_areas=c_areas+','+t_areas[i].noq+"@"+t_areas[i].city;
+						}
+						q_cmbParse("cmbIareasno", c_areas);
+					}else{
+						$('#cmbIareasno').text('');
+						$('#cmbIareatno').text('');
+						q_cmbParse("cmbIareasno",'@----------');
+						q_cmbParse("cmbIareatno",'@----------');
+					}
+				}
+			}
+			
+			function change_areat(typea) {
+				if(typea=='A'){//地址
+					if($('#cmbAreano').val()!='' && $('#cmbAreasno').val()!=''){
+						//處理內容
+						$('#cmbAreatno').text('');
+						var c_areat='@----------';
+						for (i=0;i<t_areat.length;i++){
+							if(t_areat[i].noa==$('#cmbAreano').val() && t_areat[i].noq==$('#cmbAreasno').val())
+								c_areat=c_areat+','+t_areat[i].nor+"@"+t_areat[i].district;
+						}
+						q_cmbParse("cmbAreatno", c_areat);
+					}else{
+						$('#cmbAreatno').text('');
+						q_cmbParse("cmbAreatno",'@----------');
+					}
+				}else{//發票
+					if($('#cmbIareano').val()!='' && $('#cmbIareasno').val()!=''){
+						//處理內容
+						$('#cmbIareatno').text('');
+						var c_areat='@----------';
+						for (i=0;i<t_areat.length;i++){
+							if(t_areat[i].noa==$('#cmbAreano').val() && t_areat[i].noq==$('#cmbAreasno').val())
+								c_areat=c_areat+','+t_areat[i].nor+"@"+t_areat[i].district;
+						}
+						q_cmbParse("cmbIareatno", c_areat);
+					}else{
+						$('#cmbIareatno').text('');
+						q_cmbParse("cmbIareatno",'@----------');
+					}
+				}
+			}
+			
 
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)// 1-3
@@ -444,6 +560,19 @@
 				if(tmp_noa!=$('#txtNoa').val()){
 					refreshclear();
 					tmp_noa=$('#txtNoa').val();
+				}
+				
+				change_areas('A');
+				change_areas('I');
+				if(abbm[q_recno]){
+					$("#cmbAreasno").val(abbm[q_recno].areasno);
+					$("#cmbIareasno").val(abbm[q_recno].iareasno);
+				}
+				change_areat('A');
+				change_areat('I');
+				if(abbm[q_recno]){
+					$("#cmbAreatno").val(abbm[q_recno].areatno);
+					$("#cmbIareatno").val(abbm[q_recno].iareatno);
 				}
 			}
 			
@@ -889,7 +1018,10 @@
 						<td colspan='3'>
 							<select id="cmbCountry" class="txt c2" style="display: none;"> </select>
 							<a style="float: left;display: none;">-</a>
-							<input id="txtAddr" type="text" class="txt c1"/>
+							<select id="cmbAreano" class="txt c2" style="width: 15%;"> </select>
+							<select id="cmbAreasno" class="txt c2" style="width: 13%;"> </select>
+							<select id="cmbAreatno" class="txt c2" style="width: 13%;"> </select>
+							<input id="txtAddr" type="text" class="txt c1" style="width: 58%;"/>
 						</td>
 					</tr>
 					<tr>
@@ -903,9 +1035,21 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblTel' class="lbl"> </a></td>
-						<td><input id="txtTel" type="text" class="txt c1"/></td>
+						<td>
+							<input id="txtTcode" type="text" class="txt c1" style="width: 15%;"/>
+							<a style="float:left;">-</a>
+							<input id="txtTareacode" type="text" class="txt c1" style="width: 15%;"/>
+							<a style="float:left;">-</a>
+							<input id="txtTel" type="text" class="txt c1" style="width: 65%;"/>
+						</td>
 						<td><span> </span><a id='lblFax' class="lbl"> </a></td>
-						<td><input id="txtFax" type="text" class="txt c1"/></td>
+						<td>
+							<input id="txtFcode" type="text" class="txt c1" style="width: 15%;"/>
+							<a style="float:left;">-</a>
+							<input id="txtFareacode" type="text" class="txt c1" style="width: 15%;"/>
+							<a style="float:left;">-</a>
+							<input id="txtFax" type="text" class="txt c1" style="width: 65%;"/>
+						</td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblStatus' class="lbl"> </a></td>
@@ -930,12 +1074,18 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblInvoaddr' class="lbl"> </a></td>
-						<td>
-							<input id="txtInvopost" type="text" class="txt c4"/><a style="float: left;">-</a>
-							<input id="txtInvoaddr" type="text" class="txt c5"/>
+						<td colspan="3">
+							<input id="txtInvopost" type="text" class="txt c4" style="display: none;"/>
+							<a style="float: left;display: none;">-</a>
+							<select id="cmbIareano" class="txt c2" style="width: 15%;"> </select>
+							<select id="cmbIareasno" class="txt c2" style="width: 13%;"> </select>
+							<select id="cmbIareatno" class="txt c2" style="width: 13%;"> </select>
+							<input id="txtInvoaddr" type="text" class="txt c5" style="width: 58%;"/>
 						</td>
+					</tr>
+					<tr>
 						<td><span> </span><a id='lblInvomemo' class="lbl"> </a></td>
-						<td><input id="txtInvomemo" type="text" class="txt c1"/></td>
+						<td colspan="3"><input id="txtInvomemo" type="text" class="txt c1"/></td>
 					</tr>
 					<tr class="conn">
 						<td colspan="4" style="text-align: center;"><a class="lbl" style="float: none;">主帳號(型錄聯絡人)</a></td>
@@ -952,7 +1102,10 @@
 						<td><span> </span><a id='lblJob' class="lbl"> </a></td>
 						<td><input id="txtJob" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblMobile' class="lbl"> </a></td>
-						<td><input id="txtMobile" type="text" class="txt c1"/></td>
+						<td>
+							<input id="txtMcode" type="text" class="txt c4"/><a style="float:left;">-</a>
+							<input id="txtMobile" type="text" class="txt c5"/>
+						</td>
 						<td> </td>
 					</tr>
 					<tr class="conn">
@@ -977,7 +1130,10 @@
 						<td><span> </span><a id='lblSjob' class="lbl"> </a></td>
 						<td><input id="txtSjob" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblSmobile' class="lbl"> </a></td>
-						<td><input id="txtSmobile" type="text" class="txt c1"/></td>
+						<td>
+							<input id="txtSmcode" type="text" class="txt c4"/><a style="float:left;">-</a>
+							<input id="txtSmobile" type="text" class="txt c5"/>
+						</td>
 						<td> </td>
 					</tr>
 					<tr class="sconn">

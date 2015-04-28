@@ -237,6 +237,11 @@
 		                	t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
+							if(dec($('#txtHprice_'+b_seq).val())<dec($('#txtLprice_'+b_seq).val())){
+                    			var tmp=$('#txtHprice_'+b_seq).val();
+                    			$('#txtHprice_'+b_seq).val($('#txtLprice_'+b_seq).val());
+                    			$('#txtLprice_'+b_seq).val(tmp);
+                    		}
 		                	q_tr('txtAprice_'+b_seq,q_div(q_add(q_float('txtHprice_'+b_seq),q_float('txtLprice_'+b_seq)),2));
 						});
 						
@@ -244,6 +249,11 @@
 		                	t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
+							if(dec($('#txtHprice_'+b_seq).val())<dec($('#txtLprice_'+b_seq).val())){
+                    			var tmp=$('#txtHprice_'+b_seq).val();
+                    			$('#txtHprice_'+b_seq).val($('#txtLprice_'+b_seq).val());
+                    			$('#txtLprice_'+b_seq).val(tmp);
+                    		}
 		                	q_tr('txtAprice_'+b_seq,q_div(q_add(q_float('txtHprice_'+b_seq),q_float('txtLprice_'+b_seq)),2));
 						});
 		            }
