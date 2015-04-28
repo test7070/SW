@@ -110,7 +110,7 @@
 				});
 				
 				$('#txtNoa').change(function(e){
-					$(this).val($.trim($(this).val()).toUpperCase());		
+					$(this).val($.trim($(this).val()));		
 					if($(this).val().length>0){
 						if((/^(\w+|\w+\u002D\w+)$/g).test($(this).val())){
 							//t_where="where=^^ noa='"+$(this).val()+"'^^";
@@ -516,7 +516,7 @@
 						t_id=t_id+(t_id.length>0?',':'')+("'"+$('#txtId_'+i).val()+"'");
 					}
 				}
-				t_where="where=^^ id in ("+t_id+") and noa!='"+$('#txtNoa').val()+"' ^^";
+				t_where="where=^^ id in ("+t_id+") collate Chinese_Taiwan_Stroke_CS_AS and noa!='"+$('#txtNoa').val()+"' ^^";
 				q_gt('custs', t_where, 0, 0, 0, "btnOkCustsId", r_accy);
 				//wrServer($('#txtNoa').val());
 			}
@@ -640,7 +640,7 @@
 							b_seq = t_IdSeq;
 							$('.dbbt').css('top', $('.dbbs').offset().top+$('.dbbs').height()+5);
 							$('.dbbt').css('left', $('.dbbs').width()-$('.dbbt').width());
-							t_bbt_id=$('#txtId_'+b_seq).val().toUpperCase();
+							t_bbt_id=$('#txtId_'+b_seq).val();
 							bbtchange();
 						 	$('.dbbt').show()
 						});
@@ -649,14 +649,14 @@
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							$(this).val($(this).val().toUpperCase());
-							if((/^[A-Z0-9]{6,20}$/g).test($(this).val())){
+							$(this).val($(this).val());
+							if((/^[A-Za-z0-9]{4,12}$/g).test($(this).val())){
 								if(!emp($(this).val())){
-									t_where="where=^^ id='"+$(this).val()+"'^^";
+									t_where="where=^^ id='"+$(this).val()+"' collate Chinese_Taiwan_Stroke_CS_AS ^^";
 									q_gt('custs', t_where, 0, 0, 0, "checkCustsId_"+b_seq, r_accy);
 								}
 							}else{
-								alert(q_getMsg('lblId_s')+'請輸入6~20個英文或數字!!');
+								alert(q_getMsg('lblId_s')+'請輸入4~12個英文或數字!!');
 								$(this).val('');
 							}
 						});
