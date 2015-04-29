@@ -513,10 +513,10 @@
 				var t_id='';
 				for (var i = 0; i < q_bbsCount; i++) {
 					if(!emp($('#txtId_'+i).val())){
-						t_id=t_id+(t_id.length>0?',':'')+("'"+$('#txtId_'+i).val()+"'");
+						t_id=t_id+(t_id.length>0?' and':'')+("id='"+$('#txtId_'+i).val()+"' collate Chinese_Taiwan_Stroke_CS_AS ");
 					}
 				}
-				t_where="where=^^ id in ("+t_id+") collate Chinese_Taiwan_Stroke_CS_AS and noa!='"+$('#txtNoa').val()+"' ^^";
+				t_where="where=^^  ("+t_id+") and noa!='"+$('#txtNoa').val()+"' collate Chinese_Taiwan_Stroke_CS_AS^^";
 				q_gt('custs', t_where, 0, 0, 0, "btnOkCustsId", r_accy);
 				//wrServer($('#txtNoa').val());
 			}

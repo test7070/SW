@@ -56,8 +56,8 @@
                 mainForm(1);
             }
 			
-			var n_typeb=[],n_typec=[],n_typed=[],n_typeNow=[];
-			n_typeNow.push({typea:'',typeb:'',typec:'',typed:''});
+			/*var n_typeb=[],n_typec=[],n_typed=[],n_typeNow=[];
+			n_typeNow.push({typea:'',typeb:'',typec:'',typed:''});*/
             function mainPost() {
             	bbmMask = [['txtDatea', '9999/99/99'],['txtTimea', '99:99']];
                 q_mask(bbmMask);
@@ -154,6 +154,40 @@
 							$('.'+className).hide();
 					});	
 				}
+				
+				$("input[name='typea2']").click(function() {
+					savetypea2();
+					var t_values=$(this).val();
+					if($(this).prop('checked')){
+						//自動勾選上層
+						$("input[name='typea2']").each(function() {
+							if(t_values.substr(0,$(this).val().length)==$(this).val()){
+									$(this).prop('checked',true);
+							}
+						});
+					}else{
+						//取消下層
+						$("input[name='typea2']").each(function() {
+							if(t_values==$(this).val().substr(0,t_values.length) && t_values.length<$(this).val().length){
+									$(this).prop('checked',false);
+							}
+						});
+					}
+						savetypea2();
+						readTypea2();
+				});
+				
+				var levels2=dec(replaceAll($("input[name='typea2']").last().attr('id'),'typea',''));
+				for (var i=levels+1;i<=levels2;i++){
+					$('.typea'+i).hide();
+					$('#typea'+i).click(function() {
+						var className = $(this).attr('id');
+						if($(this).prop('checked'))
+							$('.'+className).show();
+						else
+							$('.'+className).hide();
+					});	
+				}
                 
                 $('.btnImg').change(function() {
 					event.stopPropagation(); 
@@ -222,7 +256,7 @@
 				return function() {return s4() + s4() + s4() + s4();};
 			})();
             
-            function Typeachange() {
+            /*function Typeachange() {
 				if($('#cmbTypea').val()!=''){
 					//處理內容
 					$('#cmbTypeb').text('');
@@ -256,7 +290,7 @@
 					if(abbm[q_recno])
 						$('#cmbTyped').val(n_typeNow[0].typed);
 				}
-			}
+			}*/
 			
 			function readTypea() {
 				var t_typea=$('#txtTypea').val().split(',');
@@ -272,6 +306,32 @@
 				
 				var levels=dec(replaceAll($("input[name='typea']").last().attr('id'),'typea',''));
 				for (var i=1;i<=levels;i++){
+					$('.typea'+i).hide();
+					$('#typea'+i).each(function() {
+						var className = $(this).attr('id');
+						if($(this).prop('checked'))
+							$('.'+className).show();
+						else
+							$('.'+className).hide();
+					});	
+				}
+			}
+			
+			function readTypea2() {
+				var t_typea2=$('#txtTypea2').val().split(',');
+				$("input[name='typea2']").prop('checked',false);
+				//核取
+				$("input[name='typea2']").each(function() {
+					for(var i=0;i<t_typea2.length;i++){
+						if(t_typea2[i]==$(this).val()){
+							$(this).prop('checked',true);
+						}	
+					}
+				});
+				
+				var levels=dec(replaceAll($("input[name='typea']").last().attr('id'),'typea',''));
+				var levels2=dec(replaceAll($("input[name='typea2']").last().attr('id'),'typea',''));
+				for (var i=levels+1;i<=levels2;i++){
 					$('.typea'+i).hide();
 					$('#typea'+i).each(function() {
 						var className = $(this).attr('id');
@@ -328,6 +388,114 @@
 					}
 					if(levels[dec(t_typea[i].substr(0,2))])
 						levels[dec(t_typea[i].substr(0,2))].counts++;
+				}
+				//寫入底層是否有資料
+				for (var i=0;i<levels.length; i++){
+					if(levels[i]!=undefined){
+						for (var j=0;j<levels[i].child.length; j++){
+							if(levels[i].child[j]!=undefined){
+								for (var k=0;k<levels[i].child[j].child.length; k++){
+									if(levels[i].child[j].child[k]!=undefined){
+										for (var l=0;l<levels[i].child[j].child[k].child.length; l++){
+											if(levels[i].child[j].child[k].child[l]!=undefined){												
+												//l
+												if(levels[i].child[j].child[k].child[l].check)
+													levels[i].child[j].child[k].lcheck=true;
+											}
+										}
+										//K
+										if(levels[i].child[j].child[k].check)
+											levels[i].child[j].lcheck=true;
+									}
+								}
+								//j
+								if(levels[i].child[j].check)
+									levels[i].lcheck=true;
+							}
+						}
+					}
+				}
+				
+				for (var i=0;i<levels.length; i++){
+					if(levels[i]!=undefined){
+						for (var j=0;j<levels[i].child.length; j++){
+							if(levels[i].child[j]!=undefined){
+								for (var k=0;k<levels[i].child[j].child.length; k++){
+									if(levels[i].child[j].child[k]!=undefined){
+										//K
+										if(levels[i].child[j].child[k].check!=levels[i].child[j].child[k].lcheck && levels[i].child[j].child[k].child.length!=0)
+											levels[i].hcheck=false;
+									}
+								}
+								//j
+								if(levels[i].child[j].check!=levels[i].child[j].lcheck && levels[i].child[j].child.length!=0)
+									levels[i].hcheck=false;
+							}
+						}
+						//i
+						if(levels[i].lcheck != levels[i].check && levels[i].child.length!=0)
+							levels[i].hcheck=false;
+					}
+				}
+				
+				var t_msg='';
+				for (var i=0;i<levels.length; i++){
+					if(levels[i]!=undefined){
+						if(levels[i].counts!=0 && !levels[i].hcheck)
+							t_msg=t_msg+(t_msg.length>0?"\n":"")+levels[i].item+'子階層未選取!!';
+					}
+				}
+				if (t_msg.length>0){
+					alert(t_msg);
+					return false;
+				}else
+					return true;
+			}
+			
+			function checkTypea2() {
+				//紀錄最高階層 
+				var levels=[];
+				$("input[name='typea2']").each(function() {
+					if(levels[dec($(this).val().substr(0,2))]==undefined)
+						levels[dec($(this).val().substr(0,2))]={level:0,hcheck:true,lcheck:false,check:false,counts:0,item:'',child:[]}
+					if(levels[dec($(this).val().substr(0,2))].level<($(this).val().length/2))
+						levels[dec($(this).val().substr(0,2))].level=($(this).val().length/2);
+					if(($(this).val().length/2)==1)
+						levels[dec($(this).val().substr(0,2))].item=$('#item'+$(this).val()).text();
+					if(($(this).val().length/2)==2){
+						if(levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))]==undefined)
+							levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))]={lcheck:false,check:false,val:$(this).val(),child:[]};
+						levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].val=$(this).val();
+					}
+					if(($(this).val().length/2)==3){
+						if(levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))]==undefined)
+							levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))]={lcheck:false,check:false,val:$(this).val(),child:[]};
+						levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))].val=$(this).val();
+					}
+					if(($(this).val().length/2)==4){
+						if(levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))].child[dec($(this).val().substr(6,2))]==undefined)
+							levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))].child[dec($(this).val().substr(6,2))]={lcheck:false,check:false,val:$(this).val(),child:[]};
+						levels[dec($(this).val().substr(0,2))].child[dec($(this).val().substr(2,2))].child[dec($(this).val().substr(4,2))].child[dec($(this).val().substr(6,2))].child.val=$(this).val();
+					}
+				});
+				
+				//目前資料
+				var t_typea2=$('#txtTypea2').val().split(',');
+				for (var i=0;i<t_typea2.length; i++){
+					if((t_typea2[i].length/2)==1 ){
+						levels[dec(t_typea2[i].substr(0,2))].check=true;
+					}
+					if((t_typea2[i].length/2)==2 ){
+						levels[dec(t_typea2[i].substr(0,2))].child[dec(t_typea2[i].substr(2,2))].check=true;
+					}
+					if((t_typea2[i].length/2)==3 ){
+						levels[dec(t_typea2[i].substr(0,2))].child[dec(t_typea2[i].substr(2,2))].child[dec(t_typea2[i].substr(4,2))].check=true;
+					}
+					if((t_typea2[i].length/2)==4 ){
+						levels[dec(t_typea2[i].substr(0,2))].child[dec(t_typea2[i].substr(2,2))].child[dec(t_typea2[i].substr(4,2))].child[dec(t_typea2[i].substr(6,2))].check=true;
+					}
+					if(levels[dec(t_typea2[i].substr(0,2))])
+						levels[dec(t_typea2[i].substr(0,2))].counts++;
 				}
 				//寫入底層是否有資料
 				for (var i=0;i<levels.length; i++){
@@ -518,7 +686,7 @@
 								$("#cmbTypea").val(abbm[q_recno].typea);
 						}
                 		break;
-                	case 'newstypeb':
+                	/*case 'newstypeb':
                 		n_typeb = _q_appendData("newstypeb", "", true);
                 		Typeachange();
                 		break;
@@ -529,7 +697,7 @@
                 	case 'newstyped':
                 		n_typed = _q_appendData("newstyped", "", true);
                 		Typeachange();
-                		break;
+                		break;*/
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
@@ -589,10 +757,24 @@
 				$('#txtTypea').val(t_typea);
             } 
             
+            function savetypea2() {
+                var t_typea2=''
+            	$("input[name='typea2']").each(function(index) {
+            		if($(this).prop('checked'))
+						t_typea2=t_typea2+(t_typea2.length>0?',':'')+$(this).val();
+				});
+				$('#txtTypea2').val(t_typea2);
+            } 
+            
             function btnOk() {
             	Lock(1,{opacity:0});
             	savetypea();
+            	savetypea2();
             	if(!checkTypea()){
+            		Unlock(1);
+                    return;
+            	}
+            	if(!checkTypea2()){
             		Unlock(1);
                     return;
             	}
@@ -600,7 +782,7 @@
             	var t_err = '';
                 t_err = q_chkEmpField([['txtTitle', q_getMsg('lblTitle')],['txtContents', q_getMsg('lblContents')]
                 ,['txtSssno', q_getMsg('lblSss')],['txtNamea', q_getMsg('lblSss')],['txtDatea', q_getMsg('lblDatea')],['txtTimea', q_getMsg('lblTimea')]
-                ,['cmbStype', q_getMsg('lblStype')],['txtTypea', q_getMsg('lblTypea')],['cmbArea', q_getMsg('lblArea')]
+                ,['cmbStype', q_getMsg('lblStype')],['txtTypea', q_getMsg('lblTypea')],['txtTypea2', q_getMsg('lblTypea2')],['cmbArea', q_getMsg('lblArea')]
                 ,['cmbRank', q_getMsg('lblRank')]]);
                 
                 if (t_err.length > 0) {
@@ -685,27 +867,30 @@
                 _refresh(recno);
                 $('#txtContents').val(replaceAll($('#txtContents').val(),'chr(10)','\n'));
             	$('#txtContents2').val(replaceAll($('#txtContents2').val(),'chr(10)','\n')) ;
-                if(abbm[q_recno]){
+                /*if(abbm[q_recno]){
 	                n_typeNow[0].typea=abbm[q_recno].typea;
 	                n_typeNow[0].typeb=abbm[q_recno].typeb;
 	                n_typeNow[0].typec=abbm[q_recno].typec;
 	                n_typeNow[0].typed=abbm[q_recno].typed;
-				}
+				}*/
                 //Typeachange();  
                 ShowImglbl();
                 ChangeGB();
                 readTypea();
+                readTypea2();
             }
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                 if(t_para){
                 	$("input[name='typea']").attr('disabled', 'disabled');
+                	$("input[name='typea2']").attr('disabled', 'disabled');
                 	$('.btnImg').attr('disabled', 'disabled');
                 	$('.btnAtt').attr('disabled', 'disabled');
                 	$('#txtDatea').datepicker( 'destroy' );
                 }else{
                 	$("input[name='typea']").removeAttr('disabled');
+                	$("input[name='typea2']").removeAttr('disabled');
                 	$('.btnImg').removeAttr('disabled', 'disabled');
                 	$('.btnAtt').removeAttr('disabled', 'disabled');
                 	$('#txtDatea').removeClass('hasDatepicker')
@@ -1280,9 +1465,12 @@
 						</td>
 					</tr>
 					<tr>
-						<td> </td>
+						<td>
+							<span> </span><a id='lblTypea2' class="lbl"> </a>
+							<input id="txtTypea2" type="hidden"  class="txt c1"/>
+						</td>
 						<td colspan="5">
-							<input id="typea6" name="typea" type="checkbox" value="06"/><a id='item06'>市場脈動</a>
+							<input id="typea6" name="typea2" type="checkbox" value="06"/><a id='item06'>市場脈動</a>
 						</td>
 					</tr>
 					<tr class="typea6">
@@ -1292,13 +1480,13 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td>
-										<input name="typea" type="checkbox" value="0601"/>市場供需
-										<input name="typea" type="checkbox" value="0602"/>行情波動
-										<input name="typea" type="checkbox" value="0603"/>產銷統計
-										<input name="typea" type="checkbox" value="0604"/>公司財報
-										<input name="typea" type="checkbox" value="0605"/>進出口資料
-										<input name="typea" type="checkbox" value="0606"/>建築
-										<input name="typea" type="checkbox" value="0607"/>其它
+										<input name="typea2" type="checkbox" value="0601"/>市場供需
+										<input name="typea2" type="checkbox" value="0602"/>行情波動
+										<input name="typea2" type="checkbox" value="0603"/>產銷統計
+										<input name="typea2" type="checkbox" value="0604"/>公司財報
+										<input name="typea2" type="checkbox" value="0605"/>進出口資料
+										<input name="typea2" type="checkbox" value="0606"/>建築
+										<input name="typea2" type="checkbox" value="0607"/>其它
 									</td>
 								</tr>
 							</table>
@@ -1307,7 +1495,7 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea7" name="typea" type="checkbox" value="07"/><a id='item07'>政策</a>
+							<input id="typea7" name="typea2" type="checkbox" value="07"/><a id='item07'>政策</a>
 						</td>
 					</tr>
 					<tr class="typea7">
@@ -1317,11 +1505,11 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td>
-										<input name="typea" type="checkbox" value="0701"/>稅率
-										<input name="typea" type="checkbox" value="0702"/>傾銷
-										<input name="typea" type="checkbox" value="0703"/>環保
-										<input name="typea" type="checkbox" value="0704"/>會議
-										<input name="typea" type="checkbox" value="0705"/>其它
+										<input name="typea2" type="checkbox" value="0701"/>稅率
+										<input name="typea2" type="checkbox" value="0702"/>傾銷
+										<input name="typea2" type="checkbox" value="0703"/>環保
+										<input name="typea2" type="checkbox" value="0704"/>會議
+										<input name="typea2" type="checkbox" value="0705"/>其它
 									</td>
 								</tr>
 							</table>
@@ -1330,7 +1518,7 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea8" name="typea" type="checkbox" value="08"/><a id='item08'>交通運輸</a>
+							<input id="typea8" name="typea2" type="checkbox" value="08"/><a id='item08'>交通運輸</a>
 						</td>
 					</tr>
 					<tr class="typea8">
@@ -1340,10 +1528,10 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td>
-										<input name="typea" type="checkbox" value="0801"/>船運
-										<input name="typea" type="checkbox" value="0802"/>陸運
-										<input name="typea" type="checkbox" value="0803"/>交通政策
-										<input name="typea" type="checkbox" value="0804"/>其它
+										<input name="typea2" type="checkbox" value="0801"/>船運
+										<input name="typea2" type="checkbox" value="0802"/>陸運
+										<input name="typea2" type="checkbox" value="0803"/>交通政策
+										<input name="typea2" type="checkbox" value="0804"/>其它
 									</td>
 								</tr>
 							</table>
@@ -1352,7 +1540,7 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea9" name="typea" type="checkbox" value="09"/><a id='item09'>企業動態</a>
+							<input id="typea9" name="typea2" type="checkbox" value="09"/><a id='item09'>企業動態</a>
 						</td>
 					</tr>
 					<tr class="typea9">
@@ -1362,14 +1550,14 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td>
-										<input name="typea" type="checkbox" value="0901"/>盤價
-										<input name="typea" type="checkbox" value="0902"/>盤勢預測
-										<input name="typea" type="checkbox" value="0903"/>營運進展
-										<input name="typea" type="checkbox" value="0904"/>人事異動
-										<input name="typea" type="checkbox" value="0905"/>財務危機
-										<input name="typea" type="checkbox" value="0906"/>突發事故
-										<input name="typea" type="checkbox" value="0907"/>投資
-										<input name="typea" type="checkbox" value="0908"/>其它
+										<input name="typea2" type="checkbox" value="0901"/>盤價
+										<input name="typea2" type="checkbox" value="0902"/>盤勢預測
+										<input name="typea2" type="checkbox" value="0903"/>營運進展
+										<input name="typea2" type="checkbox" value="0904"/>人事異動
+										<input name="typea2" type="checkbox" value="0905"/>財務危機
+										<input name="typea2" type="checkbox" value="0906"/>突發事故
+										<input name="typea2" type="checkbox" value="0907"/>投資
+										<input name="typea2" type="checkbox" value="0908"/>其它
 									</td>
 								</tr>
 							</table>
@@ -1378,7 +1566,7 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea10" name="typea" type="checkbox" value="10"/><a id='item10'>相關產業</a>
+							<input id="typea10" name="typea2" type="checkbox" value="10"/><a id='item10'>相關產業</a>
 						</td>
 					</tr>
 					<tr class="typea10">
@@ -1388,14 +1576,14 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td>
-										<input name="typea" type="checkbox" value="1001"/>造船
-										<input name="typea" type="checkbox" value="1002"/>汽車
-										<input name="typea" type="checkbox" value="1003"/>機械
-										<input name="typea" type="checkbox" value="1004"/>建築
-										<input name="typea" type="checkbox" value="1005"/>家電
-										<input name="typea" type="checkbox" value="1006"/>加工剪裁
-										<input name="typea" type="checkbox" value="1007"/>單軋業
-										<input name="typea" type="checkbox" value="1008"/>其它
+										<input name="typea2" type="checkbox" value="1001"/>造船
+										<input name="typea2" type="checkbox" value="1002"/>汽車
+										<input name="typea2" type="checkbox" value="1003"/>機械
+										<input name="typea2" type="checkbox" value="1004"/>建築
+										<input name="typea2" type="checkbox" value="1005"/>家電
+										<input name="typea2" type="checkbox" value="1006"/>加工剪裁
+										<input name="typea2" type="checkbox" value="1007"/>單軋業
+										<input name="typea2" type="checkbox" value="1008"/>其它
 									</td>
 								</tr>
 							</table>
@@ -1404,7 +1592,7 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea11" name="typea" type="checkbox" value="11"/><a id='item11'>應用開發</a>
+							<input id="typea11" name="typea2" type="checkbox" value="11"/><a id='item11'>應用開發</a>
 						</td>
 					</tr>
 					<tr class="typea11">
@@ -1414,10 +1602,10 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td>
-										<input name="typea" type="checkbox" value="1101"/>新技術
-										<input name="typea" type="checkbox" value="1102"/>新產品
-										<input name="typea" type="checkbox" value="1103"/>新設備
-										<input name="typea" type="checkbox" value="1104"/>其它
+										<input name="typea2" type="checkbox" value="1101"/>新技術
+										<input name="typea2" type="checkbox" value="1102"/>新產品
+										<input name="typea2" type="checkbox" value="1103"/>新設備
+										<input name="typea2" type="checkbox" value="1104"/>其它
 									</td>
 								</tr>
 							</table>
@@ -1426,7 +1614,7 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea12" name="typea" type="checkbox" value="12"/><a id='item12'>其它</a>
+							<input id="typea12" name="typea2" type="checkbox" value="12"/><a id='item12'>其它</a>
 						</td>
 					</tr>
 					<!--<tr class="typea">
