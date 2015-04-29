@@ -1454,7 +1454,9 @@
 										<input name="typea" type="checkbox" value="0502"/>鋁
 										<input name="typea" type="checkbox" value="0503"/>鋅
 										<input name="typea" type="checkbox" value="0504"/>鎳
-										<input name="typea" type="checkbox" value="0505"/>其它
+										<input name="typea" type="checkbox" value="0505"/>鉛
+										<input name="typea" type="checkbox" value="0506"/>錫
+										<input name="typea" type="checkbox" value="0599"/>其它
 									</td>
 								</tr>
 							</table>
@@ -1585,7 +1587,8 @@
 										<input name="typea2" type="checkbox" value="1005"/>家電
 										<input name="typea2" type="checkbox" value="1006"/>加工剪裁
 										<input name="typea2" type="checkbox" value="1007"/>單軋業
-										<input name="typea2" type="checkbox" value="1008"/>其它
+										<input name="typea2" type="checkbox" value="1008"/>團體組織
+										<input name="typea2" type="checkbox" value="1099"/>其它
 									</td>
 								</tr>
 							</table>
