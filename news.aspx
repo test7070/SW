@@ -723,6 +723,7 @@
                 ShowImglbl();
                 ChangeGB();
                 readTypea();
+                readTypea2();
                 $('#chkWatermark').prop('checked',true);
                 $('#chkOnline').prop('checked',true);
             }
@@ -735,6 +736,7 @@
                 ShowImglbl();
                 ChangeGB();
                 readTypea();
+                readTypea2();
             }
 
             function btnPrint() {
@@ -1461,7 +1463,7 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea13" name="typea" type="checkbox" value="13"/><a id='item13'>其它產品</a>
+							<input id="typea6" name="typea" type="checkbox" value="13"/><a id='item13'>其它產品</a>
 						</td>
 					</tr>
 					<tr>
@@ -1470,10 +1472,10 @@
 							<input id="txtTypea2" type="hidden"  class="txt c1"/>
 						</td>
 						<td colspan="5">
-							<input id="typea6" name="typea2" type="checkbox" value="06"/><a id='item06'>市場脈動</a>
+							<input id="typea7" name="typea2" type="checkbox" value="06"/><a id='item06'>市場脈動</a>
 						</td>
 					</tr>
-					<tr class="typea6">
+					<tr class="typea7">
 						<td> </td>
 						<td colspan="5">
 							<table style="width: 100%;">
@@ -1495,10 +1497,10 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea7" name="typea2" type="checkbox" value="07"/><a id='item07'>政策</a>
+							<input id="typea8" name="typea2" type="checkbox" value="07"/><a id='item07'>政策</a>
 						</td>
 					</tr>
-					<tr class="typea7">
+					<tr class="typea8">
 						<td> </td>
 						<td colspan="5">
 							<table style="width: 100%;">
@@ -1518,10 +1520,10 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea8" name="typea2" type="checkbox" value="08"/><a id='item08'>交通運輸</a>
+							<input id="typea9" name="typea2" type="checkbox" value="08"/><a id='item08'>交通運輸</a>
 						</td>
 					</tr>
-					<tr class="typea8">
+					<tr class="typea9">
 						<td> </td>
 						<td colspan="5">
 							<table style="width: 100%;">
@@ -1540,10 +1542,10 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea9" name="typea2" type="checkbox" value="09"/><a id='item09'>企業動態</a>
+							<input id="typea10" name="typea2" type="checkbox" value="09"/><a id='item09'>企業動態</a>
 						</td>
 					</tr>
-					<tr class="typea9">
+					<tr class="typea10">
 						<td> </td>
 						<td colspan="5">
 							<table style="width: 100%;">
@@ -1566,10 +1568,10 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea10" name="typea2" type="checkbox" value="10"/><a id='item10'>相關產業</a>
+							<input id="typea11" name="typea2" type="checkbox" value="10"/><a id='item10'>相關產業</a>
 						</td>
 					</tr>
-					<tr class="typea10">
+					<tr class="typea11">
 						<td> </td>
 						<td colspan="5">
 							<table style="width: 100%;">
@@ -1592,10 +1594,10 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea11" name="typea2" type="checkbox" value="11"/><a id='item11'>應用開發</a>
+							<input id="typea12" name="typea2" type="checkbox" value="11"/><a id='item11'>應用開發</a>
 						</td>
 					</tr>
-					<tr class="typea11">
+					<tr class="typea12">
 						<td> </td>
 						<td colspan="5">
 							<table style="width: 100%;">
@@ -1614,7 +1616,7 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
-							<input id="typea12" name="typea2" type="checkbox" value="12"/><a id='item12'>其它</a>
+							<input id="typea13" name="typea2" type="checkbox" value="12"/><a id='item12'>其它</a>
 						</td>
 					</tr>
 					<!--<tr class="typea">

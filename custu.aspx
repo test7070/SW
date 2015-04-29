@@ -50,7 +50,7 @@
             function mainPost() {
             	bbmMask = [['txtDatea', '9999/99/99'],['txtInvodate', '9999/99/99']];
                 q_mask(bbmMask);
-                q_cmbParse("cmbCobtype", ',二聯,三聯');
+                q_cmbParse("cmbCobtype", ',二聯式,三聯式');
                 q_cmbParse("cmbTypea", ','+q_getPara('custu.typea'));
                 q_cmbParse("cmbAcc", ','+q_getPara('custu.acc'));
                 q_cmbParse("cmbKind", ','+q_getPara('custu.kind'));
