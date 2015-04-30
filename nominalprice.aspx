@@ -291,7 +291,7 @@
 						$('.hmoney').show();
 		    			$('.lmoney').show();
 						break;
-					case 'fs'://豐興
+					case 'fh'://豐興
 						$('.hmoney').show();
 		    			$('.lmoney').show();
 						break;
