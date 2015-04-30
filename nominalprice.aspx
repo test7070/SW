@@ -108,7 +108,7 @@
 			var curData = new currentData();
 
 		    function mainPost() {
-		        bbmMask = [['txtMon', '9999/99']];
+		        bbmMask = [['txtMon', '9999/99/99']];
 		        q_mask(bbmMask);
 		        
 		        q_cmbParse("cmbSteel", q_getPara('nominalprice.steel'));
@@ -316,7 +316,7 @@
 					curData.paste();
 				}
 		        $('#txtNoa').val('AUTO');
-				$('#txtMon').val(q_date().substr(0,7));
+				$('#txtMon').val(q_date());
 				$('#cmbSteel').focus();
 				ChangeGB();
 				bbschange();
