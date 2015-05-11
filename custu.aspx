@@ -19,8 +19,8 @@
 		<script type="text/javascript"> hs.graphicsDir = '../highslide/graphics/'; hs.showCredits = false; hs.outlineType = 'rounded-white'; hs.outlineWhileAnimating = true; </script>
         <script type="text/javascript">    
             var q_name = "custu";
-            var q_readonly = ['txtNoa','txtWorker','txtWorker2'];
-            var bbmNum = [['txtMoney', 15, 0,1],['txtInvomoney', 15, 0,1]];
+            var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtId'];
+            var bbmNum = [['txtMoney', 15, 0,1]];
             var bbmMask = [];
             q_sqlCount = 6;
             brwCount = 6;
@@ -47,13 +47,25 @@
                 // 1=Last  0=Top
             }
 			
+			var t_area=[],t_areas=[],t_areat=[];
             function mainPost() {
-            	bbmMask = [['txtDatea', '9999/99/99'],['txtInvodate', '9999/99/99']];
+            	bbmMask = [['txtIndate', '9999/99/99'],['txtInvodate', '9999/99/99']];
                 q_mask(bbmMask);
                 q_cmbParse("cmbCobtype", ',二聯式,三聯式');
-                q_cmbParse("cmbTypea", ','+q_getPara('custu.typea'));
-                q_cmbParse("cmbAcc", ','+q_getPara('custu.acc'));
-                q_cmbParse("cmbKind", ','+q_getPara('custu.kind'));
+                //q_cmbParse("cmbTypea", ','+q_getPara('custu.typea'));
+                //q_cmbParse("cmbAcc", ','+q_getPara('custu.acc'));
+                //q_cmbParse("cmbKind", ','+q_getPara('custu.kind'));
+                
+                q_gt('area', '', 0, 0, 0, "area");
+				q_cmbParse("cmbAreasno",'@----------');
+				q_cmbParse("cmbAreatno",'@----------');
+                
+                $('#cmbAreano').change(function() {
+					change_areas();
+				});
+				$('#cmbAreasno').change(function() {
+					change_areat();
+				});
                 
             }
             
@@ -68,12 +80,70 @@
 			
             function q_gtPost(t_name) {
                 switch (t_name) {
+                	case 'area':
+						t_area = _q_appendData("area", "", true);
+						 var t_item = "@請選擇地區";
+						for ( i = 0; i < t_area.length; i++) {
+							t_item = t_item + (t_item.length > 0 ? ',' : '') + t_area[i].noa + '@' + t_area[i].area;
+						}
+						q_cmbParse("cmbAreano", t_item);
+						if(abbm[q_recno]){
+							$("#cmbAreano").val(abbm[q_recno].areano);
+						}
+						
+						q_gt('areas', '', 0, 0, 0, "areas");
+						break;
+					case 'areas':
+						t_areas = _q_appendData("areas", "", true);
+						q_gt('areat', '', 0, 0, 0, "areat");
+						break;
+					case 'areat':
+						t_areat = _q_appendData("areat", "", true);
+						refresh(q_recno);
+						break;
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
                         break;
                 }  /// end switch
             }
+            
+            function change_areas() {
+				if($('#cmbAreano').val()!=''){
+					//處理內容
+					$('#cmbAreasno').text('');
+					$('#cmbAreatno').text('');
+					q_cmbParse("cmbAreatno",'@----------');
+					var c_areas='@----------';
+					for (i=0;i<t_areas.length;i++){
+						if(t_areas[i].noa==$('#cmbAreano').val())
+							c_areas=c_areas+','+t_areas[i].noq+"@"+t_areas[i].city;
+					}
+					q_cmbParse("cmbAreasno", c_areas);
+				}else{
+					$('#cmbAreasno').text('');
+					$('#cmbAreatno').text('');
+					q_cmbParse("cmbAreasno",'@----------');
+					q_cmbParse("cmbAreatno",'@----------');
+				}
+			}
+			
+			function change_areat(typea) {
+				if($('#cmbAreano').val()!='' && $('#cmbAreasno').val()!=''){
+					//處理內容
+					$('#cmbAreatno').text('');
+					var c_areat='@----------';
+					for (i=0;i<t_areat.length;i++){
+						if(t_areat[i].noa==$('#cmbAreano').val() && t_areat[i].noq==$('#cmbAreasno').val())
+							c_areat=c_areat+','+t_areat[i].nor+"@"+t_areat[i].district;
+					}
+					q_cmbParse("cmbAreatno", c_areat);
+				}else{
+					$('#cmbAreatno').text('');
+					q_cmbParse("cmbAreatno",'@----------');
+				}
+				
+			}
 
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)// 1-3
@@ -117,7 +187,7 @@
                 Lock(1,{opacity:0});
             	var t_err = '';
                 t_err = q_chkEmpField([['txtComp', q_getMsg('lblComp')],['txtSerial', q_getMsg('lblSerial')]
-                ,['txtDatea', q_getMsg('lblDatea')],['txtInvodate', q_getMsg('lblInvodate')]
+                ,['txtIndate', q_getMsg('lblIndate')],['txtInvodate', q_getMsg('lblInvodate')]
                 ,['txtMoney', q_getMsg('lblMoney')],['txtInvomoney', q_getMsg('lblInvomoney')]
                 ,['cmbCobtype', q_getMsg('lblCobtype')],['cmbTypea', q_getMsg('lblTypea')]
                 ,['cmbAcc', q_getMsg('lblAcc')],['cmbKind', q_getMsg('lblKind')]
@@ -156,16 +226,25 @@
 
             function refresh(recno) {
                 _refresh(recno);
+                
+                change_areas();
+				if(abbm[q_recno]){
+					$("#cmbAreasno").val(abbm[q_recno].areasno);
+				}
+				change_areat();
+				if(abbm[q_recno]){
+					$("#cmbAreatno").val(abbm[q_recno].areatno);
+				}
             }
             
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                  if(t_para){
-                 	$('#txtDatea').datepicker( 'destroy' );
+                 	$('#txtIndate').datepicker( 'destroy' );
                  	$('#txtInvodate').datepicker( 'destroy' );
                 }else{
-                	$('#txtDatea').removeClass('hasDatepicker')
-					$('#txtDatea').datepicker({ dateFormat: 'yy/mm/dd' });
+                	$('#txtIndate').removeClass('hasDatepicker')
+					$('#txtIndate').datepicker({ dateFormat: 'yy/mm/dd' });
 					$('#txtInvodate').removeClass('hasDatepicker')
 					$('#txtInvodate').datepicker({ dateFormat: 'yy/mm/dd' });
                 }
@@ -343,13 +422,13 @@
 					<tr>
 						<td align="center" style="width:3%"><a id='vewChk'> </a></td>
 						<td align="center" style="width:47%"><a id='vewComp'> </a></td>
-						<td align="center" style="width:25%"><a id='vewDatea'> </a></td>
+						<td align="center" style="width:25%"><a id='vewIndate'> </a></td>
 						<td align="center" style="width:25%"><a id='vewMoney'> </a></td>
 					</tr>
 					<tr>
 						<td ><input id="chkBrow.*" type="checkbox" style=''/></td>
 						<td align="center" id="comp">~comp</td>
-						<td align="center" id="datea">~datea</td>
+						<td align="center" id="indate">~indate</td>
 						<td align="center" id='money,0,1'>~money,0,1</td>
 					</tr>
 				</table>
@@ -357,23 +436,43 @@
 			<div class='dbbm' style="float: left;">
 				<table class="tbbm"  id="tbbm"   border="0" cellpadding='2'  cellspacing='5'>
 					<tr style="height:1px;">
-						<td style="width: 190px"> </td>
+						<td style="width: 170px"> </td>
 						<td style="width: 200px"> </td>
-						<td style="width: 150px"> </td>
+						<td style="width: 170px"> </td>
 						<td style="width: 200px"> </td>
 						<td style="width: 10px"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblComp' class="lbl"> </a></td>
+						<td><span> </span><a id='lblId' class="lbl"> </a></td>
 						<td>
+							<input id="txtId" type="text" class="txt c1"/>
+							<input id="txtSerial" type="hidden" />
+							<input id="txtNoa" type="hidden"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblComp' class="lbl"> </a></td>
+						<td colspan="3">
 							<input id="txtComp" type="text" class="txt c1"/>
 							<input id="txtCustno" type="hidden"/>
 						</td>
-						<td><span> </span><a id='lblSerial' class="lbl"> </a></td>
-						<td>
-							<input id="txtSerial" type="text" class="txt c1"/>
-							<input id="txtNoa" type="hidden"/>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblInvoname' class="lbl"> </a></td>
+						<td><input id="txtInvoname" type="text" class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblAddr' class="lbl"> </a></td>
+						<td colspan="3">
+							<select id="cmbAreano" class="txt c2" style="width: 15%;"> </select>
+							<select id="cmbAreasno" class="txt c2" style="width: 13%;"> </select>
+							<select id="cmbAreatno" class="txt c2" style="width: 13%;"> </select>
+							<input id="txtAddr" type="text" class="txt c1" style="width: 58%;"/>
 						</td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblCobtype' class="lbl"> </a></td>
+						<td><select id="cmbCobtype" class="txt c1"> </select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblInvotitle' class="lbl"> </a></td>
@@ -382,41 +481,17 @@
 						<td><input id="txtInvoserial" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
-						<td><input id="txtDatea" type="text" class="txt c1"/></td>
-						<td><span> </span><a id='lblInvodate' class="lbl"> </a></td>
-						<td><input id="txtInvodate" type="text" class="txt c1"/></td>
-					</tr>
-					<tr>
+						<td><span> </span><a id='lblIndate' class="lbl"> </a></td>
+						<td><input id="txtIndate" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblMoney' class="lbl"> </a></td>
 						<td><input id="txtMoney" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id='lblInvomoney' class="lbl"> </a></td>
-						<td><input id="txtInvomoney" type="text" class="txt num c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblAddr' class="lbl"> </a><a class="lbl">-</a><a id='lblPost' class="lbl"> </a></td>
-						<td colspan="3">
-							<input id="txtPost" type="text" class="txt c2"/><a style="float: left;">-</a>
-							<input id="txtAddr" type="text" class="txt c3"/>
-						</td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblCobtype' class="lbl"> </a></td>
-						<td><select id="cmbCobtype" class="txt c1"> </select></td>
-						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
-						<td><select id="cmbTypea" class="txt c1"> </select></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblAcc' class="lbl"> </a></td>
-						<td><select id="cmbAcc" class="txt c1"> </select></td>
-						<td><span> </span><a id='lblKind' class="lbl"> </a></td>
-						<td><select id="cmbKind" class="txt c1"> </select></td>
-					</tr>
-					<tr>
+						<td><span> </span><a id='lblAccount' class="lbl"> </a></td>
+						<td><input id="txtAccount" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
-						<td colspan="3"><input id="txtMemo"  type="text"  class="txt c1"/></td>
-						<td> </td>
-					</tr>
+						<td><input id="txtMemo"  type="text"  class="txt c1"/></td>
+					</tr>					
 					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
 						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
