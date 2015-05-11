@@ -1173,7 +1173,7 @@
 					<td align="center" style="width:40px;"><a id='lblGroupa_s'> </a></td>
 					<td align="center" style="width:40px;"><a id='lblGroupb_s'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblConn_s'> </a></td>
-					<td align="center" style="width:150px;"><a id='lblEmail_s'> </a></td>
+					<td align="center" style="width:150px;display: none;"><a id='lblEmail_s'> </a></td>
 					<td align="center" style="width:50px;"><a id='lblMaster_s'> </a></td>
 					<!--<td align="center" style="width:80px;"><a id='lblTypea_s'> </a></td>-->
 					<td align="center" style="width:50px;"><a id='lblSconn_s'> </a></td>
@@ -1195,7 +1195,7 @@
 					<td align="center"><input id="chkGroupa.*" type="checkbox"/></td>
 					<td align="center"><input id="chkGroupb.*" type="checkbox"/></td>
 					<td><input type="text" id="txtConn.*" class="txt c1" /></td>
-					<td><input type="text" id="txtEmail.*" class="txt c1" /></td>
+					<td style="display: none;"><input type="text" id="txtEmail.*" class="txt c1" /></td>
 					<td align="center"><input id="chkMaster.*" type="checkbox"/></td>
 					<!--<td><select id="cmbTypea.*" class="txt c1"> </select></td>-->
 					<td align="center"><input id="chkSconn.*" type="checkbox"/></td>
