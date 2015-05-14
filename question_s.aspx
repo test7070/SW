@@ -39,6 +39,7 @@
 			function q_seekStr() {
 				t_bdate = $('#txtBdate').val();
 				t_edate = $('#txtEdate').val();
+				t_comp = $('#txtComp').val();
 				t_namea = $('#txtNamea').val();
 				t_email = $('#txtEmail').val();
 				t_typea = $('#cmbTypea').val();
@@ -47,7 +48,7 @@
 				t_edate = t_edate.length > 0 && t_edate.indexOf("_") > -1 ? t_edate.substr(0, t_edate.indexOf("_")) : t_edate;
 
 				var t_where = " 1=1 " + q_sqlPara2("datea", t_bdate, t_edate) 
-				+ q_sqlPara2("namea", t_namea)+ q_sqlPara2("email", t_email) + q_sqlPara2("typea", t_typea);
+				+ q_sqlPara2("namea", t_namea)+ q_sqlPara2("comp", t_comp)+ q_sqlPara2("email", t_email) + q_sqlPara2("typea", t_typea);
 
 				t_where = ' where=^^' + t_where + '^^ ';
 				return t_where;
@@ -68,6 +69,10 @@
 				<tr class='seek_tr'>
 					<td class='seek' style="width:30%;"><a id='lblTypea'> </a></td>
 					<td><select id="cmbTypea" style="width:215px; font-size:medium;"> </select></td>
+				</tr>
+				<tr class='seek_tr'>
+					<td class='seek' style="width:30%;"><a id='lblComp'> </a></td>
+					<td><input class="txt" id="txtComp" type="text" style="width:215px; font-size:medium;" /></td>
 				</tr>
 				<tr class='seek_tr'>
 					<td class='seek' style="width:30%;"><a id='lblNamea'> </a></td>
