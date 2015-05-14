@@ -141,10 +141,6 @@
                     Unlock(1);
                     return;
                 }
-                
-                if($('#chkIsemail').prop('checked')){
-                	//寄信
-                }
                             	
 				$('#txtWorker2').val(r_name);
 				
@@ -166,6 +162,15 @@
                 $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val(key_value);
                 _btnOk(key_value, bbmKey[0], '', '', 2);
             }
+            
+            function q_stPost() {
+				if (!(q_cur == 1 || q_cur == 2))
+					return false;
+					
+				if($('#chkIsemail').prop('checked')){
+                	q_func( "daysw.emailq", $('#txtNoa').val());    //客服中心回覆
+                }
+			}
 
             function refresh(recno) {
                 _refresh(recno);
