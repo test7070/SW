@@ -15,7 +15,7 @@
 		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
         <script type="text/javascript">    
             var q_name = "question";
-            var q_readonly = ['txtNoa','cmbTypea','txtDatea','txtNamea','txtEmail','txtWorker','txtWorker2'];
+            var q_readonly = ['txtNoa','txtTypea','txtDatea','txtNamea','txtEmail','txtWorker','txtWorker2','txtStatus','txtQuestion','txtComp','txtAppellation','txtTel','txtMobile','txtFax'];
             var bbmNum = [];
             var bbmMask = [];
             q_sqlCount = 6;
@@ -47,7 +47,7 @@
             function mainPost() {
             	bbmMask = [['txtDatea', '9999/99/99'],['txtRdate', '9999/99/99']];
                 q_mask(bbmMask);
-                q_cmbParse("cmbTypea", ','+q_getPara('question.typea'));
+                //q_cmbParse("cmbTypea", ','+q_getPara('question.typea'));
                 
                 $.datepicker.regional['zh-TW']={
 				   dayNames:["星期日","星期一","星期二","星期三","星期四","星期五","星期六"],
@@ -62,12 +62,24 @@
 				$.datepicker.setDefaults($.datepicker.regional["zh-TW"]);
 				
 				$('#btnIns').hide();
+				
 				$('#chkIsreplye').click(function() {
 					if($('#chkIsreplye').prop('checked')){
 						$('#txtStatus').val('已回覆');
+						if(emp($('#txtRdate').val()))
+                			$('#txtRdate').val(q_date());
 					}else{
 						$('#txtStatus').val('未回覆');
 					}
+				});
+				
+				$('#txtAnswer').change(function() {
+					if(!emp($(this).val())){
+						if(emp($('#txtRdate').val()))
+	                		$('#txtRdate').val(q_date());
+	                	$('#chkIsreplye').prop('checked',true);
+	                	$('#txtStatus').val('已回覆');
+                	}
 				});
 				
             }
@@ -107,8 +119,6 @@
                     return;
                 _btnModi();
                 $('#txtAnswer').focus();
-                if(emp($('#txtRdate').val()))
-                	$('#txtRdate').val(q_date());
             }
 
             function btnPrint() {
@@ -124,7 +134,7 @@
             function btnOk() {
                 Lock(1,{opacity:0});
             	var t_err = '';
-                t_err = q_chkEmpField([['txtRdate', q_getMsg('lblRdate')],['txtAnswer', q_getMsg('lblAnswer')]]);
+                t_err = q_chkEmpField([['txtAnswer', q_getMsg('lblAnswer')]]);
                 
                 if (t_err.length > 0) {
                     alert(t_err);
@@ -132,18 +142,12 @@
                     return;
                 }
                 
-                if($('#chkIsreplye').prop('checked')){
-					$('#txtStatus').val('已回覆');
-				}else{
-					$('#txtStatus').val('未回覆');
-				}
+                if($('#chkIsemail').prop('checked')){
+                	//寄信
+                }
                             	
-				if(q_cur==1){
-					$('#txtWorker').val(r_name);
-				}else{
-					$('#txtWorker2').val(r_name);
-				}
-
+				$('#txtWorker2').val(r_name);
+				
 				var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
 				if (s1.length == 0 || s1 == "AUTO")
 					q_gtnoa(q_name, replaceAll(q_date(), '/', ''));
@@ -165,12 +169,13 @@
 
             function refresh(recno) {
                 _refresh(recno);
+                $('#txtQuestion').val(replaceAll($('#txtQuestion').val(),'chr(10)','\n'));
+            	$('#txtAnswer').val(replaceAll($('#txtAnswer').val(),'chr(10)','\n')) ;
                 $('#tview td').each(function(index) {
                 	if($(this).text()=="( )"){
                 		$(this).text("");
                 	}
                 });
-                
             }
             
             function readonly(t_para, empty) {
@@ -390,30 +395,35 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
-						<td><select id="cmbTypea" class="txt c1"> </select></td>
+						<td>
+							<!--<select id="cmbTypea" class="txt c1"> </select>-->
+							<input id="txtTypea"  type="text"  class="txt c1"/>
+						</td>
 						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
 						<td><input id="txtDatea"  type="text"  class="txt c1"/></td>
 						<td><input id="txtNoa"  type="text" style="display: none;"/></td>
 					</tr>
 					<tr>
+						<td><span> </span><a id='lblComp' class="lbl"> </a></td>
+						<td><input id="txtComp"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id='lblNamea' class="lbl"> </a></td>
-						<td><input id="txtNamea"  type="text"  class="txt c1"/></td>
+						<td>
+							<input id="txtNamea"  type="text"  class="txt c5"/>
+							<input id="txtAppellation"  type="text"  class="txt c4"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblTel' class="lbl"> </a></td>
+						<td><input id="txtTel"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblMobile' class="lbl"> </a></td>
+						<td><input id="txtMobile"  type="text"  class="txt c1"/></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblFax' class="lbl"> </a></td>
+						<td><input id="txtFax"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id='lblEmail' class="lbl"> </a></td>
 						<td><input id="txtEmail"  type="text"  class="txt c1"/></td>
-						<td> </td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblStatus' class="lbl"> </a></td>
-						<td><input id="txtStatus"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id='lblRdate' class="lbl"> </a></td>
-						<td><input id="txtRdate"  type="text"  class="txt c1"/></td>
-						<td> </td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblIsreplye' class="lbl"> </a></td>
-						<td><input id="chkIsreplye" type="checkbox" style="float: center;"/></td>
-						<td><span> </span><a id='lblIsemail' class="lbl"> </a></td>
-						<td><input id="chkIsemail" type="checkbox" style="float: center;"/></td>
 						<td> </td>
 					</tr>
 					<tr>
@@ -427,8 +437,20 @@
 						<td> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
-						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
+						<td><span> </span><a id='lblIsreplye' class="lbl"> </a></td>
+						<td>
+							<input id="chkIsreplye" type="checkbox" style="float: center;"/>
+							<input id="txtStatus"  type="hidden"  class="txt c1"/>
+							<input id="chkIsemail" type="checkbox" style="float: right;"/>
+							<span> </span><a id='lblIsemail' class="lbl" style="float: right"> </a>
+						</td>
+						<td><span> </span><a id='lblRdate' class="lbl"> </a></td>
+						<td><input id="txtRdate"  type="text"  class="txt c1"/></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<!--<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
+						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>-->
 						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
 						<td><input id="txtWorker2"  type="text"  class="txt c1"/></td>
 					</tr>
