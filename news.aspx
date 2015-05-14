@@ -95,7 +95,8 @@
 				});
 				
                 q_gt('newsstype', '', 0, 0, 0, "newsstype");
-                q_gt('newsarea', '', 0, 0, 0, "newsarea");
+                //q_gt('newsarea', '', 0, 0, 0, "newsarea");
+                q_gt('newscountry', '', 0, 0, 0, "newscountry");
                 /*q_gt('newstypea', '', 0, 0, 0, "newstypea");
                 q_gt('newstypeb', '', 0, 0, 0, "newstypeb");
                 q_gt('newstypec', '', 0, 0, 0, "newstypec");
@@ -120,6 +121,10 @@
 					n_typeNow[0].typed=$('#cmbTyped').val()
                 	Typeachange(); 
 				});*/
+				
+				$('#cmbRegion').change(function() {
+					Regionchange();
+				});
 				
 				$("input[name='typea']").click(function() {
 					savetypea();
@@ -291,6 +296,20 @@
 						$('#cmbTyped').val(n_typeNow[0].typed);
 				}
 			}*/
+			
+			function Regionchange() {
+				//清除Country資料
+				$('#cmbCountry').text('').val('');
+				
+				if($('#cmbRegion').val()!=''){
+					var c_country='@';
+					for (i=0;i<t_newscountry.length;i++){
+						if(t_newscountry[i].regionno==$('#cmbRegion').val())
+							c_country=c_country+','+t_newscountry[i].noa+"@"+t_newscountry[i].country;
+					}
+					q_cmbParse("cmbCountry", c_country);
+				}
+			}
 			
 			function readTypea() {
 				var t_typea=$('#txtTypea').val().split(',');
@@ -638,6 +657,8 @@
                 b_pop='';
             }
             
+            var t_newscountry=[];//儲存newscountry資料
+            var t_newsregion=[];//儲存newsregion資料
             function q_gtPost(t_name) {
                 switch (t_name) {
                 	case 'sss':
@@ -662,7 +683,7 @@
 								$("#cmbStype").val(abbm[q_recno].stype);
 						}
                 		break;
-                	case 'newsarea':
+                	/*case 'newsarea':
                 		var as = _q_appendData("newsarea", "", true);
 						if (as[0] != undefined) {
 							var t_item = "@";
@@ -672,6 +693,38 @@
 							q_cmbParse("cmbArea", t_item);
 							if(abbm[q_recno])
 								$("#cmbArea").val(abbm[q_recno].area);
+						}
+                		break;*/
+                	case 'newscountry':
+                		t_newscountry = _q_appendData("newscountry", "", true);
+                		if (t_newscountry[0] != undefined) {
+							for (i = 0; i < t_newscountry.length; i++) {
+								var regionrepeat=false;
+								for (j = 0; j < t_newsregion.length; j++) {
+									if(t_newscountry[i].regionno==t_newsregion[j].regionno){
+										regionrepeat=true;
+										break;
+									}
+								}
+								if(!regionrepeat){
+									t_newsregion.push({
+										regionno:t_newscountry[i].regionno,
+										region:t_newscountry[i].region,
+										areano:t_newscountry[i].areano
+									})	;
+								}
+							}
+							
+							var t_item = "@";
+							for (i = 0; i < t_newsregion.length; i++) {
+								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(t_newsregion[i].regionno) + '@' + $.trim(t_newsregion[i].region);
+							}
+							q_cmbParse("cmbRegion", t_item);
+							if(abbm[q_recno])
+								$("#cmbRegion").val(abbm[q_recno].region);
+							Regionchange();
+							if(abbm[q_recno])
+								$("#cmbCountry").val(abbm[q_recno].country);
 						}
                 		break;
                 	case 'newstypea':
@@ -784,7 +837,8 @@
             	var t_err = '';
                 t_err = q_chkEmpField([['txtTitle', q_getMsg('lblTitle')],['txtContents', q_getMsg('lblContents')]
                 ,['txtSssno', q_getMsg('lblSss')],['txtNamea', q_getMsg('lblSss')],['txtDatea', q_getMsg('lblDatea')],['txtTimea', q_getMsg('lblTimea')]
-                ,['cmbStype', q_getMsg('lblStype')],['txtTypea', q_getMsg('lblTypea')],['txtTypea2', q_getMsg('lblTypea2')],['cmbArea', q_getMsg('lblArea')]
+                ,['cmbStype', q_getMsg('lblStype')],['txtTypea', q_getMsg('lblTypea')],['txtTypea2', q_getMsg('lblTypea2')]
+                //,['cmbArea', q_getMsg('lblArea')]
                 ,['cmbRank', q_getMsg('lblRank')]]);
                 
                 if (t_err.length > 0) {
@@ -821,6 +875,13 @@
                 		t_contents2=t_contents2+'{ad01}';
                 	}
                 	$('#txtContents2').val(t_contents2);
+                }
+                
+                for(var i=0;i<t_newsregion.length;i++){
+                	if($('#cmbRegion').val()==t_newsregion[i].regionno){
+                		$('#txtArea').val(t_newsregion[i].areano);
+                		break;
+                	}
                 }
             	
 				if(q_cur==1){
@@ -876,6 +937,9 @@
 	                n_typeNow[0].typed=abbm[q_recno].typed;
 				}*/
                 //Typeachange();  
+                Regionchange();
+                if(abbm[q_recno])
+					$("#cmbCountry").val(abbm[q_recno].country);
                 ShowImglbl();
                 ChangeGB();
                 readTypea();
@@ -1295,8 +1359,15 @@
 						<td colspan="5"><textarea id="txtContents2" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblArea' class="lbl"> </a></td>
-						<td><select id="cmbArea" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblRegion' class="lbl"> </a></td>
+						<td><select id="cmbRegion" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblCountry' class="lbl"> </a></td>
+						<td><select id="cmbCountry" class="txt c1"> </select></td>
+						<td style="display: none;"><span> </span><a id='lblArea' class="lbl"> </a></td>
+						<td style="display: none;">
+							<input id="txtArea"  type="text"  class="txt c1"/>
+							<!--<select id="cmbArea" class="txt c1"> </select>-->
+						</td>
 					</tr>
 					<tr>
 						<td>

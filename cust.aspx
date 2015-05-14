@@ -684,6 +684,24 @@
 					        	}
 							}
 						});
+						
+						$('#btnPassid_'+i).click(function() {
+		            		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							if(confirm('確定要'+q_getMsg('lblPassid_s')+'【'+$('#txtId_'+b_seq).val()+'】?')){
+								q_func( "daysw.email", "1,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+$('#txtId_'+b_seq).val()+","+$('#txtPw_'+b_seq).val());   //會員帳號開通信函
+							}
+						});
+						
+						$('#btnSendpass_'+i).click(function() {
+		            		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							if(confirm('確定要'+q_getMsg('lblSendpass_s')+'【'+$('#txtId_'+b_seq).val()+'】?')){
+								q_func( "daysw.email", "3,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+$('#txtId_'+b_seq).val()+","+$('#txtPw_'+b_seq).val());   //會員密碼查詢回覆 
+							}
+						});
 		            }
 		        }
 		        _bbsAssign();
