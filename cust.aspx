@@ -1006,7 +1006,7 @@
 					<tr>
 						<td><input id="chkBrow.*" type="checkbox" style=''/></td>
 						<td align="center" id='status'>~status</td>
-						<td align="center" id='comp,8'>~comp,8</td>
+						<td align="center" id='comp'>~comp</td>
 					</tr>
 				</table>
 			</div>

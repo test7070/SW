@@ -303,11 +303,17 @@
 				
 				if($('#cmbRegion').val()!=''){
 					var c_country='@';
+					var country_count=0;
 					for (i=0;i<t_newscountry.length;i++){
-						if(t_newscountry[i].regionno==$('#cmbRegion').val())
+						if(t_newscountry[i].regionno==$('#cmbRegion').val()){
 							c_country=c_country+','+t_newscountry[i].noa+"@"+t_newscountry[i].country;
+							country_count++;
+						}
 					}
 					q_cmbParse("cmbCountry", c_country);
+					if(country_count==1){
+						$('#cmbCountry').get(0).selectedIndex=1;
+					}
 				}
 			}
 			
@@ -779,6 +785,7 @@
                 readTypea2();
                 $('#chkWatermark').prop('checked',true);
                 $('#chkOnline').prop('checked',true);
+                $('#cmbCountry').text('').val('');
             }
 
             function btnModi() {
@@ -838,8 +845,8 @@
                 t_err = q_chkEmpField([['txtTitle', q_getMsg('lblTitle')],['txtContents', q_getMsg('lblContents')]
                 ,['txtSssno', q_getMsg('lblSss')],['txtNamea', q_getMsg('lblSss')],['txtDatea', q_getMsg('lblDatea')],['txtTimea', q_getMsg('lblTimea')]
                 ,['cmbStype', q_getMsg('lblStype')],['txtTypea', q_getMsg('lblTypea')],['txtTypea2', q_getMsg('lblTypea2')]
+                ,['cmbRegion', q_getMsg('lblRegion')],['cmbCountry', q_getMsg('lblCountry')],['cmbRank', q_getMsg('lblRank')]]);
                 //,['cmbArea', q_getMsg('lblArea')]
-                ,['cmbRank', q_getMsg('lblRank')]]);
                 
                 if (t_err.length > 0) {
                     alert(t_err);
