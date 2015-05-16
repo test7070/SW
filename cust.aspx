@@ -46,6 +46,8 @@
 				bbsKey = ['noa', 'noq'];
 				bbtKey = ['noa', 'noq'];
                 q_brwCount();
+                
+                q_content="where=^^1=1^^";
                 q_gt(q_name, q_content, q_sqlCount, 1)
                 $('#txtNoa').focus
 			});
@@ -371,7 +373,34 @@
 					var as = _q_appendData("custs", "", true);
 					if (as[0] != undefined) {
 						alert(q_getMsg('lblId_s')+'重覆!!!');
-						$('#txtId_'+n).val('');
+						$('#txtId_'+n).val(bbs_id_new);
+					}else{
+						$('.dbbt').hide();
+						if(bbs_id_new==''){
+							//新的ID
+							//找主帳號的日期
+							var v_bdate='',v_edate='';
+							for(var j=0;j<q_bbtCount;j++){
+								if($('#textMid').val()==$('#txtId__'+j).val()){
+									if(v_bdate<$('#txtBdate__'+j).val()){
+										v_bdate=$('#txtBdate__'+j).val()
+										v_edate=$('#txtEdate__'+j).val()
+									}
+								}
+							}
+							$('#btnPlut').click();
+							var m=q_bbtCount-1;
+							$('#txtId__'+m).val($('#txtId_'+n).val());
+							$('#txtBdate__'+m).val(v_bdate);
+							$('#txtEdate__'+m).val(v_edate);
+						}else{
+							//取代原先使用期限的id
+							for(var j=0;j<q_bbtCount;j++){
+								if(bbs_id_new==$('#txtId__'+j).val()){
+									$('#txtId__'+j).val($('#txtId_'+n).val());
+								}
+							}
+						}
 					}
 				}
 			}
@@ -511,6 +540,19 @@
 				txt_bizscopes=txt_bizscopes.substr(0,txt_bizscopes.length-1);//去逗號
 				$('#txtBizscopes').val(t_bizscopes+'##'+txt_bizscopes);
 				
+				//檢查會員密碼是否空白
+				var t_err='';
+				for (var i = 0; i < q_bbsCount; i++) {
+					if(!emp($('#txtId_'+i).val()) && emp($('#txtPw_'+i).val())){
+						t_err=t_err+(t_err.length>0?"、":"")+"【"+$('#txtId_'+i).val()+"】";
+					}
+				}
+				if(t_err.length>0){
+					alert(t_err+"密碼空白!!");
+					Unlock(1);
+					return;	
+				}
+				
 				//檢查會員帳號是否重複
 				var t_id='';
 				for (var i = 0; i < q_bbsCount; i++) {
@@ -576,6 +618,13 @@
 					$("#cmbAreatno").val(abbm[q_recno].areatno);
 					$("#cmbIareatno").val(abbm[q_recno].iareatno);
 				}
+				
+				for (var i = 0; i < brwCount; i++) {
+                	if($('#vtunprocess_'+i).text()=="V" || dec($('#vtunprocess_'+i).text())>0)
+                		$('#vtunprocess_'+i).text("V");
+                	else
+                		$('#vtunprocess_'+i).text("");
+                }
 			}
 			
 			function refreshclear(){
@@ -594,12 +643,17 @@
 			
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
+				if(q_cur==1)
+					$('#btnCustu').attr('disabled', 'disabled');
+				else
+					$('#btnCustu').removeAttr('disabled', 'disabled');
+					
 				if(t_para){
 					$("input[name='bizscopes']").attr('disabled', 'disabled');
 					$(".textBizscopes").attr('disabled', 'disabled');
 					$('.btnImg').attr('disabled', 'disabled');
 					$('#btnShip').removeAttr('disabled', 'disabled');
-					$('#btnCustu').removeAttr('disabled', 'disabled');
+					//$('#btnCustu').removeAttr('disabled', 'disabled');
 					$('#txtStartdate').datepicker( 'destroy' );
                 	$('#txtKdate').datepicker( 'destroy' );
 				}else{
@@ -607,7 +661,7 @@
 					$(".textBizscopes").removeAttr('disabled');
 					$('.btnImg').removeAttr('disabled', 'disabled');
 					$('#btnShip').attr('disabled', 'disabled');
-					$('#btnCustu').attr('disabled', 'disabled');
+					//$('#btnCustu').attr('disabled', 'disabled');
 					$('#txtStartdate').removeClass('hasDatepicker')
 					$('#txtStartdate').datepicker({ dateFormat: 'yy/mm/dd' });
 					$('#txtKdate').removeClass('hasDatepicker')
@@ -632,6 +686,7 @@
 			}
 			
 			var t_bbt_id='';
+			var bbs_id_new='';
 			function bbsAssign() {
 		        for (var i = 0; i < q_bbsCount; i++) {
 		            $('#lblNo_' + i).text(i + 1);
@@ -643,9 +698,20 @@
 							$('.dbbt').css('top', $('.dbbs').offset().top+$('.dbbs').height()+5);
 							$('.dbbt').css('left', $('.dbbs').width()-$('.dbbt').width());
 							t_bbt_id=$('#txtId_'+b_seq).val();
-							bbtchange();
-						 	$('.dbbt').show()
+							if(t_bbt_id!=''){
+								bbtchange();
+							 	$('.dbbt').show();
+						 	}else{
+						 		$('.dbbt').hide();
+						 	}
 						});
+						
+						$('#txtId_'+i).focusin(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							bbs_id_new=$(this).val();
+						})
 						
 						$('#txtId_'+i).change(function() {
 							t_IdSeq = -1;
@@ -689,8 +755,54 @@
 		            		t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							if(confirm('確定要'+q_getMsg('lblPassid_s')+'【'+$('#txtId_'+b_seq).val()+'】?')){
-								q_func( "daysw.email", "1,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+$('#txtId_'+b_seq).val()+","+$('#txtPw_'+b_seq).val());   //會員帳號開通信函
+							if(!emp($('#txtId_'+b_seq).val())){
+								if(emp($('#txtPw_'+b_seq).val())){
+									alert("【"+$('#txtId_'+b_seq).val()+"】密碼空白!!");
+									return;
+								}
+								
+								if(confirm('確定要'+q_getMsg('lblPassid_s')+'【'+$('#txtId_'+b_seq).val()+'】?')){
+									var valid_id=[];
+									for (var j = 0; j < q_bbtCount; j++) {
+										if(q_date()>=$('#txtBdate__'+j).val() && q_date()<=$('#txtEdate__'+j).val()){
+											var t_pw='';
+											for (var i = 0; i < q_bbsCount; i++) {
+												if($('#txtId__'+j).val()==$('#txtId_'+i).val()){
+													t_pw=$('#txtPw_'+i).val();
+												}
+											}
+											//密碼不空白
+											if(t_pw!=''){
+												//檢查id是否存在
+												var x_id=false;
+												for (var i = 0; i < valid_id.length; i++) {
+													if(valid_id[i].id==$('#txtId__'+j).val()){
+														x_id=true;
+														break;
+													}
+												}
+												if(!x_id){
+													valid_id.push({
+														id:$('#txtId__'+j).val(),
+														pw:t_pw
+													})
+												}
+											}
+										}
+									}
+									
+									if(valid_id.length>0){
+										var t_id='',t_pw='';
+										for (var i = 0; i < valid_id.length; i++) {
+											t_id=t_id+(t_id.length>0?';':'')+valid_id[i].id;
+											t_pw=t_pw+(t_pw.length>0?';':'')+valid_id[i].pw;
+										}
+										q_func( "daysw.email", "1,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+t_id+","+t_pw);   //會員帳號開通信函
+										//q_func( "daysw.email", "1,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+$('#txtId_'+b_seq).val()+","+$('#txtPw_'+b_seq).val());   //會員帳號開通信函
+									}else{
+										alert("無有效帳號!!");
+									}
+								}
 							}
 						});
 						
@@ -698,8 +810,15 @@
 		            		t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							if(confirm('確定要'+q_getMsg('lblSendpass_s')+'【'+$('#txtId_'+b_seq).val()+'】?')){
-								q_func( "daysw.email", "3,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+$('#txtId_'+b_seq).val()+","+$('#txtPw_'+b_seq).val());   //會員密碼查詢回覆 
+							if(!emp($('#txtId_'+b_seq).val())){
+								if(emp($('#txtPw_'+b_seq).val())){
+									alert("【"+$('#txtId_'+b_seq).val()+"】密碼空白!!");
+									return;
+								}
+							
+								if(confirm('確定要'+q_getMsg('lblSendpass_s')+'【'+$('#txtId_'+b_seq).val()+'】?')){
+									q_func( "daysw.email", "3,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+$('#txtId_'+b_seq).val()+","+$('#txtPw_'+b_seq).val());   //會員密碼查詢回覆 
+								}
 							}
 						});
 		            }
@@ -770,6 +889,18 @@
 					q_cmbParse("cmbTypea__"+i, t_typea);
 					if(abbtNow[i])
 						$("#cmbTypea__"+i).val(abbtNow[i].typea);
+				}
+				
+				for (var i = 0; i < q_bbtCount; i++) {
+					if (q_cur<1 && q_cur>2) {
+						$('#txtBdate__'+i).datepicker( 'destroy' );
+						$('#txtEdate__'+i).datepicker( 'destroy' );
+					}else{
+						$('#txtBdate__'+i).removeClass('hasDatepicker');
+						$('#txtBdate__'+i).datepicker({ dateFormat: 'yy/mm/dd' });
+						$('#txtEdate__'+i).removeClass('hasDatepicker');
+						$('#txtEdate__'+i).datepicker({ dateFormat: 'yy/mm/dd' });
+					}
 				}
 				
 				bbtchange();
@@ -1002,11 +1133,13 @@
 						<td align="center" style="width:5%"><a id='vewChk'> </a></td>
 						<td align="center" style="width:35%"><a id='vewStatus'> </a></td>
 						<td align="center" style="width:40%"><a id='vewComp'> </a></td>
+						<td align="center" style="width:40%"><a id='vewUnprocess'> </a></td>
 					</tr>
 					<tr>
 						<td><input id="chkBrow.*" type="checkbox" style=''/></td>
 						<td align="center" id='status'>~status</td>
 						<td align="center" id='comp'>~comp</td>
+						<td align="center" id='unprocess'>~unprocess</td>
 					</tr>
 				</table>
 			</div>

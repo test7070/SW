@@ -163,7 +163,15 @@
                     $('#cmbCobtype').val(wParent.getElementById("cmbCobtype").value);
                     $('#txtPost').val(wParent.getElementById("txtInvopost").value);
                     $('#txtAddr').val(wParent.getElementById("txtInvoaddr").value);
+                    
+                    $('#txtId').val(wParent.getElementById("textMid").value);
+                    $('#txtInvoname').val(wParent.getElementById("txtBoss").value);
+                    $('#cmbAreano').val(wParent.getElementById("cmbIareano").value);
+                    $('#cmbAreasno').val(wParent.getElementById("cmbIareasno").value);
+                    $('#cmbAreatno').val(wParent.getElementById("cmbIareatno").value);
                 }
+                //$('#txtIndate').val(q_date());
+                $('#chkProcess').prop('checked',true);
             }
 
             function btnModi() {
@@ -449,6 +457,8 @@
 							<input id="txtSerial" type="hidden" />
 							<input id="txtNoa" type="hidden"/>
 						</td>
+						<td><span> </span><a id='lblProcess' class="lbl"> </a></td>
+						<td><input id="chkProcess" type="checkbox"></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblComp' class="lbl"> </a></td>
