@@ -30,6 +30,8 @@
 				q_mask(bbmMask);
 				
 				q_cmbParse("cmbStatus", '@全部,'+q_getPara('cust.status'));
+				q_cmbParse("cmbUnprocess", '@全部,1@未處理,2@已處理');
+				
 				$('#txtNoa').focus();
 				q_gt('bizscope', "where=^^right(noa,3)='000'^^", 0, 0, 0, "bizscope");
 			}
@@ -64,13 +66,14 @@
 				t_status = $('#cmbStatus').val();
 				t_bizscope = $('#cmbBizscope').val();
 				t_bizscope2 = $('#cmbBizscope2').val();
+				t_unprocess = $('#cmbUnprocess').val();
 
 				t_bdate = t_bdate.length > 0 && t_bdate.indexOf("_") > -1 ? t_bdate.substr(0, t_bdate.indexOf("_")) : t_bdate;
 				t_edate = t_edate.length > 0 && t_edate.indexOf("_") > -1 ? t_edate.substr(0, t_edate.indexOf("_")) : t_edate;
 
 				var t_where = " 1=1 " + q_sqlPara2("kdate", t_bdate, t_edate) 
 				+ q_sqlPara2("noa", t_noa) + q_sqlPara2("comp", t_comp) + q_sqlPara2("status", t_status) 
-				+ q_sqlPara2("bizscope", t_bizscope)+ q_sqlPara2("bizscope2", t_bizscope2);
+				+ q_sqlPara2("bizscope", t_bizscope)+ q_sqlPara2("bizscope2", t_bizscope2)+ q_sqlPara2("unprocess", t_unprocess);
 
 				t_where = ' where=^^' + t_where + '^^ ';
 				return t_where;
@@ -115,6 +118,10 @@
 				<tr class='seek_tr'>
 					<td class='seek' style="width:30%;"><a id='lblBizscope2'> </a></td>
 					<td><select id="cmbBizscope2" style="width:215px; font-size:medium;"> </select></td>
+				</tr>
+				<tr class='seek_tr'>
+					<td class='seek' style="width:30%;"><a id='lblUnprocess'> </a></td>
+					<td><select id="cmbUnprocess" style="width:215px; font-size:medium;"> </select></td>
 				</tr>
 			</table>
 			<!--#include file="../inc/seek_ctrl.inc"-->
