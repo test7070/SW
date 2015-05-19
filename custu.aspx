@@ -165,9 +165,11 @@
                     $('#txtAddr').val(wParent.getElementById("txtInvoaddr").value);
                     
                     $('#txtId').val(wParent.getElementById("textMid").value);
-                    $('#txtInvoname').val(wParent.getElementById("txtBoss").value);
+                    $('#txtInvoname').val(wParent.getElementById("txtInvoname").value);
                     $('#cmbAreano').val(wParent.getElementById("cmbIareano").value);
+                    change_areas();
                     $('#cmbAreasno').val(wParent.getElementById("cmbIareasno").value);
+                    change_areat();
                     $('#cmbAreatno').val(wParent.getElementById("cmbIareatno").value);
                 }
                 //$('#txtIndate').val(q_date());

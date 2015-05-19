@@ -287,6 +287,11 @@
 		    }
 		    
 		    function bbschange() {
+		    	if($('#cmbArea').val()=='tk')
+		        	$('#lblDatea').text('調價日期');
+		        else
+		        	$('#lblDatea').text('更新日期');
+		        	
 		    	$('.lblLanguage_s').html('繁<BR>簡').css('line-height','23px');
 		    	$('.typeb').show();
 		    	$('.typec').hide();

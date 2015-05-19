@@ -4,7 +4,7 @@
             string a = "";
             foreach (string x in getOnlineUsers())
             {
-                a = x+@",";
+                a =a+x+@",";
             }
             this.textSess.Value = a;
         }
@@ -445,7 +445,8 @@
 	                            $('#custslogout_datea' + i).html(t_date.getFullYear()+'-'
 	                            											+('00'+(t_date.getMonth()+1)).substr(-2)+'-'
 	                            											+('00'+t_date.getDate()).substr(-2)+' '
-	                            											+('00'+t_date.getHours()).substr(-2)+':'+('00'+t_date.getMinutes()).substr(-2));
+	                            											//+('00'+t_date.getHours()).substr(-2)+':'+('00'+t_date.getMinutes()).substr(-2)
+	                            											);
 							}
                         } else {
                             $('#btnLogoutClear_' + i).attr('disabled', 'disabled');
@@ -556,7 +557,7 @@
                         			break;
                         		}
                         	}
-                        	if(!t_login || (cust_login[i].memo=="" && cust_login[i].datea=="")){
+                        	if(!t_login || (cust_login[i].memo=="" && cust_login[i].datea=="") || cust_login[i].status=="logout"){
                         		cust_login.splice(i, 1);
 								i--;
                         	}
@@ -565,7 +566,7 @@
                         for(var i=0;i<cust_logout.length;i++){
                         	var t_login=false;
                         	for(var j=0;j<sess.length;j++){
-                        		if(cust_logout[i].id==sess[j] && (cust_logout[i].memo!="" && cust_logout[i].datea!="")){
+                        		if(cust_logout[i].id==sess[j] && (cust_logout[i].memo!="" && cust_logout[i].datea!="") && cust_logout[i].status=="success"){
                         			t_login=true;
                         			break;
                         		}
