@@ -24,7 +24,7 @@
 			}
 			q_tables = 't';
 			var q_name = "cust";
-			var q_readonly = ['textMid'];
+			var q_readonly = ['textMid','txtWorker','txtWorker2'];
 			var q_readonlys = [];
 			var q_readonlyt = [];
 			var bbmNum = [];
@@ -547,11 +547,17 @@
 						t_err=t_err+(t_err.length>0?"、":"")+"【"+$('#txtId_'+i).val()+"】";
 					}
 				}
+				
 				if(t_err.length>0){
 					alert(t_err+"密碼空白!!");
 					Unlock(1);
 					return;	
 				}
+				
+				if(q_cur==1)
+					$('#txtWorker').val(r_name);
+				else
+					$('#txtWorker2').val(r_name);
 				
 				//檢查會員帳號是否重複
 				var t_id='';
@@ -1324,6 +1330,13 @@
 						<td><input id="txtInvoserial" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblInvomemo' class="lbl"> </a></td>
 						<td><input id="txtInvomemo" type="text" class="txt c1"/></td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
+						<td><input id="txtWorker" type="text" class="txt c1"/></td>
+						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
+						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 						<td> </td>
 					</tr>
 					<tr style="display: none;">
