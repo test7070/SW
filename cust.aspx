@@ -756,6 +756,16 @@
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
 							if(!emp($('#txtId_'+b_seq).val())){
+								if(emp($('#txtEmail').val())){
+									alert(q_getMsg('lblEmail')+"空白!!");
+									return;
+								}
+								
+								if(emp($('#txtConn_'+b_seq).val())){
+									alert("【"+$('#txtId_'+b_seq).val()+"】"+q_getMsg('lblConn_s')+"空白!!");
+									return;
+								}
+								
 								if(emp($('#txtPw_'+b_seq).val())){
 									alert("【"+$('#txtId_'+b_seq).val()+"】密碼空白!!");
 									return;
@@ -811,6 +821,16 @@
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
 							if(!emp($('#txtId_'+b_seq).val())){
+								if(emp($('#txtEmail').val())){
+									alert(q_getMsg('lblEmail')+"空白!!");
+									return;
+								}
+								
+								if(emp($('#txtConn_'+b_seq).val())){
+									alert("【"+$('#txtId_'+b_seq).val()+"】"+q_getMsg('lblConn_s')+"空白!!");
+									return;
+								}
+								
 								if(emp($('#txtPw_'+b_seq).val())){
 									alert("【"+$('#txtId_'+b_seq).val()+"】密碼空白!!");
 									return;
