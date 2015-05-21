@@ -34,11 +34,14 @@
 			var bbsMask = [];
 			var bbtMask = [];
 			q_sqlCount = 6;
-			brwCount = 6;
 			brwList = [];
 			brwNowPage = 0;
 			brwKey = 'noa';
-			brwCount2 = 33;
+			//brwCount = 6;
+			//brwCount2 = 33;
+            brwCount = 0;
+            brwCount2 = 9999;
+			
 			aPop = new Array();
 			
 			$(document).ready(function() {
@@ -67,6 +70,9 @@
 				bbmMask = [['txtStartdate', '9999/99/99'],['txtKdate', '9999/99/99']];
 				bbtMask = [['txtBdate', '9999/99/99'],['txtEdate', '9999/99/99']];
 				q_mask(bbmMask);
+				
+				$('#btnPrevPage').hide();
+				$('#btnNextPage').hide();
 				
 				//q_gt('custtype', '', 0, 0, 0, "custtype");
 				q_gt('bizscope', "where=^^right(noa,3)='000'^^", 0, 0, 0, "bizscope");
@@ -481,7 +487,7 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)// 1-3
 					return;
-				q_box('cust_s.aspx', q_name + '_s', "500px", "420px", q_getMsg("popSeek"));
+				q_box('cust_s.aspx', q_name + '_s', "500px", "450px", q_getMsg("popSeek"));
 			}
 
 			function btnIns() {
@@ -723,16 +729,17 @@
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							$(this).val($(this).val());
-							if((/^[A-Za-z0-9]{4,12}$/g).test($(this).val())){
+							//$(this).val($(this).val());
+							//if((/^[A-Za-z0-9]{4,12}$/g).test($(this).val())){
 								if(!emp($(this).val())){
 									t_where="where=^^ id='"+$(this).val()+"' collate Chinese_Taiwan_Stroke_CS_AS ^^";
 									q_gt('custs', t_where, 0, 0, 0, "checkCustsId_"+b_seq, r_accy);
 								}
-							}else{
+							/*/}else{
 								alert(q_getMsg('lblId_s')+'請輸入4~12個英文或數字!!');
 								$(this).val('');
-							}
+							}*/
+							
 							$('#chkGroupa_'+b_seq).prop('checked',true);
 							$('#txtCredit_'+b_seq).val(100);
 							$('#txtTimes_'+b_seq).val(100);
@@ -1153,7 +1160,7 @@
 	>
 		<!--#include file="../inc/toolbar.inc"-->
 		<div id='dmain' style="overflow:hidden;width:1250px;">
-			<div class="dview" id="dview" style="float: left; width:400px;" >
+			<div class="dview" id="dview" style="float: left; width:400px; display: none;">
 				<table class="tview" id="tview" border="1" cellpadding='2' cellspacing='0' style="background-color: #FFFF66;">
 					<tr>
 						<td align="center" style="width:5%"><a id='vewChk'> </a></td>

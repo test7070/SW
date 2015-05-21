@@ -67,14 +67,21 @@
 				t_bizscope = $('#cmbBizscope').val();
 				t_bizscope2 = $('#cmbBizscope2').val();
 				t_unprocess = $('#cmbUnprocess').val();
+				t_id = $('#txtId').val();
 
 				t_bdate = t_bdate.length > 0 && t_bdate.indexOf("_") > -1 ? t_bdate.substr(0, t_bdate.indexOf("_")) : t_bdate;
 				t_edate = t_edate.length > 0 && t_edate.indexOf("_") > -1 ? t_edate.substr(0, t_edate.indexOf("_")) : t_edate;
 
 				var t_where = " 1=1 " + q_sqlPara2("kdate", t_bdate, t_edate) 
-				+ q_sqlPara2("noa", t_noa) + q_sqlPara2("comp", t_comp) + q_sqlPara2("status", t_status) 
+				+ q_sqlPara2("noa", t_noa) + q_sqlPara2("status", t_status) 
 				+ q_sqlPara2("bizscope", t_bizscope)+ q_sqlPara2("bizscope2", t_bizscope2)+ q_sqlPara2("unprocess", t_unprocess);
-
+				
+				if(t_comp.length>0)
+					t_where=" and charindex('"+t_comp+"',comp)>0 ";
+					
+				if(t_id.length>0)	
+					t_where=" and noa=(select noa from custs where id='"+t_id+"' ) ";
+				
 				t_where = ' where=^^' + t_where + '^^ ';
 				return t_where;
 			}
@@ -122,6 +129,10 @@
 				<tr class='seek_tr'>
 					<td class='seek' style="width:30%;"><a id='lblUnprocess'> </a></td>
 					<td><select id="cmbUnprocess" style="width:215px; font-size:medium;"> </select></td>
+				</tr>
+				<tr class='seek_tr'>
+					<td class='seek'  style="width:20%;"><a id='lblId'> </a></td>
+					<td><input class="txt" id="txtId" type="text" style="width:215px; font-size:medium;" /></td>
 				</tr>
 			</table>
 			<!--#include file="../inc/seek_ctrl.inc"-->
