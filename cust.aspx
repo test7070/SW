@@ -472,7 +472,7 @@
 						$('#cmbIareatno').text('');
 						var c_areat='@----------';
 						for (i=0;i<t_areat.length;i++){
-							if(t_areat[i].noa==$('#cmbAreano').val() && t_areat[i].noq==$('#cmbAreasno').val())
+							if(t_areat[i].noa==$('#cmbIareano').val() && t_areat[i].noq==$('#cmbIareasno').val())
 								c_areat=c_areat+','+t_areat[i].nor+"@"+t_areat[i].district;
 						}
 						q_cmbParse("cmbIareatno", c_areat);
@@ -1211,6 +1211,20 @@
 						</td>
 						<td><span> </span><a id='lblEmail' class="lbl"> </a></td>
 						<td><input id="txtEmail" type="text" class="txt c1"/></td>
+						<td> </td>
+					</tr>
+					<tr class="conn">
+						<td><span> </span><a id='lblConn2' class="lbl"> </a></td>
+						<td><input id="txtConn2" type="text" class="txt c1"/></td>
+						<td><span> </span><a id='lblJob2' class="lbl"> </a></td>
+						<td><input id="txtJob2" type="text" class="txt c1"/></td>
+						<td> </td>
+					</tr>
+					<tr class="conn">
+						<td><span> </span><a id='lblExt2' class="lbl"> </a></td>
+						<td><input id="txtExt2" type="text" class="txt c1"/></td>
+						<td> </td>
+						<td> </td>
 						<td> </td>
 					</tr>
 					<tr>

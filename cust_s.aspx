@@ -77,7 +77,7 @@
 				+ q_sqlPara2("bizscope", t_bizscope)+ q_sqlPara2("bizscope2", t_bizscope2)+ q_sqlPara2("unprocess", t_unprocess);
 				
 				if(t_comp.length>0)
-					t_where=t_where+" and charindex('"+t_comp+"',comp)>0 ";
+					t_where=t_where+" and charindex(N'"+t_comp+"',comp)>0 ";
 					
 				if(t_id.length>0)	
 					t_where=t_where+" and noa=(select noa from custs where id='"+t_id+"' ) ";
