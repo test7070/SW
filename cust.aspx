@@ -39,8 +39,8 @@
 			brwKey = 'noa';
 			//brwCount = 6;
 			//brwCount2 = 33;
-            brwCount = 0;
-            brwCount2 = 9999;
+            brwCount = 6;
+            brwCount2 = 30;
 			
 			aPop = new Array();
 			
@@ -1160,7 +1160,7 @@
 	>
 		<!--#include file="../inc/toolbar.inc"-->
 		<div id='dmain' style="overflow:hidden;width:1250px;">
-			<div class="dview" id="dview" style="float: left; width:400px; display: none;">
+			<div class="dview" id="dview" style="float: left; width:400px;">
 				<table class="tview" id="tview" border="1" cellpadding='2' cellspacing='0' style="background-color: #FFFF66;">
 					<tr>
 						<td align="center" style="width:5%"><a id='vewChk'> </a></td>
