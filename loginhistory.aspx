@@ -122,8 +122,10 @@
 		                        	alert(data)
 		                        }
 		                        //重新載入資料
-		                    	t_where="where=^^exists (select * from custt where id=a.id and '"+q_date()+"' between bdate and edate) ^^";
-								q_gt('custs_login', t_where, 0, 0, 0,'custslogin_init', r_accy);
+		                        t_where="where=^^ DATEDIFF(MI,rdate,GETDATE())<=10 and [status]='success' ^^";
+								q_gt('loginhistory', t_where, 0, 0, 0,'loginhistory_init', r_accy);
+		                    	//t_where="where=^^exists (select * from custt where id=a.id and '"+q_date()+"' between bdate and edate) ^^";
+								//q_gt('custs_login', t_where, 0, 0, 0,'custslogin_init', r_accy);
 		                    },
 		                    complete: function(){ 
 		                    	Unlock(1);
@@ -324,8 +326,10 @@
 		                        	alert(data)
 		                        }
 		                        //重新載入資料
-		                    	t_where="where=^^exists (select * from custt where id=a.id and '"+q_date()+"' between bdate and edate) ^^";
-								q_gt('custs_login', t_where, 0, 0, 0,'custslogin_init', r_accy);
+		                        t_where="where=^^ DATEDIFF(MI,rdate,GETDATE())<=10 and [status]='success' ^^";
+								q_gt('loginhistory', t_where, 0, 0, 0,'loginhistory_init', r_accy);
+		                    	//t_where="where=^^exists (select * from custt where id=a.id and '"+q_date()+"' between bdate and edate) ^^";
+								//q_gt('custs_login', t_where, 0, 0, 0,'custslogin_init', r_accy);
 		                    },
 		                    complete: function(){ 
 		                    	Unlock(1);
@@ -470,13 +474,15 @@
 			});
 			
 			var sess;
+			var loginhistory_success10=[];
 			function q_gfPost() {
 				q_getFormat();
                 q_langShow();
                 q_popAssign();
                 q_cur=2;
-                t_where="where=^^exists (select * from custt where id=a.id and '"+q_date()+"' between bdate and edate) ^^";
-				q_gt('custs_login', t_where, 0, 0, 0,'custslogin_init', r_accy);
+                
+                t_where="where=^^ DATEDIFF(MI,rdate,GETDATE())<=10 and [status]='success' ^^";
+				q_gt('loginhistory', t_where, 0, 0, 0,'loginhistory_init', r_accy);
 				
 				$('#btnClearAll').click(function() {
 					if(!confirm('確定要刪除全部登入資訊?'))
@@ -500,8 +506,10 @@
 								alert(data)
 							}
 							//重新載入資料
-							t_where="where=^^exists (select * from custt where id=a.id and '"+q_date()+"' between bdate and edate) ^^";
-							q_gt('custs_login', t_where, 0, 0, 0,'custslogin_init', r_accy);
+							t_where="where=^^ DATEDIFF(MI,rdate,GETDATE())<=10 and [status]='success' ^^";
+							q_gt('loginhistory', t_where, 0, 0, 0,'loginhistory_init', r_accy);
+							//t_where="where=^^exists (select * from custt where id=a.id and '"+q_date()+"' between bdate and edate) ^^";
+							//q_gt('custs_login', t_where, 0, 0, 0,'custslogin_init', r_accy);
 						},
 						complete: function(){ 
 							Unlock(1);
@@ -542,36 +550,65 @@
 			var custslogin_n='';//目前custslogin的列數
 			function q_gtPost(t_name) {
 				switch (t_name) {
+					case 'loginhistory_init':
+						loginhistory_success10 = _q_appendData("loginhistory", "", true);
+						
+						t_where="where=^^ exists (select * from custt where id=a.id and '"+q_date()+"' between bdate and edate) ^^";
+						q_gt('custs_login', t_where, 0, 0, 0,'custslogin_init', r_accy);
+						break;
                     case 'custslogin_init':
                     	var as = _q_appendData("custs", "", true);
                         var cust_login = [].concat(as);
                         var cust_logout = [].concat(as);
                         <% get_sess(); %>
                         var sess=$('#textSess').val().split(',');
-                        
+                        //登入
                         for(var i=0;i<cust_login.length;i++){
                         	var t_login=false;
+                        	//在session中
                         	for(var j=0;j<sess.length;j++){
                         		if(cust_login[i].id==sess[j]){
                         			t_login=true;
                         			break;
                         		}
                         	}
+                        	//session被清空 但10分內還有在動作的使用者
+                        	if(!t_login){
+	                        	for (var k=0;k<loginhistory_success10.length;k++){
+	                        		if(cust_login[i].id==loginhistory_success10[k].id){
+	                        			t_login=true;
+	                        			break;
+	                        		}
+	                        	}
+                        	}
+                        	
                         	if(!t_login || (cust_login[i].memo=="" && cust_login[i].datea=="") || cust_login[i].status=="logout"){
                         		cust_login.splice(i, 1);
 								i--;
                         	}
                         }
                         
+                        //登出
                         for(var i=0;i<cust_logout.length;i++){
                         	var t_login=false;
+                        	//在session中
                         	for(var j=0;j<sess.length;j++){
                         		if(cust_logout[i].id==sess[j] && (cust_logout[i].memo!="" && cust_logout[i].datea!="") && cust_logout[i].status=="success"){
                         			t_login=true;
                         			break;
                         		}
                         	}
-                        	if(t_login ){
+                        	//session被清空 但10分內還有在動作的使用者
+                        	if(!t_login){
+	                        	for (var k=0;k<loginhistory_success10.length;k++){
+	                        		if(cust_logout[i].id==loginhistory_success10[k].id && (cust_logout[i].memo!="" && cust_logout[i].datea!="") && cust_logout[i].status=="success"){
+	                        			t_login=true;
+	                        			break;
+	                        		}
+	                        	}
+                        	}
+                        	
+                        	if(t_login){
                         		cust_logout.splice(i, 1);
 								i--;
                         	}
