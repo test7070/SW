@@ -8,6 +8,28 @@ z_cust01:--z_cust01
 	declare @t_bcustno nvarchar(20) = case when '#non'=[5] then '' else [5] end
 	declare @t_ecustno nvarchar(20) = case when '#non'=[6] then CHAR(255) else [6] end
 -------------------------------------------------------------------------------------------------------------------------------------------
+	declare @tmp table(
+		gno nvarchar(10),
+		recno int,
+		mbdate nvarchar(20),
+		medate nvarchar(20),
+		typea nvarchar(50),
+		id nvarchar(50),
+		kdate nvarchar(50),
+		conn nvarchar(50),
+		email nvarchar(100),
+		conn2 nvarchar(50),
+		tel nvarchar(100),
+		serial nvarchar(100),
+		comp nvarchar(100),
+		invoaddr nvarchar(200),
+		cobtype nvarchar(50),
+		money float,
+		invomemo nvarchar(200),
+		counts float
+	)
+	
+	insert @tmp
 	select '0' gno,ROW_NUMBER() over (order by c.bdate,c.typea) recno
 	,c.bdate mbdate
 	,c.edate medate
@@ -24,12 +46,16 @@ z_cust01:--z_cust01
 	,a.cobtype
 	,isnull((select money from custu where noa=d.unoa),0) money
 	,a.invomemo
-	,@t_bdate+'~'+@t_edate enddate
+	,0
 	from cust a left join custs b on a.noa=b.noa
 	outer apply (select top 1 * from custt where id=b.id and edate between @t_bdate and @t_edate order by bdate desc)c
 	outer apply (select MAX(noa)unoa from custu where serial=a.noa)d
 	where isnull(b.master,0)=1
 	and c.edate between @t_bdate and @t_edate
-
+	
+	insert @tmp (gno,money,counts)
+	select '1',sum(money),count(*) from @tmp
+	
+	select *,@t_bdate+'~'+@t_edate enddate from @tmp order by gno,recno
 ;
 --****************************************************************************************************
