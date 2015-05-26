@@ -31,10 +31,10 @@
                     //清除資料
                     if (itemIn.id=="all"){
                     	queryString = @"SET QUOTED_IDENTIFIER OFF declare @cmd nvarchar(max)  
-                    	delete loginhistory ";
+                    	update loginhistory set status='logout' where [status]='success' ";
                     }else{
                     	queryString = @"SET QUOTED_IDENTIFIER OFF declare @cmd nvarchar(max)  
-                    	delete loginhistory where id=@id ";	
+                    	update loginhistory set status='logout' where id=@id and [status]='success' ";	
                     }
 					
                     System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(queryString, connSource);
