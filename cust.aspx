@@ -67,7 +67,7 @@
 			
 			var t_area=[],t_areas=[],t_areat=[];
 			function mainPost() {
-				bbmMask = [['txtStartdate', '9999/99/99'],['txtKdate', '9999/99/99']];
+				bbmMask = [['txtStartdate', '9999/99/99'],['txtKdate', '9999/99/99'],['txtKtime', '99:99']];
 				bbtMask = [['txtBdate', '9999/99/99'],['txtEdate', '9999/99/99']];
 				q_mask(bbmMask);
 				
@@ -512,7 +512,7 @@
 			}
 
 			function btnPrint() {
-				
+				q_box("z_cust.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";;" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
 			}
 			
 			 function q_stPost() {
@@ -1305,7 +1305,10 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblKdate' class="lbl"> </a></td>
-						<td><input id="txtKdate" type="text" class="txt c2"/></td>
+						<td>
+							<input id="txtKdate" type="text" class="txt c2"/>
+							<input id="txtKtime" type="text" class="txt c2"/>
+						</td>
 						<td><span> </span><a id='lblIscheck' class="lbl"> </a></td>
 						<td><input id="chkIscheck" type="checkbox"/></td>
 					</tr>
