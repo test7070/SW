@@ -13,13 +13,16 @@
 		<link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
 		<script src="css/jquery/ui/jquery.ui.core.js"></script>
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
-		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
+		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
 		<script type="text/javascript">
+            var t_area = '';
             $(document).ready(function() {
                 _q_boxClose();
                 q_getId();
-                q_gf('', 'z_cust');
+
+                q_gt('area', '', 0, 0, 0, "area");
             });
+
             function q_gfPost() {
                 $('#q_report').q_report({
                     fileName : 'z_cust',
@@ -31,58 +34,88 @@
                         type : '0',
                         name : 'namea',
                         value : r_name
-                    }, {//[3][4]
-						type : '1', 
-						name : 'xdate'
-					}, {//[5],[6]
+                    }, {//[3]
+                        type : '5',
+                        name : 'datetype',
+                        value : 'bdate@主帳號起始日,edate@主帳號終止日,kdate@註冊日期'.split(',')
+                    }, {//[4][5]
+                        type : '1',
+                        name : 'xdate'
+                    }, {//[6],[7]
                         type : '2',
                         name : 'custno',
                         dbf : 'cust',
                         index : 'noa,comp',
                         src : 'cust_b.aspx'
-                    }, {//[7]
+                    }, {//[8]
+                        type : '5',
+                        name : 'xtypea',
+                        value : (' @全部,' + q_getPara('custs.typea')).split(',')
+                    }, {//[9]
                         type : '5',
                         name : 'xstatus',
-                        value : q_getPara('custs.typea').split(',')
+                        value : (' @全部,' + q_getPara('cust.status')).split(',')
+                    }, {//[10]
+                        type : '5',
+                        name : 'xareano',
+                        value : t_area.split(',')
+                    },{//[11]
+                    	type : '0',
+                        name : 'custstypea',
+                        value : q_getPara('custs.typea')
                     }]
                 });
                 q_popAssign();
                 q_getFormat();
                 q_langShow();
-                
+
                 $('#txtXdate1').mask('9999/99/99');
                 $('#txtXdate2').mask('9999/99/99');
-                $('#txtXdate1').datepicker();
-                $('#txtXdate2').datepicker();
-                
-                var t_date,t_year,t_month,t_day;
-	                t_date = new Date();
-	                t_date.setDate(1);
-	                t_year = t_date.getUTCFullYear();
-	                t_year = t_year>99?t_year+'':'0'+t_year;
-	                t_month = t_date.getUTCMonth()+1;
-	                t_month = t_month>9?t_month+'':'0'+t_month;
-	                t_day = t_date.getUTCDate();
-	                t_day = t_day>9?t_day+'':'0'+t_day;
-	                $('#txtXdate1').val(t_year+'/'+t_month+'/'+t_day);
-	                
-	                t_date = new Date();
-	                t_date.setDate(35);
-	                t_date.setDate(0);
-	                t_year = t_date.getUTCFullYear();
-	                t_year = t_year>99?t_year+'':'0'+t_year;
-	                t_month = t_date.getUTCMonth()+1;
-	                t_month = t_month>9?t_month+'':'0'+t_month;
-	                t_day = t_date.getUTCDate();
-	                t_day = t_day>9?t_day+'':'0'+t_day;
-	                $('#txtXdate2').val(t_year+'/'+t_month+'/'+t_day);
-                
+                $('#txtXdate1').datepicker({
+                    dateFormat : 'yy/mm/dd'
+                });
+                $('#txtXdate2').datepicker({
+                    dateFormat : 'yy/mm/dd'
+                });
+
+                var t_date, t_year, t_month, t_day;
+                t_date = new Date();
+                t_date.setDate(1);
+                t_year = t_date.getUTCFullYear();
+                t_year = t_year > 99 ? t_year + '' : '0' + t_year;
+                t_month = t_date.getUTCMonth() + 1;
+                t_month = t_month > 9 ? t_month + '' : '0' + t_month;
+                t_day = t_date.getUTCDate();
+                t_day = t_day > 9 ? t_day + '' : '0' + t_day;
+                $('#txtXdate1').val(t_year + '/' + t_month + '/' + t_day);
+
+                t_date = new Date();
+                t_date.setDate(35);
+                t_date.setDate(0);
+                t_year = t_date.getUTCFullYear();
+                t_year = t_year > 99 ? t_year + '' : '0' + t_year;
+                t_month = t_date.getUTCMonth() + 1;
+                t_month = t_month > 9 ? t_month + '' : '0' + t_month;
+                t_day = t_date.getUTCDate();
+                t_day = t_day > 9 ? t_day + '' : '0' + t_day;
+                $('#txtXdate2').val(t_year + '/' + t_month + '/' + t_day);
+
             }
 
             function q_boxClose(s2) {
+
             }
 
-            function q_gtPost(s2) {
+            function q_gtPost(t_name) {
+                switch (t_name) {
+                    case 'area':
+                        as = _q_appendData("area", "", true);
+                        t_area = " @全部";
+                        for ( i = 0; i < as.length; i++) {
+                            t_area = t_area + (t_area.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].area;
+                        }
+                        q_gf('', 'z_cust');
+                }
             }
 		</script>
 	</head>
@@ -91,10 +124,10 @@
 	ondragover="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	>
-		<div id="q_menu"></div>
+		<div id="q_menu"> </div>
 		<div style="position: absolute;top: 10px;left:50px;z-index: 1;width:2000px;">
 			<div id="container">
-				<div id="q_report"></div>
+				<div id="q_report"> </div>
 			</div>
 			<div class="prt" style="margin-left: -40px;">
 				<!--#include file="../inc/print_ctrl.inc"-->

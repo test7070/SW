@@ -1337,12 +1337,12 @@
 						<td><span> </span><a id='lblIllustrate2' class="lbl btn ChangeGB"> </a></td>
 						<td><input id="txtIllustrate2"  type="text"  class="txt c1"/></td>
 						<td colspan="2">
-							<input id="chkOnline" type="checkbox" style="float: center;"/>
-							<a id='lblOnline' class="lbl" style="float: center;"> </a>
-							<input id="chkNewimg" type="checkbox" style="float: center;"/>
-							<a id='lblNewimg' class="lbl" style="float: center;"> </a>
-							<input id="chkWatermark" type="checkbox" style="float: center;"/>
-							<a id='lblWatermark' class="lbl" style="float: center;"> </a>
+							<input id="chkOnline" type="checkbox" style="float: left;"/>
+							<a id='lblOnline' class="lbl" style="float: left;"> </a>
+							<input id="chkNewimg" type="checkbox" style="float: left;"/>
+							<a id='lblNewimg' class="lbl" style="float: left;"> </a>
+							<input id="chkWatermark" type="checkbox" style="float: left;"/>
+							<a id='lblWatermark' class="lbl" style="float: left;"> </a>
 						</td>
 					</tr>
 					<tr>
