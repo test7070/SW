@@ -26,9 +26,12 @@ z_cust01:--z_cust01
 		mbdate nvarchar(20),
 		medate nvarchar(20),
 		typea nvarchar(50),
+		status nvarchar(50),
 		id nvarchar(50),
 		kdate nvarchar(50),
 		conn nvarchar(50),
+		mobile nvarchar(100),
+		sms nvarchar(50),
 		email nvarchar(100),
 		conn2 nvarchar(50),
 		tel nvarchar(100),
@@ -46,15 +49,21 @@ z_cust01:--z_cust01
 	,c.bdate mbdate
 	,c.edate medate
 	,(select typea from @tmpa where noa=c.typea)
+	,a.status
 	,b.id
 	,a.kdate
 	,a.conn
+	,a.mobile
+	,''
 	,a.email
 	,a.conn2
 	,isnull(a.tcode,'')+'-'+isnull(a.tareacode,'')+'-'+isnull(a.tel,'') tel
 	,a.serial
 	,a.comp
-	,isnull(a.iareano,'')+isnull(a.iareasno,'')+isnull(a.iareatno,'')+isnull(a.invoaddr,'') invoaddr
+	, (select area from area where noa=isnull(a.iareano,''))
+	+(select city from areas where noa=isnull(a.iareano,'') and noq=isnull(a.iareasno,''))
+	+(select district from areat where noa=isnull(a.iareano,'') and noq=isnull(a.iareasno,'') and nor=isnull(a.iareatno,''))
+	+isnull(a.invoaddr,'') invoaddr
 	,a.cobtype
 	,isnull((select money from custu where noa=d.unoa),0) money
 	,a.invomemo
@@ -72,6 +81,9 @@ z_cust01:--z_cust01
 	insert @tmp (gno,money,counts)
 	select '1',sum(money),count(*) from @tmp
 	
-	select *,@t_bdate+'~'+@t_edate enddate from @tmp order by gno,recno
+	select *,@t_bdate+'~'+@t_edate enddate 
+	,case when @t_datetype='bdate' then '主帳號起始日' when @t_datetype='edate' then '主帳號終止日' else '註冊日期' end tdtype  
+	,case when @t_status='' then '會員' else @t_status end tstatus
+	from @tmp order by gno,recno
 ;
 --****************************************************************************************************
