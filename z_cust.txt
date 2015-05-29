@@ -54,7 +54,7 @@ z_cust01:--z_cust01
 	,a.kdate
 	,a.conn
 	,a.mobile
-	,''
+	,case when isnull(a.issms,0)=1 then '是' else '否' end 
 	,a.email
 	,a.conn2
 	,isnull(a.tcode,'')+'-'+isnull(a.tareacode,'')+'-'+isnull(a.tel,'') tel

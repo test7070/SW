@@ -31,6 +31,7 @@
 				
 				q_cmbParse("cmbStatus", '@全部,'+q_getPara('cust.status'));
 				q_cmbParse("cmbUnprocess", '@全部,1@未處理,2@已處理');
+				q_cmbParse("cmbIssms", '@全部,1@是,2@否');
 				
 				$('#txtNoa').focus();
 				q_gt('bizscope', "where=^^right(noa,3)='000'^^", 0, 0, 0, "bizscope");
@@ -68,6 +69,7 @@
 				t_bizscope2 = $('#cmbBizscope2').val();
 				t_unprocess = $('#cmbUnprocess').val();
 				t_id = $('#txtId').val();
+				t_issms = $('#cmbIssms').val();
 
 				t_bdate = t_bdate.length > 0 && t_bdate.indexOf("_") > -1 ? t_bdate.substr(0, t_bdate.indexOf("_")) : t_bdate;
 				t_edate = t_edate.length > 0 && t_edate.indexOf("_") > -1 ? t_edate.substr(0, t_edate.indexOf("_")) : t_edate;
@@ -81,6 +83,11 @@
 					
 				if(t_id.length>0)	
 					t_where=t_where+" and noa=(select noa from custs where id='"+t_id+"' ) ";
+				
+				if(t_issms=='1')
+					t_where=t_where+" and isnull(issms,0)=1 ";
+				if(t_issms=='2')
+					t_where=t_where+" and isnull(issms,0)=0 ";
 				
 				t_where = ' where=^^' + t_where + '^^ ';
 				return t_where;
@@ -133,6 +140,10 @@
 				<tr class='seek_tr'>
 					<td class='seek'  style="width:20%;"><a id='lblId'> </a></td>
 					<td><input class="txt" id="txtId" type="text" style="width:215px; font-size:medium;" /></td>
+				</tr>
+				<tr class='seek_tr'>
+					<td class='seek' style="width:30%;"><a id='lblIssms'> </a></td>
+					<td><select id="cmbIssms" style="width:215px; font-size:medium;"> </select></td>
 				</tr>
 			</table>
 			<!--#include file="../inc/seek_ctrl.inc"-->

@@ -487,7 +487,7 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)// 1-3
 					return;
-				q_box('cust_s.aspx', q_name + '_s', "500px", "450px", q_getMsg("popSeek"));
+				q_box('cust_s.aspx', q_name + '_s', "500px", "480px", q_getMsg("popSeek"));
 			}
 
 			function btnIns() {
@@ -1223,8 +1223,8 @@
 					<tr class="conn">
 						<td><span> </span><a id='lblExt2' class="lbl"> </a></td>
 						<td><input id="txtExt2" type="text" class="txt c1"/></td>
-						<td> </td>
-						<td> </td>
+						<td><span> </span><a id='lblIssms' class="lbl"> </a></td>
+						<td><input id="chkIssms" type="checkbox"/></td>
 						<td> </td>
 					</tr>
 					<tr>
