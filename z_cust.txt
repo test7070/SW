@@ -69,7 +69,7 @@ z_cust01:--z_cust01
 	,a.invomemo
 	,0
 	from cust a left join custs b on a.noa=b.noa
-	outer apply (select top 1 * from custt where id=b.id and edate between @t_bdate and @t_edate order by bdate desc)c
+	outer apply (select top 1 * from custt where id=b.id order by bdate desc)c
 	outer apply (select MAX(noa)unoa from custu where serial=a.noa)d
 	where isnull(b.master,0)=1
 	and case when @t_datetype='bdate' then c.bdate when @t_datetype='edate' then c.edate else a.kdate end between @t_bdate and @t_edate
