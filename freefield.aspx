@@ -349,6 +349,11 @@
 						<td> </td>
 					</tr>
 					<tr>
+						<td><span> </span><a id='lblMemo2' class="lbl"> </a></td>
+						<td colspan="3"><textarea id="txtMemo2" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
+						<td> </td>
+					</tr>
+					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
 						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
