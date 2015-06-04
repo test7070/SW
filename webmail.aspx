@@ -60,7 +60,8 @@
 				});
 				
 				$('#lblEmailaddr').click(function() {
-					q_box('cust_b2.aspx','cust', "500px", "90%", q_getMsg("lblEmailaddr"));
+					var t_where="1=1"
+					q_box("cust_b2.aspx?"+ r_userno + ";" + r_name + ";" + q_time + ";" + t_where,'cust', "500px", "90%", q_getMsg("lblEmailaddr"));
 				});
             }
             
