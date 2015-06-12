@@ -47,6 +47,8 @@
             function mainPost() {
             	bbmMask = [];
                 q_mask(bbmMask);
+                
+                q_cmbParse("cmbTypea",'1,2');
             }
             
             function q_boxClose(s2) {
@@ -55,7 +57,6 @@
                     case q_name + '_s':
                         q_boxClose2(s2);
                         break;
-
                 }
             }
 			
@@ -340,8 +341,12 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblFields' class="lbl"> </a></td>
-						<td><input id="txtFields"  type="text"  class="txt c1"/></td>
-						<td><input id="txtNoa"  type="text" style="display: none;"/></td>
+						<td>
+							<input id="txtFields"  type="text"  class="txt c1"/>
+							<input id="txtNoa"  type="text" style="display: none;"/>
+						</td>
+						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
+						<td><select id="cmbTypea" class="txt c1"> </select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
