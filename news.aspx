@@ -1397,7 +1397,8 @@
 										<input name="typea" type="checkbox" value="0103"/>合金鐵
 										<input name="typea" type="checkbox" value="0104"/>廢鋼
 										<input name="typea" type="checkbox" value="0105"/>煤
-										<input name="typea" type="checkbox" value="0106"/>其它
+										<input name="typea" type="checkbox" value="0106"/>粗鋼
+										<input name="typea" type="checkbox" value="0199"/>其它
 									</td>
 								</tr>
 							</table>
