@@ -165,7 +165,7 @@
                     		//寄信
 		                    var t_data = Array({
 		                        subject:$('#txtSubject').val(),
-		                        contents:$('#txtContents').val(),
+		                        contents:replaceAll($('#txtContents').val(),'\n','<BR>'),
 		                        emailaddr: x_mailaddr
 		                    });
 		                    
