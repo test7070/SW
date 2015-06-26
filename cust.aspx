@@ -768,64 +768,68 @@
 		            		t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							if(!emp($('#txtId_'+b_seq).val())){
-								if(emp($('#txtEmail').val())){
-									alert(q_getMsg('lblEmail')+"空白!!");
-									return;
-								}
-								
-								if(emp($('#txtConn_'+b_seq).val())){
-									alert("【"+$('#txtId_'+b_seq).val()+"】"+q_getMsg('lblConn_s')+"空白!!");
-									return;
-								}
-								
-								if(emp($('#txtPw_'+b_seq).val())){
-									alert("【"+$('#txtId_'+b_seq).val()+"】密碼空白!!");
-									return;
-								}
-								
-								if(confirm('確定要'+q_getMsg('lblPassid_s')+'【'+$('#txtId_'+b_seq).val()+'】?')){
-									var valid_id=[];
-									for (var j = 0; j < q_bbtCount; j++) {
-										if(q_date()>=$('#txtBdate__'+j).val() && q_date()<=$('#txtEdate__'+j).val()){
-											var t_pw='';
-											for (var i = 0; i < q_bbsCount; i++) {
-												if($('#txtId__'+j).val()==$('#txtId_'+i).val()){
-													t_pw=$('#txtPw_'+i).val();
-												}
-											}
-											//密碼不空白
-											if(t_pw!=''){
-												//檢查id是否存在
-												var x_id=false;
-												for (var i = 0; i < valid_id.length; i++) {
-													if(valid_id[i].id==$('#txtId__'+j).val()){
-														x_id=true;
-														break;
-													}
-												}
-												if(!x_id){
-													valid_id.push({
-														id:$('#txtId__'+j).val(),
-														pw:t_pw
-													})
-												}
-											}
-										}
+							if(q_cur!=1 && q_cur!=2){
+								if(!emp($('#txtId_'+b_seq).val())){
+									if(emp($('#txtEmail').val())){
+										alert(q_getMsg('lblEmail')+"空白!!");
+										return;
 									}
 									
-									if(valid_id.length>0){
-										var t_id='',t_pw='';
-										for (var i = 0; i < valid_id.length; i++) {
-											t_id=t_id+(t_id.length>0?';':'')+valid_id[i].id;
-											t_pw=t_pw+(t_pw.length>0?';':'')+valid_id[i].pw;
+									if(emp($('#txtConn_'+b_seq).val())){
+										alert("【"+$('#txtId_'+b_seq).val()+"】"+q_getMsg('lblConn_s')+"空白!!");
+										return;
+									}
+									
+									if(emp($('#txtPw_'+b_seq).val())){
+										alert("【"+$('#txtId_'+b_seq).val()+"】密碼空白!!");
+										return;
+									}
+									
+									if(confirm('確定要'+q_getMsg('lblPassid_s')+'【'+$('#txtId_'+b_seq).val()+'】?')){
+										var valid_id=[];
+										for (var j = 0; j < q_bbtCount; j++) {
+											if(q_date()>=$('#txtBdate__'+j).val() && q_date()<=$('#txtEdate__'+j).val()){
+												var t_pw='';
+												for (var i = 0; i < q_bbsCount; i++) {
+													if($('#txtId__'+j).val()==$('#txtId_'+i).val()){
+														t_pw=$('#txtPw_'+i).val();
+													}
+												}
+												//密碼不空白
+												if(t_pw!=''){
+													//檢查id是否存在
+													var x_id=false;
+													for (var i = 0; i < valid_id.length; i++) {
+														if(valid_id[i].id==$('#txtId__'+j).val()){
+															x_id=true;
+															break;
+														}
+													}
+													if(!x_id){
+														valid_id.push({
+															id:$('#txtId__'+j).val(),
+															pw:t_pw
+														})
+													}
+												}
+											}
 										}
-										q_func( "daysw.email", "1,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+t_id+","+t_pw);   //會員帳號開通信函
-										//q_func( "daysw.email", "1,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+$('#txtId_'+b_seq).val()+","+$('#txtPw_'+b_seq).val());   //會員帳號開通信函
-									}else{
-										alert("無有效帳號!!");
+										
+										if(valid_id.length>0){
+											var t_id='',t_pw='';
+											for (var i = 0; i < valid_id.length; i++) {
+												t_id=t_id+(t_id.length>0?';':'')+valid_id[i].id;
+												t_pw=t_pw+(t_pw.length>0?';':'')+valid_id[i].pw;
+											}
+											q_func( "daysw.email", "1,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+t_id+","+t_pw);   //會員帳號開通信函
+											//q_func( "daysw.email", "1,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+$('#txtId_'+b_seq).val()+","+$('#txtPw_'+b_seq).val());   //會員帳號開通信函
+										}else{
+											alert("無有效帳號!!");
+										}
 									}
 								}
+							}else{
+								alert("請先儲存會員資料再帳號開通!!");
 							}
 						});
 						
@@ -833,25 +837,29 @@
 		            		t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							if(!emp($('#txtId_'+b_seq).val())){
-								if(emp($('#txtEmail').val())){
-									alert(q_getMsg('lblEmail')+"空白!!");
-									return;
-								}
+							if(q_cur!=1 && q_cur!=2){
+								if(!emp($('#txtId_'+b_seq).val())){
+									if(emp($('#txtEmail').val())){
+										alert(q_getMsg('lblEmail')+"空白!!");
+										return;
+									}
+									
+									if(emp($('#txtConn_'+b_seq).val())){
+										alert("【"+$('#txtId_'+b_seq).val()+"】"+q_getMsg('lblConn_s')+"空白!!");
+										return;
+									}
+									
+									if(emp($('#txtPw_'+b_seq).val())){
+										alert("【"+$('#txtId_'+b_seq).val()+"】密碼空白!!");
+										return;
+									}
 								
-								if(emp($('#txtConn_'+b_seq).val())){
-									alert("【"+$('#txtId_'+b_seq).val()+"】"+q_getMsg('lblConn_s')+"空白!!");
-									return;
+									if(confirm('確定要'+q_getMsg('lblSendpass_s')+'【'+$('#txtId_'+b_seq).val()+'】?')){
+										q_func( "daysw.email", "3,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+$('#txtId_'+b_seq).val()+","+$('#txtPw_'+b_seq).val());   //會員密碼查詢回覆 
+									}
 								}
-								
-								if(emp($('#txtPw_'+b_seq).val())){
-									alert("【"+$('#txtId_'+b_seq).val()+"】密碼空白!!");
-									return;
-								}
-							
-								if(confirm('確定要'+q_getMsg('lblSendpass_s')+'【'+$('#txtId_'+b_seq).val()+'】?')){
-									q_func( "daysw.email", "3,"+$('#txtEmail').val()+","+$('#txtConn_'+b_seq).val()+","+$('#txtId_'+b_seq).val()+","+$('#txtPw_'+b_seq).val());   //會員密碼查詢回覆 
-								}
+							}else{
+								alert("請先儲存會員資料再寄送密碼!!");
 							}
 						});
 		            }

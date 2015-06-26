@@ -39,7 +39,7 @@
 				$('#btnSearch').click(function() {
 					var t_where="1=1";
 					if(!emp($('#textId').val())){
-						t_where+=" and noa in (select noa from where id='"+$('#textId').val()+"') ";
+						t_where+=" and noa in (select noa from custs where id='"+$('#textId').val()+"') ";
 					}
 					if(!emp($('#textComp').val())){
 						t_where+=" and charindex('"+$('#textComp').val()+"',comp)>0";

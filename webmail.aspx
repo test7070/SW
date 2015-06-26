@@ -76,7 +76,8 @@
 							var t_addr='',t_recipient='',t_unemail='';
 							for(var i=0;i<b_ret.length;i++){
 								if(b_ret[i].email.length>0){
-									t_addr=t_addr+(t_addr.length>0?',':'')+(b_ret[i].nick.length>0?b_ret[i].nick:b_ret[i].comp)+'<'+b_ret[i].email+'>';
+									//t_addr=t_addr+(t_addr.length>0?',':'')+(b_ret[i].nick.length>0?b_ret[i].nick:b_ret[i].comp)+'<'+b_ret[i].email+'>';
+									t_addr=t_addr+(t_addr.length>0?',':'')+b_ret[i].email;
 									t_recipient=t_recipient+(t_recipient.length>0?',':'')+b_ret[i].noa;
 								}else{
 									t_unemail=t_unemail+(t_unemail.length>0?',':'')+(b_ret[i].nick.length>0?b_ret[i].nick:b_ret[i].comp);
@@ -114,6 +115,7 @@
 						if (as[0] != undefined) {
 							$('#txtSubject').val(as[0].subject);
 							$('#txtContents').val(as[0].contents);
+							$('#txtContents').val(replaceAll($('#txtContents').val(),'chr(10)','\n'));
 						}
                 		break;
                     case q_name:
@@ -154,6 +156,57 @@
             function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
+                    
+                    $('#txtContents').val(replaceAll($('#txtContents').val(),'chr(10)','\n'));
+                    if(!emp($('#txtEmailaddr').val())){
+                    	var t_mailaddr=$('#txtEmailaddr').val().split(',');
+                    	for(var i=0;i<t_mailaddr.length;i++){
+                    		var x_mailaddr=t_mailaddr[i];
+                    		//寄信
+		                    var t_data = Array({
+		                        subject:$('#txtSubject').val(),
+		                        contents:$('#txtContents').val(),
+		                        emailaddr: x_mailaddr
+		                    });
+		                    
+		                    $.ajax({
+		                        url: 'webmail_send.aspx',
+		                        headers: { 'database': q_db },
+		                        type: 'POST',
+		                        data: JSON.stringify(t_data[0]),
+		                        dataType: 'text',
+		                        timeout: 10000,
+		                        success: function (data) {
+		                            if (data.length > 0) {
+		                                alert(data)
+		                            }
+		                        },
+		                        complete: function () {
+		
+		                        },
+		                        error: function (jqXHR, exception) {
+		                            var errmsg = this.url + '資料寫入異常 SEQ:' + this.seq + '。\n';
+		                            if (jqXHR.status === 0) {
+		                                alert(errmsg + 'Not connect.\n Verify Network.');
+		                            } else if (jqXHR.status == 404) {
+		                                alert(errmsg + 'Requested page not found. [404]');
+		                            } else if (jqXHR.status == 500) {
+		                                alert(errmsg + 'Internal Server Error [500].');
+		                            } else if (exception === 'parsererror') {
+		                                alert(errmsg + 'Requested JSON parse failed.');
+		                            } else if (exception === 'timeout') {
+		                                alert(errmsg + 'Time out error.');
+		                            } else if (exception === 'abort') {
+		                                alert(errmsg + 'Ajax request aborted.');
+		                            } else {
+		                                alert(errmsg + 'Uncaught Error.\n' + jqXHR.responseText);
+		                            }
+		                        }
+		                    });
+                    		
+                    	}
+                    }
+                    
                 Unlock();
             }
 
@@ -203,6 +256,7 @@
 
             function refresh(recno) {
                 _refresh(recno);
+                $('#txtContents').val(replaceAll($('#txtContents').val(),'chr(10)','\n'));
             }
             
             function readonly(t_para, empty) {
