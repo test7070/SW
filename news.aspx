@@ -854,6 +854,12 @@
                     return;
                 }
                 
+                if(!((/^[0-9]{2}\:[0-9]{2}$/g).test($('#txtTimea').val()))){
+                	alert('時間格式錯誤!!!');
+                    Unlock(1);
+                    return;
+                }
+                
                 if($('#chkWatermark').prop('checked') && $('#txtContents').val().indexOf('{ad01}')==-1){
                 	var s_contents=$('#txtContents').val().split('。');
                 	var t_contents='';
