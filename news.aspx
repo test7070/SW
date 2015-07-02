@@ -1404,6 +1404,7 @@
 										<input name="typea" type="checkbox" value="0104"/>廢鋼
 										<input name="typea" type="checkbox" value="0105"/>煤
 										<input name="typea" type="checkbox" value="0106"/>粗鋼
+										<input name="typea" type="checkbox" value="0107"/>焦炭
 										<input name="typea" type="checkbox" value="0199"/>其它
 									</td>
 								</tr>
@@ -1485,7 +1486,7 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td colspan="3">
-										<input name="typea" type="checkbox" value="0302"/>特殊鋼(含不鏽鋼)
+										<input name="typea" type="checkbox" value="0302"/>特殊鋼
 									</td>
 								</tr>
 								<tr>
@@ -1497,6 +1498,17 @@
 									<td> </td>
 									<td> </td>
 									<td colspan="2"><input name="typea" type="checkbox" value="030202"/>條鋼</td>
+								</tr>
+								<tr>
+									<td> </td>
+									<td> </td>
+									<td colspan="2"><input name="typea" type="checkbox" value="030203"/>不鏽鋼</td>
+								</tr>
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td colspan="3">
+										<input name="typea" type="checkbox" value="0303"/>鋼材
+									</td>
 								</tr>
 							</table>
 						</td>
@@ -1514,9 +1526,10 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td>
-										<input name="typea" type="checkbox" value="0401"/>螺絲
+										<input name="typea" type="checkbox" value="0401"/>螺絲(扣件)
 										<input name="typea" type="checkbox" value="0402"/>鋼管
-										<input name="typea" type="checkbox" value="0403"/>其它
+										<input name="typea" type="checkbox" value="0403"/>緊固件
+										<input name="typea" type="checkbox" value="0499"/>其它
 									</td>
 								</tr>
 							</table>
@@ -1541,6 +1554,7 @@
 										<input name="typea" type="checkbox" value="0504"/>鎳
 										<input name="typea" type="checkbox" value="0505"/>鉛
 										<input name="typea" type="checkbox" value="0506"/>錫
+										<input name="typea" type="checkbox" value="0507"/>鉬
 										<input name="typea" type="checkbox" value="0599"/>其它
 									</td>
 								</tr>
