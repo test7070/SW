@@ -159,53 +159,49 @@
                     
                     $('#txtContents').val(replaceAll($('#txtContents').val(),'chr(10)','\n'));
                     if(!emp($('#txtEmailaddr').val())){
-                    	var t_mailaddr=$('#txtEmailaddr').val().split(',');
-                    	for(var i=0;i<t_mailaddr.length;i++){
-                    		var x_mailaddr=t_mailaddr[i];
-                    		//寄信
-		                    var t_data = Array({
-		                        subject:$('#txtSubject').val(),
-		                        contents:replaceAll($('#txtContents').val(),'\n','<BR>'),
-		                        emailaddr: x_mailaddr
-		                    });
+                    	var t_mailaddr=$('#txtEmailaddr').val();
+                    	//寄信
+						var t_data = Array({
+							subject:$('#txtSubject').val(),
+							contents:replaceAll($('#txtContents').val(),'\n','<BR>'),
+							emailaddr: t_mailaddr
+						});
 		                    
-		                    $.ajax({
-		                        url: 'webmail_send.aspx',
-		                        headers: { 'database': q_db },
-		                        type: 'POST',
-		                        data: JSON.stringify(t_data[0]),
-		                        dataType: 'text',
-		                        timeout: 10000,
-		                        success: function (data) {
-		                            if (data.length > 0) {
-		                                alert(data)
-		                            }
-		                        },
-		                        complete: function () {
-		
-		                        },
-		                        error: function (jqXHR, exception) {
-		                            var errmsg = this.url + '資料寫入異常 SEQ:' + this.seq + '。\n';
-		                            if (jqXHR.status === 0) {
-		                                alert(errmsg + 'Not connect.\n Verify Network.');
-		                            } else if (jqXHR.status == 404) {
-		                                alert(errmsg + 'Requested page not found. [404]');
-		                            } else if (jqXHR.status == 500) {
-		                                alert(errmsg + 'Internal Server Error [500].');
-		                            } else if (exception === 'parsererror') {
-		                                alert(errmsg + 'Requested JSON parse failed.');
-		                            } else if (exception === 'timeout') {
-		                                alert(errmsg + 'Time out error.');
-		                            } else if (exception === 'abort') {
-		                                alert(errmsg + 'Ajax request aborted.');
-		                            } else {
-		                                alert(errmsg + 'Uncaught Error.\n' + jqXHR.responseText);
-		                            }
-		                        }
-		                    });
-                    		
-                    	}
-                    }
+						$.ajax({
+							url: 'webmail_send.aspx',
+							headers: { 'database': q_db },
+							type: 'POST',
+							data: JSON.stringify(t_data[0]),
+							dataType: 'text',
+							timeout: 10000,
+							success: function (data) {
+								if (data.length > 0) {
+									alert(data)
+								}
+							},
+							complete: function () {
+								
+							},
+							error: function (jqXHR, exception) {
+								var errmsg = this.url + '資料寫入異常 SEQ:' + this.seq + '。\n';
+								if (jqXHR.status === 0) {
+									alert(errmsg + 'Not connect.\n Verify Network.');
+								} else if (jqXHR.status == 404) {
+									alert(errmsg + 'Requested page not found. [404]');
+								} else if (jqXHR.status == 500) {
+									alert(errmsg + 'Internal Server Error [500].');
+								} else if (exception === 'parsererror') {
+									alert(errmsg + 'Requested JSON parse failed.');
+								} else if (exception === 'timeout') {
+									alert(errmsg + 'Time out error.');
+								} else if (exception === 'abort') {
+									alert(errmsg + 'Ajax request aborted.');
+								} else {
+									alert(errmsg + 'Uncaught Error.\n' + jqXHR.responseText);
+								}
+							}
+					});
+				}
                     
                 Unlock();
             }
