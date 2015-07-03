@@ -157,16 +157,18 @@
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
                     
-                    $('#txtContents').val(replaceAll($('#txtContents').val(),'chr(10)','\n'));
-                    if(!emp($('#txtEmailaddr').val())){
-                    	var t_mailaddr=$('#txtEmailaddr').val();
-                    	//寄信
+				$('#txtContents').val(replaceAll($('#txtContents').val(),'chr(10)','\n'));
+				if(!emp($('#txtEmailaddr').val())){
+					var t_mailaddr=$('#txtEmailaddr').val().split(',');
+					for(var i=0;i<t_mailaddr.length;i++){
+						var x_mailaddr=t_mailaddr[i];
+						//寄信
 						var t_data = Array({
 							subject:$('#txtSubject').val(),
 							contents:replaceAll($('#txtContents').val(),'\n','<BR>'),
-							emailaddr: t_mailaddr
+							emailaddr: x_mailaddr
 						});
-		                    
+			                    
 						$.ajax({
 							url: 'webmail_send.aspx',
 							headers: { 'database': q_db },
@@ -200,7 +202,8 @@
 									alert(errmsg + 'Uncaught Error.\n' + jqXHR.responseText);
 								}
 							}
-					});
+						});
+					}
 				}
                     
                 Unlock();
