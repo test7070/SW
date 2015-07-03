@@ -1424,8 +1424,8 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td>
-										<input name="typea" type="checkbox" value="0201"/>扁鋼胚
-										<input name="typea" type="checkbox" value="0202"/>小鋼胚
+										<input name="typea" type="checkbox" value="0201"/>扁鋼胚(板胚)
+										<input name="typea" type="checkbox" value="0202"/>小鋼胚(方胚)
 										<input name="typea" type="checkbox" value="0203"/>其它
 									</td>
 								</tr>
