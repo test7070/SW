@@ -1486,7 +1486,7 @@
 								<tr>
 									<td style="width: 30px;"> </td>
 									<td colspan="3">
-										<input name="typea" type="checkbox" value="0302"/>特殊鋼
+										<input name="typea" type="checkbox" value="0302"/>特殊鋼(不鏽鋼)
 									</td>
 								</tr>
 								<tr>
@@ -1502,7 +1502,7 @@
 								<tr>
 									<td> </td>
 									<td> </td>
-									<td colspan="2"><input name="typea" type="checkbox" value="030203"/>不鏽鋼</td>
+									<td colspan="2"><input name="typea" type="checkbox" value="030299"/>其他</td>
 								</tr>
 								<tr>
 									<td style="width: 30px;"> </td>
