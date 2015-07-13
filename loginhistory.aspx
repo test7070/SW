@@ -462,8 +462,178 @@
                 }
             };
             
+            function loginseek() {};
+            loginseek.prototype = {
+                data : null,
+                tbCount : 15,
+                curPage : -1,
+                totPage : 0,
+                curIndex : '',
+                curCaddr : null,
+                load : function(){
+                    var string = "<table id='loginseek_table' style='display:none;'>";
+                    string+='<tr id="loginseek_header">';
+                    string+='<td id="loginseek_id" onclick="loginseek.sort(\'id\',false)" title="帳號" align="center" style="width:190px; color:black;">帳號</td>';
+                    string+='<td id="loginseek_status" onclick="loginseek.sort(\'status\',false)" title="狀態" align="center" style="width:190px; color:black;">狀態</td>';
+                    string+='<td id="loginseek_datea" onclick="loginseek.sort(\'datea\',false)" title="登入時間" align="center" style="width:190px;color:black;">登入時間</td>';
+                    string+='<td id="loginseek_ip" onclick="loginseek.sort(\'ip\',false)" title="登入IP" align="center" style="width:190px;color:black;">登入IP</td>';
+                    string+='</tr>';
+                    
+                    var t_color = ['DarkBlue','DarkRed'];
+                    for(var i=0;i<this.tbCount;i++){
+                        string+='<tr id="loginseek_tr'+i+'">';
+                        string+='<td id="loginseek_id'+i+'" style="text-align: center;color:'+t_color[i%t_color.length]+'"></td>';
+                        string+='<td id="loginseek_status'+i+'" style="text-align: center;color:'+t_color[i%t_color.length]+'"></td>';
+                        string+='<td id="loginseek_datea'+i+'" style="text-align: center;color:'+t_color[i%t_color.length]+'"></td>';
+                        string+='<td id="loginseek_ip'+i+'" style="text-align: center;color:'+t_color[i%t_color.length]+'"></td>';
+                        string+='</tr>';
+                    }
+                    string+='</table>';
+                    
+                    $('#loginseek').append(string);
+                    string="<a style='float:left;'>帳號：</a><input id='textLoginseek_id' type='text' style='float:left;width:120px;'/>";
+                    string+="<a style='float:left;'>日期：</a><input id='textLoginseek_bdate' type='text' style='float:left;width:100px;'/><a style='float:left;'>~</a><input id='textLoginseek_edate' type='text' style='float:left;width:100px;'/>";
+                    string+="<a style='float:left;'>　　</a>";
+                    string+='<input id="btnloginseek_seek" type="button" style="float:left;width:100px;" value="查詢"/>';
+                    string+='<input id="btnloginseek_previous" onclick="loginseek.previous()" type="button" style="float:left;width:100px;" value="上一頁"/>';
+                    string+='<input id="btnloginseek_next" onclick="loginseek.next()" type="button" style="float:left;width:100px;" value="下一頁"/>';
+                    string+='<input id="textSeekCurPage" onchange="loginseek.page(parseInt($(this).val()))" type="text" style="float:left;width:100px;text-align: right;"/>';
+                    string+='<span style="float:left;display:block;width:10px;font-size: 25px;">/</span>';
+                    string+='<input id="textSeekTotPage"  type="text" readonly="readonly" style="float:left;width:100px;color:green;"/>';
+                    $('#loginseek_control').append(string);
+                },
+                init : function(obj) {
+                	$('#textLoginseek_bdate').mask('9999/99/99');
+                	$('#textLoginseek_edate').mask('9999/99/99');
+                	
+                	$('#btnloginseek_seek').click(function() {
+                		var id=$('#textLoginseek_id').val();
+                		var bdate=$('#textLoginseek_bdate').val();
+                		var edate=$('#textLoginseek_edate').val();
+                		if(edate=='')
+                			edate='9999/99/99'
+                		
+                		t_where="where=^^ id='"+id+"' and replace(CONVERT (varchar(10),datea,20),'-','/') between '"+bdate+"' and '"+edate+"' ^^";
+						q_gt('loginhistory', t_where, 0, 0, 0,'seek_init', r_accy);
+					});
+                                        
+                    this.data = new Array();
+                    if (obj[0] != undefined) {
+                        for (var i in obj)
+                            if (obj[i]['id'] != undefined ){
+                                this.data.push(obj[i]);
+                            }
+                    }
+                    
+                    this.totPage = Math.ceil(this.data.length / this.tbCount);
+                    $('#textSeekTotPage').val(this.totPage);
+                    this.sort('datea', false);
+                    Unlock();
+                },
+                sort : function(index, isFloat) {
+                    this.curIndex = index;
+
+                    if (isFloat) {
+                        this.data.sort(function(a, b) {
+                            var m = parseFloat(a[loginseek.curIndex] == undefined ? "0" : a[loginseek.curIndex]);
+                            var n = parseFloat(b[loginseek.curIndex] == undefined ? "0" : b[loginseek.curIndex]);
+                            if (m == n) {
+                                if (a['id'] < b['id'])
+                                    return 1;
+                                if (a['id'] > b['id'])
+                                    return -1;
+                                return 0;
+                            } else
+                                return n - m;
+                        });
+                    } else {
+                        this.data.sort(function(a, b) {
+                            var m = a[loginseek.curIndex] == undefined ? "" : a[loginseek.curIndex];
+                            var n = b[loginseek.curIndex] == undefined ? "" : b[loginseek.curIndex];
+                            if (m == n) {
+                                if (a['id'] > b['id'])
+                                    return 1;
+                                if (a['id'] < b['id'])
+                                    return -1;
+                                return 0;
+                            } else {
+                                if (m > n)
+                                    return 1;
+                                if (m < n)
+                                    return -1;
+                                return 0;
+                            }
+                        });
+                    }
+                    this.page(1);
+                },
+                next : function() {
+                    if (this.curPage >= this.totPage) {
+                        alert('最末頁。');
+                        return;
+                    }
+                    this.curPage++;
+                    $('#textSeekCurPage').val(this.curPage);
+                    this.refresh();
+                },
+                previous : function() {
+                    if (this.curPage == 1) {
+                        alert('最前頁。');
+                        return;
+                    }
+                    this.curPage--;
+                    $('#textSeekCurPage').val(this.curPage);
+                    this.refresh();
+                },
+                page : function(n) {
+                    if (n <= 0 || n > this.totPage) {
+                        this.curPage = 1;
+                        $('#textSeekCurPage').val(this.curPage);
+                        this.refresh();
+                        return;
+                    }
+                    this.curPage = n;
+                    $('#textSeekCurPage').val(this.curPage);
+                    this.refresh();
+                },
+                refresh : function() {
+                    //頁面更新
+                    var n = (this.curPage - 1) * this.tbCount;
+                    for (var i = 0; i < this.tbCount; i++) {
+                        if ((n + i) < this.data.length) {
+                            $('#loginseek_id' + i).html(this.data[n+i]['id']);
+                            $('#loginseek_ip' + i).html(this.data[n+i]['ipaddress']);
+                            if(this.data[n+i]['status']=='fail')
+                            	$('#loginseek_status' + i).html('失敗');
+                            else if(this.data[n+i]['status']=='success')
+                            	$('#loginseek_status' + i).html('登入');
+                            else if(this.data[n+i]['status']=='logout')
+                            	$('#loginseek_status' + i).html('登入');
+                            else
+                            	$('#loginseek_status' + i).html('');
+                            
+                            if(this.data[n+i]['datea']==''){
+                            	$('#loginseek_datea' + i).html('');
+                            }else{
+	                            var t_date=new Date(this.data[n+i]['datea']);
+	                            $('#loginseek_datea' + i).html(t_date.getFullYear()+'-'
+	                            											+('00'+(t_date.getMonth()+1)).substr(-2)+'-'
+	                            											+('00'+t_date.getDate()).substr(-2)+' '
+	                            											+('00'+t_date.getHours()).substr(-2)+':'+('00'+t_date.getMinutes()).substr(-2));
+							}
+                        } else {
+                            $('#loginseek_id' + i).text('');
+                            $('#loginseek_ip' + i).text('');
+                            $('#loginseek_datea' + i).text('');
+                            $('#loginseek_status' + i).text('');
+                        }
+                    }
+                }
+            };
+            
             custslogin = new custslogin();
             custslogout = new custslogout();
+            loginseek = new loginseek();
 
 			$(document).ready(function() {		
 				_q_boxClose();
@@ -471,6 +641,8 @@
                 q_gf('', q_name);
                 custslogin.load();
                 custslogout.load();
+                loginseek.load();
+                loginseek.init(new Array());
 			});
 			
 			var sess;
@@ -621,6 +793,16 @@
                             alert('無會員登入資料。');
                         }
                         break;
+					case 'seek_init':
+							var as=_q_appendData("loginhistory", "", true);
+							loginseek.init(as);
+							if (as[0] == undefined){
+								$('#loginseek_table').hide();
+								alert('無登入記錄。');
+							}else{
+								$('#loginseek_table').show();
+							}
+						break;
 					case q_name:
 						if (q_cur == 4)
 							q_Seek_gtPost();
@@ -796,6 +978,26 @@
                 background : yellow;
                 cursor : pointer;
             }
+            
+            #loginseek_table {
+                border: 5px solid gray;
+                font-size: medium;
+                background-color: white;
+            }
+            #loginseek_table tr {
+                height: 30px;
+            }
+            #loginseek_table td {
+                padding: 2px;
+                text-align: center;
+                border-width: 0px;
+                background-color: azure;
+                color: blue;
+            }
+            #loginseek_header td:hover{
+                background : bisque;
+                cursor : pointer;
+            }
 		</style>
 	</head>
 	<body>
@@ -816,6 +1018,9 @@
 				<td><div id="custslogin_control" style="width:100%;"> </div></td>
 				<td><div id="custslogout_control" style="width:100%;"> </div> </td>
 			</tr>
+			<tr><td colspan="2"><a style="color: blue;font-size: 20px;font-weight: bold;">登入記錄查詢</a></td></tr>
+			<tr><td colspan="2"><div id="loginseek_control" style="width:100%;"> </div></td></tr>
+			<tr><td colspan="2"><div id="loginseek" style="width:100%;"> </div></td></tr>
 		</table>
 		<input id="textSess" type="hidden" class="txt c1" value="" runat="server"/>
 	</body>
