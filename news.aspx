@@ -1528,7 +1528,6 @@
 									<td>
 										<input name="typea" type="checkbox" value="0401"/>螺絲(扣件)
 										<input name="typea" type="checkbox" value="0402"/>鋼管
-										<input name="typea" type="checkbox" value="0403"/>緊固件
 										<input name="typea" type="checkbox" value="0499"/>其它
 									</td>
 								</tr>
