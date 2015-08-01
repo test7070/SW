@@ -56,6 +56,19 @@
             	
             	q_cmbParse("cmbUnit", ' @,KG@公斤,MT@公噸');
             	q_cmbParse("cmbCoin", ' @,NTD@新台幣,USD@美金,RMB@人民幣');
+            	
+            	$('#btnSuccess').click(function(e){
+            		t_noa = $('#txtNoa').val();
+            		if(confirm("將寄送【申請成功信件】,是否繼續?")){
+            			javascript:window.open('../commerce/commerce_send_mail.aspx?noa='+t_noa+'&success=true',  t_noa ,config='width=400px,height=200px,toolbar=no,location=no,menubar=no,status=no,scrollbars=yes, resizable=yes');
+            		}
+            	});
+            	$('#btnFail').click(function(e){
+            		t_noa = $('#txtNoa').val();
+            		if(confirm("將寄送【申請失敗信件】,是否繼續?")){
+            			javascript:window.open('../commerce/commerce_send_mail.aspx?noa='+t_noa+'&success=false',  t_noa ,config='width=400px,height=200px,toolbar=no,location=no,menubar=no,status=no,scrollbars=yes, resizable=yes');
+            		}
+            	});
             }
 
             function q_funcPost(t_func, result) {
@@ -153,6 +166,13 @@
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
+                if(t_para){
+                	$('#btnSuccess').removeAttr('disabled');
+                	$('#btnFail').removeAttr('disabled');
+                }else{
+                	$('#btnSuccess').attr('disabled','disabled');
+                	$('#btnFail').attr('disabled','disabled');
+                }
             }
 
             function btnMinus(id) {
@@ -471,6 +491,7 @@
 						<td colspan="2"><input id="txtComp"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id="lblHref" class="lbl">公司網址</a></td>
 						<td colspan="2"><input id="txtHref"  type="text"  class="txt c1"/></td>
+						<td><input id="btnSuccess"  type="button" value="申請通過E-MAIL"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblTel1" class="lbl">連絡電話(1)</a></td>
@@ -483,6 +504,7 @@
 						<td colspan="2"><input id="txtTel2"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id="lblFax" class="lbl">傳真</a></td>
 						<td colspan="2"><input id="txtFax"  type="text"  class="txt c1"/></td>
+						<td><input id="btnFail"  type="button" style="color:red;" value="申請不通過E-MAIL"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblWorker" class="lbl">製單人員</a></td>
