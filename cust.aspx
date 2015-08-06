@@ -572,6 +572,8 @@
 						t_id=t_id+(t_id.length>0?' and':'')+(" id='"+$('#txtId_'+i).val()+"' collate Chinese_Taiwan_Stroke_CS_AS ");
 					}
 				}
+				if(t_id=='')
+					id=" 1=1 "
 				t_where="where=^^  ("+t_id+") and noa!='"+$('#txtNoa').val()+"' collate Chinese_Taiwan_Stroke_CS_AS^^";
 				q_gt('custs', t_where, 0, 0, 0, "btnOkCustsId", r_accy);
 				//wrServer($('#txtNoa').val());
