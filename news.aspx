@@ -1554,6 +1554,7 @@
 										<input name="typea" type="checkbox" value="0505"/>鉛
 										<input name="typea" type="checkbox" value="0506"/>錫
 										<input name="typea" type="checkbox" value="0507"/>鉬
+										<input name="typea" type="checkbox" value="0508"/>鉻
 										<input name="typea" type="checkbox" value="0599"/>其它
 									</td>
 								</tr>
