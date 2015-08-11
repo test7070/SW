@@ -368,6 +368,16 @@
 							wrServer($('#txtNoa').val());
 						}
 						break;
+					case 'qcur1btnok':
+						var as = _q_appendData("cust", "", true);
+						if (as[0] != undefined) {
+							alert(q_getMsg('lblSerial')+'重覆!!!');
+							Unlock(1);
+						}else{
+							isins=true;
+							btnOk();
+						}
+						break;
 					case q_name:
 						if (q_cur == 4)
 							q_Seek_gtPost();
@@ -521,6 +531,7 @@
 				Unlock();
 			}
 			
+			var isins=false;
 			function btnOk() {
 				Lock(1,{opacity:0});
             	
@@ -532,6 +543,14 @@
             		Unlock(1);
             		return;
             	}
+            	
+            	//判斷統編noa是否存在
+            	if(!isins && q_cur==1){
+            		t_where="where=^^ noa='"+$('#txtNoa').val()+"' collate Chinese_Taiwan_Stroke_CS_AS^^";
+					q_gt('cust', t_where, 0, 0, 0, "qcur1btnok", r_accy);
+					return;
+            	}
+            	isins=false;
             	
             	//儲存營業項目 選項##其他文字
             	var t_bizscopes='',txt_bizscopes='';
@@ -572,6 +591,8 @@
 						t_id=t_id+(t_id.length>0?' and':'')+(" id='"+$('#txtId_'+i).val()+"' collate Chinese_Taiwan_Stroke_CS_AS ");
 					}
 				}
+				if(t_id=='')
+					id=" 1=1 "
 				t_where="where=^^  ("+t_id+") and noa!='"+$('#txtNoa').val()+"' collate Chinese_Taiwan_Stroke_CS_AS^^";
 				q_gt('custs', t_where, 0, 0, 0, "btnOkCustsId", r_accy);
 				//wrServer($('#txtNoa').val());
