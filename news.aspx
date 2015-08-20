@@ -1610,9 +1610,10 @@
 									<td>
 										<input name="typea2" type="checkbox" value="0701"/>稅率
 										<input name="typea2" type="checkbox" value="0702"/>傾銷
+										<input name="typea2" type="checkbox" value="0705"/>匯率
 										<input name="typea2" type="checkbox" value="0703"/>環保
 										<input name="typea2" type="checkbox" value="0704"/>會議
-										<input name="typea2" type="checkbox" value="0705"/>其它
+										<input name="typea2" type="checkbox" value="0799"/>其它
 									</td>
 								</tr>
 							</table>
