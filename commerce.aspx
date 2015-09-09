@@ -459,6 +459,11 @@
 						<td><span> </span><a id="lblPrice" class="lbl">價格</a></td>
 						<td><input id="txtPrice"  type="text"  class="txt c1 num"/></td>
 						<td><select id="cmbCoin" class="txt c1"> </select></td>
+						
+						<td>
+							<span> </span>
+							<input id="chkBargain"  type="checkbox"  class="txt"/>議價
+						</td>
 					</tr>
 					
 					<tr>
