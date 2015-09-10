@@ -22,16 +22,16 @@
             var bbsNum = [];
             var bbmMask = [['txtDatea','9999/99/99'],['txtEdate','9999/99/99']];
             var bbsMask = [];
-
+			x_bbsSave = 1;// bbs不存資料
             q_sqlCount = 6;
             brwCount = 6;
             brwList = [];
             brwNowPage = 0;
             brwKey = 'noa';
             q_desc = 1;
-			q_bbsLen = 5;
+			q_bbsLen = 10;
             aPop = new Array();
-			brwCount2 = 20;
+			brwCount2 = 23;
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
@@ -519,7 +519,10 @@
 						<td><span> </span><a id="lblOnline" class="lbl">上線</a></td>
 						<td><input id="chkOnline" type="checkbox" class="txt c1"/></td>
 					</tr>
-					
+					<tr>
+						<td> </td>
+						<td colspan="5" style="color:red;">↓↓↓↓↓明細無法修改，請注意↓↓↓↓↓</td>
+					</tr>
 				</table>
 			</div>
 		</div>
