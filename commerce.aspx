@@ -162,6 +162,23 @@
                 _refresh(recno);	
                 var t_noa = $('#txtNoa').val();
                 $('#img').attr("src","../commerce/commerce_img.aspx?noa="+t_noa);
+                
+                var obj = $('.control_online');
+                for(var i=0;i<obj.length;i++){
+                	var n = obj.eq(i).attr('id').replace('vtonline_','');
+                    switch(obj.eq(i).html()){
+                        case 'true':
+                            $('#vtYN_'+n).html('O');
+                            break;
+                        case 'false':
+                            $('#vtYN_'+n).html('X');
+                            break;
+                        default:
+                            $('#vtYN_'+n).html('X');
+                            break;
+                    }
+
+                }
             }
 
             function readonly(t_para, empty) {
@@ -242,7 +259,7 @@
             }
             .dview {
                 float: left;
-                width: 300px;
+                width: 400px;
                 border-width: 0px;
             }
             .tview {
@@ -394,18 +411,23 @@
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	>
 		<!--#include file="../inc/toolbar.inc"-->
-		<div id='dmain' style="overflow:visible;width: 1200px;">
+		<div id='dmain' style="overflow:visible;width: 1500px;">
 			<div class="dview" id="dview" >
 				<table class="tview" id="tview" >
 					<tr>
 						<td style="width:20px; color:black;"><a id='vewChk'> </a></td>
 						<td style="width:100px; color:black;"><a id='vewDatea'>登錄日期</a></td>
-						<td style="width:100px; color:black;"><a id='vewOnline'>上線</a></td>
+						<td style="width:100px; color:black;"><a id='vewDatea'>公司名稱</a></td>
+						<td style="width:100px; color:black;"><a id='vewDatea'>產品名稱</a></td>
+						<td style="width:80px; color:black;"><a id='vewOnline'>上線</a></td>
 					</tr>
 					<tr>
 						<td><input id="chkBrow.*" type="checkbox" style=''/></td>
 						<td id='datea' style="text-align: center;">~datea</td>
-						<td id='online' style="text-align: center;">~online</td>
+						<td id='comp' style="text-align: center;">~comp</td>
+						<td id='product' style="text-align: center;">~product</td>
+						<td id='online' class="control_online" style="text-align: center;display:none;">~online</td>
+						<td id='YN' style="text-align: center;"></td>
 					</tr>
 				</table>
 			</div>
