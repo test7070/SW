@@ -521,13 +521,13 @@
 						<td><input id="btnSuccess"  type="button" value="申請通過E-MAIL"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblTel1" class="lbl">連絡電話(1)</a></td>
+						<td><span> </span><a id="lblTel1" class="lbl">連絡方式(1)</a></td>
 						<td colspan="2"><input id="txtTel1"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id="lblEmail" class="lbl">E-MAIL</a></td>
 						<td colspan="2"><input id="txtEmail"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblTel2" class="lbl">連絡電話(2)</a></td>
+						<td><span> </span><a id="lblTel2" class="lbl">連絡方式(2)</a></td>
 						<td colspan="2"><input id="txtTel2"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id="lblFax" class="lbl">傳真</a></td>
 						<td colspan="2"><input id="txtFax"  type="text"  class="txt c1"/></td>
