@@ -31,8 +31,7 @@
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 q_brwCount();
-                q_gt(q_name, q_content, q_sqlCount, 1)
-                $('#txtNoa').focus();
+                q_gt(q_name, q_content, q_sqlCount, 1);
             });
 
             function main() {
@@ -41,13 +40,11 @@
                     return;
                 }
                 mainForm(1);
-                // 1=Last  0=Top
             }
 			
             function mainPost() {
             	bbmMask = [];
                 q_mask(bbmMask);
-                q_cmbParse("cmbTypea", ','+q_getPara('faq.typea'));
                 
             }
             
@@ -117,13 +114,13 @@
 				}else{
 					$('#txtWorker2').val(r_name);
 				}
-
-				var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
-				if (s1.length == 0 || s1 == "AUTO")
-					q_gtnoa(q_name, replaceAll(q_date(), '/', ''));
-				else
-					wrServer(s1);
-
+				
+				var t_noa = trim($('#txtNoa').val());
+                var t_date = q_date();
+                if (t_noa.length == 0 || t_noa == "AUTO")
+                    q_gtnoa(q_name, replaceAll((t_date.length == 0 ? q_date() : t_date), '/', ''));
+                else
+                    wrServer(t_noa);
             }
 
             function wrServer(key_value) {
@@ -145,16 +142,14 @@
                 	if($('#vtisonline_'+i).text()=="false")
                 		$('#vtisonline_'+i).text("");
                 }
-                
             }
             
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
-                 if(t_para){
-                 	
-                }else{
-					
-                }
+                if(q_cur==1)
+                    $('#txtNoa').removeAttr('readonly').css('color','black').css('background','white');
+              //  else
+                //    $('#txtNoa').attr('disabled', 'disabled');
             }
 
             function btnMinus(id) {
@@ -216,27 +211,28 @@
             .dview {
                 float: left;
                 width: 1250px;
+                border-width: 0px;
             }
             .tview {
-            	width:100%;
-                margin: 0;
-                padding: 2px;
-                border: 1px black double;
-                border-spacing: 0;
+                border: 5px solid gray;
                 font-size: medium;
-                background-color: #FFFF66;
-                color: blue;
+                background-color: black;
+            }
+            .tview tr {
+                height: 30px;
             }
             .tview td {
                 padding: 2px;
                 text-align: center;
-                border: 1px black solid;
+                border-width: 0px;
+                background-color: #FFFF66;
+                color: blue;
             }
             .dbbm {
                 float: left;
                 width: 1250px;
-                margin: -1px;
-                border: 1px black solid;
+                /*margin: -1px;
+                 border: 1px black solid;*/
                 border-radius: 5px;
             }
             .tbbm {
@@ -253,10 +249,10 @@
                 height: 35px;
             }
             .tbbm tr td {
-                
+                width: 10%;
             }
             .tbbm .tdZ {
-                width: 2%;
+                width: 1%;
             }
             .tbbm tr td span {
                 float: right;
@@ -266,39 +262,18 @@
             }
             .tbbm tr td .lbl {
                 float: right;
-                color: blue;
+                color: black;
                 font-size: medium;
             }
             .tbbm tr td .lbl.btn {
                 color: #4297D7;
                 font-weight: bolder;
-                font-size: medium;
             }
             .tbbm tr td .lbl.btn:hover {
                 color: #FF8F19;
             }
             .txt.c1 {
-                width: 99%;
-                float: left;
-            }
-            .txt.c2 {
-                width: 38%;
-                float: left;
-            }
-            .txt.c3 {
-                width: 60%;
-                float: left;
-            }
-            .txt.c4 {
-                width: 18%;
-                float: left;
-            }
-            .txt.c5 {
-                width: 80%;
-                float: left;
-            }
-            .txt.c6 {
-                width: 50%;
+                width: 100%;
                 float: left;
             }
             .txt.num {
@@ -318,61 +293,110 @@
                 border-width: 1px;
                 padding: 0px;
                 margin: -1px;
+            }
+            .dbbs {
+                width: 2000px;
+            }
+            .tbbs a {
                 font-size: medium;
             }
-            .tbbm textarea {
-                font-size: medium;
-            }
-
             input[type="text"], input[type="button"] {
                 font-size: medium;
             }
-		</style>
+            .num {
+                text-align: right;
+            }
+            select {
+                font-size: medium;
+            }
+            #dbbt {
+                width: 800px;
+            }
+            #tbbt {
+                margin: 0;
+                padding: 2px;
+                border: 2px pink double;
+                border-spacing: 1;
+                border-collapse: collapse;
+                font-size: medium;
+                color: blue;
+                background: pink;
+                width: 100%;
+            }
+            #tbbt tr {
+                height: 35px;
+            }
+            #tbbt tr td {
+                text-align: center;
+                border: 2px pink double;
+            }
+        </style>
 	</head>
 	<body>
 		<!--#include file="../inc/toolbar.inc"-->
 		<div id='dmain' style="overflow:hidden;">
-			<div class="dview" id="dview" style="float: left; "  >
-				<table class="tview" id="tview"   border="1" cellpadding='2'  cellspacing='0' style="background-color: #FFFF66;">
+			<div class="dview" id="dview"  >
+				<table class="tview" id="tview"	>
 					<tr>
-						<td align="center" style="width:3%"><a id='vewChk'> </a></td>
-						<td align="center" style="width:15%"><a id='vewTypea'> </a></td>
-						<td align="center" style="width:75%"><a id='vewQuestion'> </a></td>
-						<td align="center" style="width:3%"><a id='vewIsonline'> </a></td>
+						<td align="center" style="width:20px; color:black;"><a id="vewChk"> </a></td>
+						<td align="center" style="width:1000px; color:black;"><a id="vewQuestion"> </a></td>
+						<td align="center" style="width:50px; color:black;"><a id="vewIsonline"> </a></td>
 					</tr>
 					<tr>
-						<td ><input id="chkBrow.*" type="checkbox" style=''/></td>
-						<td align="center" id="typea">~typea</td>
+						<td><input id="chkBrow.*" type="checkbox" style=''/></td>
 						<td align="center" id='question'>~question</td>
 						<td align="center" id='isonline'>~isonline</td>
 					</tr>
 				</table>
 			</div>
-			<div class='dbbm' style="float: left;">
-				<table class="tbbm"  id="tbbm"   border="0" cellpadding='2'  cellspacing='5'>
+			<div class="dbbm">
+				<table class="tbbm"  id="tbbm">
 					<tr style="height:1px;">
-						<td style="width: 130px"> </td>
-						<td style="width: 180px"> </td>
-						<td style="width: 130px"> </td>
-						<td style="width: 180px"> </td>
-						<td style="width: 10px"> </td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td class="tdZ"></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
-						<td><select id="cmbTypea" class="txt c1"> </select></td>
+						<td><span> </span><a id='lblNoa' class="lbl">單據編號</a></td>
+						<td colspan="2"><input id="txtNoa" type="text" class="txt"/></td>
+						
 						<td><span> </span><a id='lblIsonline' class="lbl"> </a></td>
 						<td><input id="chkIsonline" type="checkbox" style="float: center;"/></td>
-						<td><input id="txtNoa"  type="text" style="display: none;"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblQuestion' class="lbl"> </a></td>
-						<td colspan="3"><textarea id="txtQuestion" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
-						<td> </td>
+						<td colspan="7"><textarea id="txtQuestion" cols="10" rows="5" style="width: 100%;height: 100px;"> </textarea></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblAnswer' class="lbl"> </a></td>
-						<td colspan="3"><textarea id="txtAnswer" cols="10" rows="5" style="width: 99%;height: 100px;"> </textarea></td>
-						<td> </td>
+						<td colspan="7"><textarea id="txtAnswer" cols="10" rows="5" style="width: 100%;height: 100px;"> </textarea></td>
+					</tr>
+					<tr style="background:pink;">
+						<td></td>
+						<td>簡體</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td class="tdZ"></td>
+					</tr>
+					<tr style="background:pink;">
+						<td><span> </span><a id='lblQuestion2' class="lbl">問題</a></td>
+						<td colspan="7"><textarea id="txtQuestion2" cols="10" rows="5" style="width: 100%;height: 100px;"> </textarea></td>
+						<td class="tdZ"></td>
+					</tr>
+					<tr style="background:pink;">
+						<td><span> </span><a id='lblAnswer2' class="lbl">答案</a></td>
+						<td colspan="7"><textarea id="txtAnswer2" cols="10" rows="5" style="width: 100%;height: 100px;"> </textarea></td>
+						<td class="tdZ"></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
