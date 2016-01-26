@@ -310,6 +310,7 @@
 							country_count++;
 						}
 					}
+					
 					q_cmbParse("cmbCountry", c_country);
 					if(country_count==1){
 						$('#cmbCountry').get(0).selectedIndex=1;
@@ -725,6 +726,7 @@
 							for (i = 0; i < t_newsregion.length; i++) {
 								t_item = t_item + (t_item.length > 0 ? ',' : '') + $.trim(t_newsregion[i].regionno) + '@' + $.trim(t_newsregion[i].region);
 							}
+							
 							q_cmbParse("cmbRegion", t_item);
 							if(abbm[q_recno])
 								$("#cmbRegion").val(abbm[q_recno].region);
