@@ -219,10 +219,10 @@
 								var per = Math.round( (e.loaded * 100) / e.total) ; 
 								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
 							}; 
-						}
+						};
 						fr.onloadstart = function(e){
 							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
-						}
+						};
 						fr.onloadend = function(e){
 							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
 							console.log(fr.fileName+':'+fr.result.length);
@@ -974,7 +974,7 @@
                 	$("input[name='typea2']").removeAttr('disabled');
                 	$('.btnImg').removeAttr('disabled', 'disabled');
                 	$('.btnAtt').removeAttr('disabled', 'disabled');
-                	$('#txtDatea').removeClass('hasDatepicker')
+                	$('#txtDatea').removeClass('hasDatepicker');
 					$('#txtDatea').datepicker({ dateFormat: 'yy/mm/dd' });
                 }
             }
@@ -1029,11 +1029,11 @@
 							if ( e.lengthComputable ) { 
 								var per = Math.round( (e.loaded * 100) / e.total) ; 
 								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
-							}; 
-						}
+							}
+						};
 						fr.onloadstart = function(e){
 							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
-						}
+						};
 						fr.onloadend = function(e){
 							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
 							console.log(fr.fileName+':'+fr.result.length);
@@ -1566,6 +1566,12 @@
 					<tr>
 						<td> </td>
 						<td colspan="5">
+							<input id="typea6a" name="typea" type="checkbox" value="14"/><a id='item14'>碳權</a>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="5">
 							<input id="typea6" name="typea" type="checkbox" value="13"/><a id='item13'>其它產品</a>
 						</td>
 					</tr>
@@ -1713,6 +1719,27 @@
 										<input name="typea2" type="checkbox" value="1102"/>新產品
 										<input name="typea2" type="checkbox" value="1103"/>新設備
 										<input name="typea2" type="checkbox" value="1104"/>其它
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="5">
+							<input id="typea16" name="typea2" type="checkbox" value="15"/><a id='item15'>碳權專區</a>
+						</td>
+					</tr>
+					<tr class="typea16">
+						<td> </td>
+						<td colspan="5">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width: 30px;"> </td>
+									<td>
+										<input name="typea2" type="checkbox" value="1501"/>簡介與宣導
+										<input name="typea2" type="checkbox" value="1502"/>新聞與動態
+										<input name="typea2" type="checkbox" value="1503"/>政令與法規
 									</td>
 								</tr>
 							</table>
