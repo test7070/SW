@@ -33,7 +33,8 @@
 				
 				q_gt('newsstype', '', 0, 0, 0, "");
 				q_gt('newsarea', '', 0, 0, 0, "");
-				q_gt('newstypea', '', 0, 0, 0, "");
+				q_gt('newstypea', "where=^^groupa='A'^^", 0, 0, 0, "newstypea_A");
+				q_gt('newstypea', "where=^^groupa='B'^^", 0, 0, 0, "newstypea_B");
 			}
 			
 			function q_gtPost(t_name) {
@@ -58,14 +59,24 @@
                             q_cmbParse("cmbArea", t_item);
                         }
                         break;
-					case 'newstypea':
+					case 'newstypea_A':
                         var as = _q_appendData("newstypea", "", true);
                         if (as[0] != undefined) {
                             t_item = '@全部';
                             for ( i = 0; i < as.length; i++) {
                                 t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].typea;
                             }
-                            q_cmbParse("cmbTypea", t_item);
+                            q_cmbParse("cmbTypea_a", t_item);
+                        }
+                        break;
+                    case 'newstypea_B':
+                        var as = _q_appendData("newstypea", "", true);
+                        if (as[0] != undefined) {
+                            t_item = '@全部';
+                            for ( i = 0; i < as.length; i++) {
+                                t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].typea;
+                            }
+                            q_cmbParse("cmbTypea_b", t_item);
                         }
                         break;
                 }
@@ -78,7 +89,8 @@
 				t_sssno = $('#txtSssno').val();
 				t_namea = $('#txtNamea').val();
 				t_stype = $('#cmbStype').val();
-				t_typea = $('#cmbTypea').val();
+				t_typea_a = $('#cmbTypea_a').val();
+				t_typea_b = $('#cmbTypea_b').val();
 				t_area = $('#cmbArea').val();
 				t_title = $('#txtTitle').val();
 
@@ -87,10 +99,16 @@
 
 				var t_where = " 1=1 " + q_sqlPara2("noa", t_noa) + q_sqlPara2("datea", t_bdate, t_edate) 
 				+ q_sqlPara2("sssno", t_sssno) + q_sqlPara2("namea", t_namea) 
-				+ q_sqlPara2("stype", t_stype) + q_sqlPara2("typea", t_typea)+ q_sqlPara2("area", t_area);
+				+ q_sqlPara2("stype", t_stype) + q_sqlPara2("area", t_area);
 				
 				if (t_title.length>0){
-					t_where=t_where+" and (charindex('"+t_title+"',title)>0 or charindex('"+t_title+"',title2)>0 ) "
+					t_where=t_where+" and (charindex('"+t_title+"',title)>0 or charindex('"+t_title+"',title2)>0 ) ";
+				}
+				if (t_typea_a.length>0){
+					t_where+=" and ( charindex(',"+t_typea_a+",',','+typea+',')>0 ) ";
+				}
+				if (t_typea_b.length>0){
+					t_where+=" and ( charindex(',"+t_typea_b+",',','+typea2+',')>0 ) ";
 				}
 
 				t_where = ' where=^^' + t_where + '^^ ';
@@ -138,8 +156,12 @@
 					<td><select id="cmbStype" style="width:215px; font-size:medium;"> </select></td>
 				</tr>
 				<tr class='seek_tr'>
-					<td class='seek' style="width:30%;"><a id='lblTypea'> </a></td>
-					<td><select id="cmbTypea" style="width:215px; font-size:medium;"> </select></td>
+					<td class='seek' style="width:30%;"><a id='lblTypea_a'>文章屬性一</a></td>
+					<td><select id="cmbTypea_a" style="width:215px; font-size:medium;"> </select></td>
+				</tr>
+				<tr class='seek_tr'>
+					<td class='seek' style="width:30%;"><a id='lblTypea_b'>文章屬性二</a></td>
+					<td><select id="cmbTypea_b" style="width:215px; font-size:medium;"> </select></td>
 				</tr>
 				<tr class='seek_tr'>
 					<td class='seek' style="width:30%;"><a id='lblArea'> </a></td>
