@@ -762,8 +762,8 @@
 							}*/
 							
 							$('#chkGroupa_'+b_seq).prop('checked',true);
-							$('#txtCredit_'+b_seq).val(100);
-							$('#txtTimes_'+b_seq).val(100);
+							$('#txtCredit_'+b_seq).val(120);
+							$('#txtTimes_'+b_seq).val(120);
 							
 						});
 						
