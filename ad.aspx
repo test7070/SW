@@ -327,7 +327,7 @@
                     return;
                 q_box('ad_s.aspx', q_name + '_s', "500px", "300px", q_getMsg("popSeek"));
             }
-
+			
             function btnIns() {
                 _btnIns();
                 //複製時排除
