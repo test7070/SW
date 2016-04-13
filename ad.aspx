@@ -30,13 +30,14 @@
             brwKey = 'noa';
             //ajaxPath = ""; //  execute in Root
             aPop = new Array(['txtCustno', '', 'cust', 'noa,comp', '0txtCustno,txtComp', '']);
-			
+			q_copy = 1;
+
 			q_desc=1;
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 q_brwCount();
-                q_gt(q_name, q_content, q_sqlCount, 1)
-                $('#txtNoa').focus
+                q_gt(q_name, q_content, q_sqlCount, 1);
+                $('#txtNoa').focus();
             });
 
             function main() {
@@ -97,11 +98,11 @@
 							if ( e.lengthComputable ) { 
 								var per = Math.round( (e.loaded * 100) / e.total) ; 
 								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
-							}; 
-						}
+							}
+						};
 						fr.onloadstart = function(e){
 							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
-						}
+						};
 						fr.onloadend = function(e){
 							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
 							console.log(fr.fileName+':'+fr.result.length);
@@ -123,7 +124,7 @@
 							}, false);
 								
 							oReq.timeout = 360000;
-							oReq.ontimeout = function () { alert("Timed out!!!"); }
+							oReq.ontimeout = function () { alert("Timed out!!!"); };
 							oReq.open("POST", 'ad_upload.aspx', true);
 							oReq.setRequestHeader("Content-type", "text/plain");
 							oReq.setRequestHeader("FileName", escape(fr.fileName));
@@ -156,11 +157,11 @@
 							if ( e.lengthComputable ) { 
 								var per = Math.round( (e.loaded * 100) / e.total) ; 
 								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
-							}; 
-						}
+							}
+						};
 						fr.onloadstart = function(e){
 							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
-						}
+						};
 						fr.onloadend = function(e){
 							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
 							console.log(fr.fileName+':'+fr.result.length);
@@ -179,7 +180,7 @@
 							}, false);
 								
 							oReq.timeout = 360000;
-							oReq.ontimeout = function () { alert("Timed out!!!"); }
+							oReq.ontimeout = function () { alert("Timed out!!!"); };
 							oReq.open("POST", 'page_upload.aspx', true);
 							oReq.setRequestHeader("Content-type", "text/plain");
 							oReq.setRequestHeader("FileName", escape(fr.fileName));
@@ -329,6 +330,11 @@
 
             function btnIns() {
                 _btnIns();
+                //複製時排除
+                $('#txtNoa').val('');
+                $('#txtWorker').val('');
+                $('#txtWorker2').val('');
+                
                 $('#txtCustno').focus();
                 ShowImglbl();
             }
@@ -415,11 +421,11 @@
                 }else{
                 	$('.btnImg').removeAttr('disabled', 'disabled');
                 	$('.btnPage').removeAttr('disabled', 'disabled');
-                	$('#txtBdate').removeClass('hasDatepicker')
+                	$('#txtBdate').removeClass('hasDatepicker');
 					$('#txtBdate').datepicker({ dateFormat: 'yy/mm/dd' });
-					$('#txtEdate').removeClass('hasDatepicker')
+					$('#txtEdate').removeClass('hasDatepicker');
 					$('#txtEdate').datepicker({ dateFormat: 'yy/mm/dd' });
-					$('#txtVipedate').removeClass('hasDatepicker')
+					$('#txtVipedate').removeClass('hasDatepicker');
 					$('#txtVipedate').datepicker({ dateFormat: 'yy/mm/dd' });
                 }
             }
