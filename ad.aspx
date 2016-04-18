@@ -66,7 +66,7 @@
 				$.datepicker.setDefaults($.datepicker.regional["zh-TW"]);
                 
                 q_cmbParse("cmbTypea", '@,'+q_getPara('ad.typea'));
-                q_cmbParse("cmbTypeb", '@,'+q_getPara('ad.typeb'));
+                q_cmbParse("combTypeb", q_getPara('ad.typeb'));
                 q_cmbParse("cmbGroupa", '1,2,3');
                 
                 $('#cmbTypea').change(function() {
@@ -370,6 +370,8 @@
                     return;
                 }
                 
+                $('#txtTypeb').val($('#combTypeb').val());
+                
                 if($('#txtWeb1').val().length==0 && $('#txtPage1').val().length==0){
             		alert('請輸入'+q_getMsg("lblPage1")+'或'+q_getMsg("lblWeb1"));
             		Unlock(1);
@@ -408,6 +410,9 @@
                 $('#div_custs').hide();
                 var t_where = "where=^^ noa='"+$("#txtCustno").val()+"' ^^";
 				q_gt('cust', t_where, 0, 0, 0, "get_custss", r_accy);
+				
+				var t_typeb = $('#txtTypeb').val().split(',');
+				$('#combTypeb').val(t_typeb);
             }
             
             function readonly(t_para, empty) {
@@ -418,6 +423,7 @@
                 	$('#txtBdate').datepicker( 'destroy' );
                 	$('#txtEdate').datepicker( 'destroy' );
                 	$('#txtVipedate').datepicker( 'destroy' );
+                	$('#combTypeb').attr('disabled', 'disabled');
                 }else{
                 	$('.btnImg').removeAttr('disabled', 'disabled');
                 	$('.btnPage').removeAttr('disabled', 'disabled');
@@ -427,6 +433,7 @@
 					$('#txtEdate').datepicker({ dateFormat: 'yy/mm/dd' });
 					$('#txtVipedate').removeClass('hasDatepicker');
 					$('#txtVipedate').datepicker({ dateFormat: 'yy/mm/dd' });
+					$('#combTypeb').removeAttr('disabled', 'disabled');
                 }
             }
 
@@ -648,7 +655,10 @@
 						<td><span> </span><a id='lblTypea' class="lbl"> </a></td>
 						<td><select id="cmbTypea" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblTypeb' class="lbl typeb"> </a></td>
-						<td colspan="2"><select id="cmbTypeb" class="txt c1 typeb"> </select></td>
+						<td colspan="2">
+							<select multiple id="combTypeb" class="txt c1 typeb"> </select>
+							<input id="txtTypeb" style="display:none;"/>
+						</td>
 						<td> </td>
 					</tr>
 					<tr>
