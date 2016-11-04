@@ -82,7 +82,7 @@
 					t_where=t_where+" and charindex(N'"+t_comp+"',comp)>0 ";
 					
 				if(t_id.length>0)	
-					t_where=t_where+" and noa=(select noa from custs where id='"+t_id+"' ) ";
+					t_where=t_where+" and noa=(select noa from custs where id='"+t_id+"' collate Chinese_Taiwan_Stroke_CS_AS ) ";
 				
 				if(t_issms=='1')
 					t_where=t_where+" and isnull(issms,0)=1 ";
