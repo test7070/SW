@@ -1,0 +1,34 @@
+create PROCEDURE [dbo].[custs2nhpe]
+@id nvarchar(50)
+AS
+	declare @datea nvarchar(10)=CONVERT(varchar(10), getdate(), 111)
+	
+	if(@id='')
+	begin
+		delete nhpe where noa!='Z001' and noa !='01' --排除固定帳號(非custs)
+		--insert nhpe(noa,namea,rank,passwd,part,partno,outs)
+		--select 'Z001','軒威電腦',9,'sw2383','','',0  union  select '01','張校綸',9,'66058','','',0
+	    
+		INSERT into nhpe(noa,namea,[rank],passwd,part,partno,outs)
+		select a.id,case when a.conn='' then a.id else a.conn end
+		,9,a.pw,'','',0
+		from custs a
+		left join custt b on a.noa=b.noa and a.id=b.id
+		where a.id!='' and isnull(a.groupb,0)=1 and @datea between b.bdate and b.edate
+		group by a.id,a.conn,a.pw
+	end
+    else
+    begin
+		delete nhpe where noa=@id collate Chinese_Taiwan_Stroke_CS_AS and noa!='Z001' and noa !='01'
+		
+		INSERT into nhpe(noa,namea,[rank],passwd,part,partno,outs)
+		select a.id,case when a.conn='' then a.id else a.conn end
+		,9,a.pw,'','',0
+		from custs a
+		left join custt b on a.noa=b.noa and a.id=b.id
+		where isnull(a.groupb,0)=1 and @datea between b.bdate and b.edate
+		and a.id=@id collate Chinese_Taiwan_Stroke_CS_AS
+		group by a.id,a.conn,a.pw
+    end
+
+GO
