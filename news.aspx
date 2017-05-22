@@ -832,6 +832,20 @@
             
             function btnOk() {
             	Lock(1,{opacity:0});
+            	var a = $('#txtDatea').val() + ' ' + $('#txtTimea').val();
+            	try{
+            		var b = new Date(a);
+            		if(isNaN(b.valueOf())){
+            			alert('日期時間錯誤');
+	            		Unlock(1);
+	                    return;
+            		}
+            	}catch(e){
+            		alert(e.message);
+            		Unlock(1);
+                    return;
+            	}
+            	
             	savetypea();
             	savetypea2();
             	if(!checkTypea()){
