@@ -810,10 +810,11 @@
 										var valid_id=[];
 										for (var j = 0; j < q_bbtCount; j++) {
 											if(q_date()>=$('#txtBdate__'+j).val() && q_date()<=$('#txtEdate__'+j).val()){
-												var t_pw='';
+												var t_pw='',t_ismaster = false;
 												for (var i = 0; i < q_bbsCount; i++) {
 													if($('#txtId__'+j).val()==$('#txtId_'+i).val()){
-														t_pw=$('#txtPw_'+i).val();
+														t_pw = $('#txtPw_'+i).val();
+														t_ismaster = $('#chkMaster_'+i).prop('checked');
 													}
 												}
 												//密碼不空白
@@ -829,14 +830,26 @@
 													if(!x_id){
 														valid_id.push({
 															id:$('#txtId__'+j).val(),
-															pw:t_pw
-														})
+															pw:t_pw,
+															isMaster: t_ismaster
+														});
 													}
 												}
 											}
 										}
 										
 										if(valid_id.length>0){
+											console.log(valid_id);
+											valid_id.sort(function(a, b){
+												if(a.isMaster && b.isMaster){
+													return b-a;
+												}else if(a.isMaster){
+													return a;
+												}else{
+													return b;
+												}
+											});
+											console.log(valid_id);
 											var t_id='',t_pw='';
 											for (var i = 0; i < valid_id.length; i++) {
 												t_id=t_id+(t_id.length>0?';':'')+valid_id[i].id;
