@@ -1920,6 +1920,7 @@
 					<tr style='color:white; background:#003366;' >
 						<td style="width:20px;"><input id="btnPlus" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
 						<td style="width:80px;"><a id='lblNo_s'> </a></td>
+						<td style="width:100px;"><a>名稱</a></td>
 						<td><a id='lblTitle_s'> </a></td>
 						<td><a id='lblTitle2_s'> </a></td>
 						<td style="width:300px;"><a class='lblLanguage1_s'> </a></td>
@@ -1931,6 +1932,7 @@
 							<input type="text" id="txtNoq.*" style="display: none;"/>
 						</td>
 						<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
+						<td><input type="text" id="txtNamea.*" class="txt c1" maxlength="20"/></td>
 						<td><input type="text" id="txtTitle.*" class="txt c1" /></td>
 						<td><input type="text" id="txtTitle2.*" class="txt c1 ChangeGBs" /></td>
 						<td style="text-align: left;">
