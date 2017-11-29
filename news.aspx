@@ -83,7 +83,8 @@
                 q_cmbParse("cmbImgbplace", ",0@右,1@下");
                 q_cmbParse("cmbImgcplace", ",0@右,1@下");
                 q_cmbParse("cmbImgdplace", ",0@右,1@下");
-				
+				q_cmbParse("cmbTypea", ",file@附件,image@圖片","s");
+				q_cmbParse("cmbPlace", ",0@右,1@下","s");
 				q_gt('sss', '', 0, 0, 0, "sss");
 				
 				$('#combNamea').change(function() {
@@ -845,7 +846,17 @@
             		Unlock(1);
                     return;
             	}
-            	
+            	//判斷BBS圖片,在內文中有無標記
+            	for(var i=0;i<q_bbsCount;i++){
+            		if($('#cmbTypea_'+i).val()=="image" && $.trim($('#txtNamea_'+i).val()).length>0){
+            			if($('#txtContents').val().indexOf("{img"+$.trim($('#txtNamea_'+i).val())+"}")<0){
+            				$('#txtContents').val("{img"+$.trim($('#txtNamea_'+i).val())+"}"+$('#txtContents').val());
+            			}
+            			if($('#txtContents2').val().indexOf("{img"+$.trim($('#txtNamea_'+i).val())+"}")<0){
+            				$('#txtContents2').val("{img"+$.trim($('#txtNamea_'+i).val())+"}"+$('#txtContents2').val());
+            			}
+            		}
+            	}
             	savetypea();
             	savetypea2();
             	if(!checkTypea()){
@@ -1007,7 +1018,7 @@
 			
 			function bbsAssign() {
 				for (var i = 0; i < q_bbsCount; i++) {
-					$('#lblNo_' + i).text(q_getMsg("lblAtt")+(i + 1));
+					$('#lblNo_' + i).text((i + 1));
 				}
 				_bbsAssign();
 				if(q_cur==1 || q_cur==2){
@@ -1919,7 +1930,9 @@
 				<table id="tbbs" class='tbbs'>
 					<tr style='color:white; background:#003366;' >
 						<td style="width:20px;"><input id="btnPlus" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
-						<td style="width:80px;"><a id='lblNo_s'> </a></td>
+						<td style="width:40px;"><a id='lblNo_s'> </a></td>
+						<td style="width:100px;"><a>類型</a></td>
+						<td style="width:50px;"><a>位置</a></td>
 						<td style="width:100px;"><a>名稱</a></td>
 						<td><a id='lblTitle_s'> </a></td>
 						<td><a id='lblTitle2_s'> </a></td>
@@ -1932,6 +1945,8 @@
 							<input type="text" id="txtNoq.*" style="display: none;"/>
 						</td>
 						<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
+						<td><select id="cmbTypea.*" class="txt c1" > </select></td>
+						<td><select id="cmbPlace.*" class="txt c1" > </select></td>
 						<td><input type="text" id="txtNamea.*" class="txt c1" maxlength="20"/></td>
 						<td><input type="text" id="txtTitle.*" class="txt c1" /></td>
 						<td><input type="text" id="txtTitle2.*" class="txt c1 ChangeGBs" /></td>
