@@ -51,11 +51,10 @@
                 q_brwCount();
                 
                 q_content="where=^^1=1^^";
-                q_gt(q_name, q_content, q_sqlCount, 1)
-                $('#txtNoa').focus
+                q_gt(q_name, q_content, q_sqlCount, 1);
+                $('#txtNoa').focus();
 			});
 
-			//////////////////end Ready
 			function main() {
 				if (dataErr) {
 					dataErr = false;
@@ -92,10 +91,16 @@
 				q_cmbParse("cmbCobtype", ',二聯式,三聯式');
 				q_cmbParse("cmbForeigns", ',0@台灣地區,1@台灣以外地區');
 				
+				$('#btnCustw').click(function() {
+					//頁面使用權限
+					var t_where = "noa='" + trim($('#txtNoa').val()) + "'";
+						q_box("custw_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where + ";"+r_accy, 'custw', "95%", "95%", q_getMsg('popCustw'));
+				});
+				
 				$('#btnCusts').click(function() {
 					$('.dbbs').css('top', $(this).offset().top+25);
 					$('.dbbs').css('left', 0);
-				 	$('.dbbs').show()
+				 	$('.dbbs').show();
 				});
 				
 				$('#btnClosesCusts').click(function() {
@@ -181,10 +186,10 @@
 								var per = Math.round( (e.loaded * 100) / e.total) ; 
 								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
 							}; 
-						}
+						};
 						fr.onloadstart = function(e){
 							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
-						}
+						};
 						fr.onloadend = function(e){
 							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
 							console.log(fr.fileName+':'+fr.result.length);
@@ -206,7 +211,7 @@
 							}, false);
 								
 							oReq.timeout = 360000;
-							oReq.ontimeout = function () { alert("Timed out!!!"); }
+							oReq.ontimeout = function () { alert("Timed out!!!"); };
 							oReq.open("POST", 'cust_upload.aspx', true);
 							oReq.setRequestHeader("Content-type", "text/plain");
 							oReq.setRequestHeader("FileName", escape(fr.fileName));
@@ -399,8 +404,8 @@
 							for(var j=0;j<q_bbtCount;j++){
 								if($('#textMid').val()==$('#txtId__'+j).val()){
 									if(v_bdate<$('#txtBdate__'+j).val()){
-										v_bdate=$('#txtBdate__'+j).val()
-										v_edate=$('#txtEdate__'+j).val()
+										v_bdate=$('#txtBdate__'+j).val();
+										v_edate=$('#txtEdate__'+j).val();
 									}
 								}
 							}
@@ -592,7 +597,7 @@
 					}
 				}
 				if(t_id=='')
-					t_id=" 1=1 "
+					t_id=" 1=1 ";
 				t_where="where=^^  ("+t_id+") and noa!='"+$('#txtNoa').val()+"' collate Chinese_Taiwan_Stroke_CS_AS^^";
 				q_gt('custs', t_where, 0, 0, 0, "btnOkCustsId", r_accy);
 				//wrServer($('#txtNoa').val());
@@ -695,9 +700,9 @@
 					$('.btnImg').removeAttr('disabled', 'disabled');
 					$('#btnShip').attr('disabled', 'disabled');
 					//$('#btnCustu').attr('disabled', 'disabled');
-					$('#txtStartdate').removeClass('hasDatepicker')
+					$('#txtStartdate').removeClass('hasDatepicker');
 					$('#txtStartdate').datepicker({ dateFormat: 'yy/mm/dd' });
-					$('#txtKdate').removeClass('hasDatepicker')
+					$('#txtKdate').removeClass('hasDatepicker');
 					$('#txtKdate').datepicker({ dateFormat: 'yy/mm/dd' });
 				}
 			}
@@ -744,7 +749,7 @@
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
 							bbs_id_new=$(this).val();
-						})
+						});
 						
 						$('#txtId_'+i).change(function() {
 							t_IdSeq = -1;
@@ -1281,6 +1286,7 @@
 							<input id="txtSerial" type="hidden"/>
 						</td>
 						<td><input id="btnCusts" type="button" value="使用者帳號維護"/></td>
+						<td><input id="btnCustw" type="button" value="網頁瀏覽權限"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblBizscope' class="lbl"> </a></td>
