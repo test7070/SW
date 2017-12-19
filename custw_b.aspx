@@ -58,10 +58,13 @@
 			}
 
 			function mainPost() {
+				bbsMask = [['txtBdate', r_picd],['txtEdate', r_picd]];
 				q_mask(bbmMask);
 				parent.$.fn.colorbox.resize({
 					height : "750px"
 				});
+				
+				q_cmbParse("cmbPage",'@,news@新聞頻道,statistics@統計數據,price@全球商情,report@專題報導,carbonright@碳權專區,metalfutures@金屬期貨','s');
 			}
 
 
@@ -69,24 +72,16 @@
 				for (var i = 0; i < q_bbsCount; i++) {
 					$('#lblNo_' + i).text(i + 1);
 					if (!$('#btnMinus_' + i).hasClass('isAssign')) {
-						/*$('#txtUcolor_' + i).bind('contextmenu', function(e) {
-							e.preventDefault();
-							if(!(q_cur==1 || q_cur==2))
-								return;
-                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                            $('#btnUcolor_'+n).click();
-                        });*/
+
 					}
 				}
 				_bbsAssign();
-				for (var i = 0; i < q_bbsCount; i++) {
-					if(!$('#txtBdate_'+i).hasClass('hasDatepicker')){
+				/*for (var i = 0; i < q_bbsCount; i++) {
+					if(!$('#txtBdate_'+i).hasClass('hasDatepicker'))
 						$('#txtBdate_'+i).datepicker();
-					}
-					if(!$('#txtEdate_'+i).hasClass('hasDatepicker')){
-						$('#txtEdate_'+i).datepicker();
-					}		
-				}
+					if(!$('#txtEdate_'+i).hasClass('hasDatepicker'))
+						$('#txtEdate_'+i).datepicker();	
+				}*/
 			}
 
 			function btnOk() {
@@ -196,7 +191,7 @@
 						<a id="lblNo.*"> </a>
 						<input type="text" id="txtNoq.*" style="display:none;"/>
 					</td>
-					<td><select id="cmbPagename" class="txt c1"> </select></td>
+					<td><select id="cmbPage.*" class="txt c1"> </select></td>
 					<td><input type="text" id="txtBdate.*" class="txt c1"/></td>
 					<td><input type="text" id="txtEdate.*" class="txt c1"/></td>
 					<td><input type="text" id="txtMemo.*" class="txt c1"/></td>					
