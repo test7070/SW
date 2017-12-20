@@ -64,16 +64,15 @@
 					height : "750px"
 				});
 				
-				q_cmbParse("cmbPage",'@,news@新聞頻道,statistics@統計數據,price@全球商情,report@專題報導,carbonright@碳權專區,metalfutures@金屬期貨','s');
+				q_cmbParse("combPage",'@,news@新聞頻道,statistics@統計數據,price@全球商情,report@專題報導,carbonright@碳權專區,metalfutures@金屬期貨','s');
+				bbsAssign();
 			}
 
 
 			function bbsAssign() {
 				for (var i = 0; i < q_bbsCount; i++) {
 					$('#lblNo_' + i).text(i + 1);
-					if (!$('#btnMinus_' + i).hasClass('isAssign')) {
-
-					}
+					$('#combPage_'+i).val($('#txtPage_'+i).val());
 				}
 				_bbsAssign();
 				/*for (var i = 0; i < q_bbsCount; i++) {
@@ -85,6 +84,9 @@
 			}
 
 			function btnOk() {
+				for (var i = 0; i < q_bbsCount; i++) {
+					$('#txtPage_'+i).val($('#combPage_'+i).val());
+				}
 				console.log('btnOk');
                 t_key = q_getHref();
                 _btnOk(t_key[1], bbsKey[0], bbsKey[1], '', 2);
@@ -118,6 +120,8 @@
 				if (!t_key)
 					return;
 				_btnModi(1);
+				console.log(q_cur);
+				refreshBbs();
 			}
 			function q_stPost() {
 				if (!(q_cur == 1 || q_cur == 2))
@@ -126,6 +130,17 @@
 			
 			function refresh() {
 				_refresh();
+				refreshBbs();
+			}
+			function refreshBbs(){
+				for (var i = 0; i < q_bbsCount; i++) {
+					$('#combPage_'+i).val($('#txtPage_'+i).val());
+					if(q_cur==1 || q_cur==2){
+						$('#combPage_'+i).removeAttr('readonly').removeAttr('disabled');
+					}else{
+						$('#combPage_'+i).attr('readonly','readonly').attr('disabled','disabled');
+					}
+				}
 			}
 
 
@@ -138,6 +153,7 @@
 
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
+				refreshBbs();
 			}
 
 			function btnMinus(id) {
@@ -191,7 +207,10 @@
 						<a id="lblNo.*"> </a>
 						<input type="text" id="txtNoq.*" style="display:none;"/>
 					</td>
-					<td><select id="cmbPage.*" class="txt c1"> </select></td>
+					<td>
+						<select id="combPage.*" class="txt c1"> </select>
+						<input type="text" id="txtPage.*" style="display:none;"/>
+					</td>
 					<td><input type="text" id="txtBdate.*" class="txt c1"/></td>
 					<td><input type="text" id="txtEdate.*" class="txt c1"/></td>
 					<td><input type="text" id="txtMemo.*" class="txt c1"/></td>					
