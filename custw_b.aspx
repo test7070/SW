@@ -12,179 +12,188 @@
 		<link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
 		<script src="css/jquery/ui/jquery.ui.core.js"></script>
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
-		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
+		<script src="css/jquery/ui/jquery.ui.datepicker.js"></script>
 		<script type="text/javascript">
-			var q_name = 'custw', t_bbsTag = 'tbbs', t_content = " ", afilter = [], bbsKey = ['noa'], t_count = 0, as, brwCount = -1;
-			brwCount2 = 0;
-			var t_sqlname = q_name;
-			t_postname = q_name;
-			var isBott = false;
-			var afield, t_htm;
-			var i, s1;
-			var decbbs = [];
-			var decbbm = [];
-			var q_readonly = [];
-			var q_readonlys = [];
-			var bbmNum = [];
-			var bbsNum = [];
-			var bbmMask = [];
-			var bbsMask = [];
-			var Parent = window.parent;
-			
-			var currentNoa = '';
+            var q_name = 'custw',
+                t_bbsTag = 'tbbs',
+                t_content = " ",
+                afilter = [],
+                bbsKey = ['noa'],
+                t_count = 0,
+                as,
+                brwCount = -1;
+            brwCount2 = 0;
+            var t_sqlname = q_name;
+            t_postname = q_name;
+            var isBott = false;
+            var afield,
+                t_htm;
+            var i,
+                s1;
+            var decbbs = [];
+            var decbbm = [];
+            var q_readonly = [];
+            var q_readonlys = [];
+            var bbmNum = [];
+            var bbsNum = [];
+            var bbmMask = [];
+            var bbsMask = [];
+            var Parent = window.parent;
 
-			/*aPop = new Array(
-				['txtProductno_', 'btnProductno_', 'ucaucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucaucc_b.aspx']
-				,['txtUcolor_', 'btnUcolor_', 'view_uccc2', 'uno,productno,product,eweight', '0txtUcolor_,txtProductno_,txtProduct_,txtWeight_', 'uccc_seek_b2.aspx?;;;1=0', '95%', '95%']
-			);*/
-			
-			$(document).ready(function() {
-				bbmKey = [];
-				bbsKey = ['noa', 'noq'];
-				if (!q_paraChk())
-					return;
-				main();
-			});
-			function main() {
-				if (dataErr) {
-					dataErr = false;
-					return;
-				}
-				mainBrow(6, t_content, t_sqlname, t_postname, r_accy);
-				$('#btnTop').hide();
-				$('#btnPrev').hide();
-				$('#btnNext').hide();
-				$('#btnBott').hide();
-			}
+            var currentNoa = '';
 
-			function mainPost() {
-				bbsMask = [['txtBdate', r_picd],['txtEdate', r_picd]];
-				q_mask(bbmMask);
-				parent.$.fn.colorbox.resize({
-					height : "750px"
-				});
-				
-				q_cmbParse("combPage",'@,news@新聞頻道,statistics@統計數據,price@全球商情,report@專題報導,carbonright@碳權專區,metalfutures@金屬期貨','s');
-				bbsAssign();
-			}
+            /*aPop = new Array(
+             ['txtProductno_', 'btnProductno_', 'ucaucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucaucc_b.aspx']
+             ,['txtUcolor_', 'btnUcolor_', 'view_uccc2', 'uno,productno,product,eweight', '0txtUcolor_,txtProductno_,txtProduct_,txtWeight_', 'uccc_seek_b2.aspx?;;;1=0', '95%', '95%']
+             );*/
 
+            $(document).ready(function() {
+                bbmKey = [];
+                bbsKey = ['noa', 'noq'];
+                if (!q_paraChk())
+                    return;
+                main();
+            });
+            function main() {
+                if (dataErr) {
+                    dataErr = false;
+                    return;
+                }
+                mainBrow(6, t_content, t_sqlname, t_postname, r_accy);
+                $('#btnTop').hide();
+                $('#btnPrev').hide();
+                $('#btnNext').hide();
+                $('#btnBott').hide();
+            }
 
-			function bbsAssign() {
-				for (var i = 0; i < q_bbsCount; i++) {
-					$('#lblNo_' + i).text(i + 1);
-					$('#combPage_'+i).val($('#txtPage_'+i).val());
-				}
-				_bbsAssign();
-				/*for (var i = 0; i < q_bbsCount; i++) {
-					if(!$('#txtBdate_'+i).hasClass('hasDatepicker'))
-						$('#txtBdate_'+i).datepicker();
-					if(!$('#txtEdate_'+i).hasClass('hasDatepicker'))
-						$('#txtEdate_'+i).datepicker();	
-				}*/
-			}
+            function mainPost() {
+                bbsMask = [['txtBdate', r_picd], ['txtEdate', r_picd]];
+                q_mask(bbmMask);
+                parent.$.fn.colorbox.resize({
+                    height : "750px"
+                });
 
-			function btnOk() {
-				for (var i = 0; i < q_bbsCount; i++) {
-					$('#txtPage_'+i).val($('#combPage_'+i).val());
-				}
-				console.log('btnOk');
+                q_cmbParse("combPage", '@,news@新聞頻道,statistics@統計數據,price@全球商情,report@專題報導,carbonright@碳權專區,metalfutures@金屬期貨', 's');
+                bbsAssign();
+            }
+
+            function bbsAssign() {
+                for (var i = 0; i < q_bbsCount; i++) {
+                    $('#lblNo_' + i).text(i + 1);
+                    $('#combPage_' + i).val($('#txtPage_' + i).val());
+                    $('#txtBdate_'+i).removeClass('hasDatepicker');
+						$('#txtBdate_'+i).datepicker({ dateFormat: 'yy/mm/dd' });
+                }
+                _bbsAssign();
+
+            }
+
+            function btnOk() {
+                for (var i = 0; i < q_bbsCount; i++) {
+                    $('#txtPage_' + i).val($('#combPage_' + i).val());
+                }
+                console.log('btnOk');
                 t_key = q_getHref();
                 _btnOk(t_key[1], bbsKey[0], bbsKey[1], '', 2);
-			}
-			function q_funcPost(t_func, result) {
+            }
+
+            function q_funcPost(t_func, result) {
                 switch(t_func) {
-                    default:
-                        break;
+                default:
+                    break;
                 }
             }
+
             function q_gtPost(t_name) {
-				switch (t_name) {
-					case q_name:
-						break;
-					default:
-                    	break;
-				}
-			}
-			
-			function bbsSave(as) {
-				if (!as['bdate']) {
-					as[bbsKey[0]] = '';
-					return;
-				}
-				q_getId2('', as);
-				return true;
-			}
+                switch (t_name) {
+                case q_name:
+                    break;
+                default:
+                    break;
+                }
+            }
 
-			function btnModi() {
-				var t_key = q_getHref();
-				if (!t_key)
-					return;
-				_btnModi(1);
-				console.log(q_cur);
-				refreshBbs();
-			}
-			function q_stPost() {
-				if (!(q_cur == 1 || q_cur == 2))
-					return false;
-			}
-			
-			function refresh() {
-				_refresh();
-				refreshBbs();
-			}
-			function refreshBbs(){
-				for (var i = 0; i < q_bbsCount; i++) {
-					$('#combPage_'+i).val($('#txtPage_'+i).val());
-					if(q_cur==1 || q_cur==2){
-						$('#combPage_'+i).removeAttr('readonly').removeAttr('disabled');
-					}else{
-						$('#combPage_'+i).attr('readonly','readonly').attr('disabled','disabled');
-					}
-				}
-			}
+            function bbsSave(as) {
+                if (!as['bdate']) {
+                    as[bbsKey[0]] = '';
+                    return;
+                }
+                q_getId2('', as);
+                return true;
+            }
 
+            function btnModi() {
+                var t_key = q_getHref();
+                if (!t_key)
+                    return;
+                _btnModi(1);
+                console.log(q_cur);
+                refreshBbs();
+            }
 
-			function q_popPost(s1) {
-				switch (s1) {
-					default:
-						break;
-				}
-			}
+            function q_stPost() {
+                if (!(q_cur == 1 || q_cur == 2))
+                    return false;
+            }
 
-			function readonly(t_para, empty) {
-				_readonly(t_para, empty);
-				refreshBbs();
-			}
+            function refresh() {
+                _refresh();
+                refreshBbs();
+            }
 
-			function btnMinus(id) {
-				_btnMinus(id);
-			}
+            function refreshBbs() {
+                for (var i = 0; i < q_bbsCount; i++) {
+                    $('#combPage_' + i).val($('#txtPage_' + i).val());
+                    if (q_cur == 1 || q_cur == 2) {
+                        $('#combPage_' + i).removeAttr('readonly').removeAttr('disabled');
+                    } else {
+                        $('#combPage_' + i).attr('readonly', 'readonly').attr('disabled', 'disabled');
+                    }
+                }
+            }
 
-			function btnPlus(org_htm, dest_tag, afield) {
-				_btnPlus(org_htm, dest_tag, afield);
-				if (q_tables == 's')
-					bbsAssign();
-			}
+            function q_popPost(s1) {
+                switch (s1) {
+                default:
+                    break;
+                }
+            }
+
+            function readonly(t_para, empty) {
+                _readonly(t_para, empty);
+
+                refreshBbs();
+            }
+
+            function btnMinus(id) {
+                _btnMinus(id);
+            }
+
+            function btnPlus(org_htm, dest_tag, afield) {
+                _btnPlus(org_htm, dest_tag, afield);
+                //if (q_tables == 's')
+                bbsAssign();
+            }
 		</script>
 		<style type="text/css">
-			input[type="text"], input[type="button"] {
-				font-size: medium;
-			}
-			.txt {
-				float: left;
-			}
-			.c1 {
-				width: 95%;
-			}
-			.num {
-				text-align: right;
-			}
-			.btn {
-				font-weight: bold;
-			}
-			#lblNo {
-				font-size: medium;
-			}
+            input[type="text"], input[type="button"] {
+                font-size: medium;
+            }
+            .txt {
+                float: left;
+            }
+            .c1 {
+                width: 95%;
+            }
+            .num {
+                text-align: right;
+            }
+            .btn {
+                font-weight: bold;
+            }
+            #lblNo {
+                font-size: medium;
+            }
 		</style>
 	</head>
 	<body>
@@ -194,26 +203,32 @@
 					<td align="center">
 					<input class="btn"  id="btnPlus" type="button" value='＋' style="font-weight: bold;"  />
 					</td>
-					<td align="center" style="width:20px;"> </td>
+					<td align="center" style="width:20px;"></td>
 					<td align="center" style="width:150px;">頁面</td>
 					<td align="center" style="width:150px;">起始日</td>
 					<td align="center" style="width:150px;">終止日</td>
 					<td align="center" style="width:200px;">備註</td>
-					
+
 				</tr>
 				<tr style="background:#cad3ff;font-size: 14px;">
-					<td><input class="btn"  id="btnMinus.*" type="button" value="－" style="font-weight: bold;"/></td>
-					<td style="text-align:center;">
-						<a id="lblNo.*"> </a>
-						<input type="text" id="txtNoq.*" style="display:none;"/>
+					<td>
+					<input class="btn"  id="btnMinus.*" type="button" value="－" style="font-weight: bold;"/>
+					</td>
+					<td style="text-align:center;"><a id="lblNo.*"> </a>
+					<input type="text" id="txtNoq.*" style="display:none;"/>
+					</td>
+					<td><select id="combPage.*" class="txt c1"></select>
+					<input type="text" id="txtPage.*" style="display:none;"/>
 					</td>
 					<td>
-						<select id="combPage.*" class="txt c1"> </select>
-						<input type="text" id="txtPage.*" style="display:none;"/>
+					<input type="text" id="txtBdate.*" class="txt c1"/>
 					</td>
-					<td><input type="text" id="txtBdate.*" class="txt c1"/></td>
-					<td><input type="text" id="txtEdate.*" class="txt c1"/></td>
-					<td><input type="text" id="txtMemo.*" class="txt c1"/></td>					
+					<td>
+					<input type="text" id="txtEdate.*" class="txt c1"/>
+					</td>
+					<td>
+					<input type="text" id="txtMemo.*" class="txt c1"/>
+					</td>
 				</tr>
 			</table>
 			<!--#include file="../inc/pop_modi.inc"-->
