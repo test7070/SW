@@ -34,7 +34,7 @@
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 q_brwCount();
-                q_gt(q_name, q_content, q_sqlCount, 1)
+                q_gt(q_name, q_content, q_sqlCount, 1);
                 $('#txtNoa').focus();
             });
 
@@ -253,9 +253,9 @@
                  	$('#txtIndate').datepicker( 'destroy' );
                  	$('#txtInvodate').datepicker( 'destroy' );
                 }else{
-                	$('#txtIndate').removeClass('hasDatepicker')
+                	$('#txtIndate').removeClass('hasDatepicker');
 					$('#txtIndate').datepicker({ dateFormat: 'yy/mm/dd' });
-					$('#txtInvodate').removeClass('hasDatepicker')
+					$('#txtInvodate').removeClass('hasDatepicker');
 					$('#txtInvodate').datepicker({ dateFormat: 'yy/mm/dd' });
                 }
             }

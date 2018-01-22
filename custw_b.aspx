@@ -82,7 +82,23 @@
                     $('#lblNo_' + i).text(i + 1);
                     $('#combPage_' + i).val($('#txtPage_' + i).val());
                     $('#txtBdate_'+i).removeClass('hasDatepicker');
-						$('#txtBdate_'+i).datepicker({ dateFormat: 'yy/mm/dd' });
+					$('#txtBdate_'+i).datepicker({ dateFormat: 'yy/mm/dd' });
+					$('#txtEdate_'+i).removeClass('hasDatepicker');
+					$('#txtEdate_'+i).datepicker({ dateFormat: 'yy/mm/dd' });
+					
+					$('#combPage_' + i).change(function() {
+                        var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                        var m = -1;
+                        try{
+                        	m = parseInt(n) - 1;
+                        }catch(e){
+                        	m= -1;
+                        }
+                        if(n>=0){
+                        	$('#txtBdate_'+n).val($('#txtBdate_'+m).val());
+                        	$('#txtEdate_'+n).val($('#txtEdate_'+m).val());
+                        }
+                    });
                 }
                 _bbsAssign();
 
