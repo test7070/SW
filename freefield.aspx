@@ -20,7 +20,7 @@
             var bbmMask = [];
             q_sqlCount = 6;
             brwCount = 6;
-            brwCount2 = 8;
+            brwCount2 = 10;
             brwList = [];
             brwNowPage = 0;
             brwKey = 'noa';
@@ -31,7 +31,7 @@
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 q_brwCount();
-                q_gt(q_name, q_content, q_sqlCount, 1)
+                q_gt(q_name, q_content, q_sqlCount, 1);
                 $('#txtNoa').focus();
             });
 
@@ -48,7 +48,7 @@
             	bbmMask = [];
                 q_mask(bbmMask);
                 
-                q_cmbParse("cmbTypea",'1,2');
+                q_cmbParse("cmbTypea",'1,2,3,4');
             }
             
             function q_boxClose(s2) {
