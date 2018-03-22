@@ -1369,13 +1369,21 @@
 						<td><input id="txtIllustrate"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id='lblIllustrate2' class="lbl btn ChangeGB"> </a></td>
 						<td><input id="txtIllustrate2"  type="text"  class="txt c1"/></td>
-						<td colspan="2">
+						
+					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="5">
 							<input id="chkOnline" type="checkbox" style="float: left;"/>
 							<a id='lblOnline' class="lbl" style="float: left;"> </a>
 							<input id="chkNewimg" type="checkbox" style="float: left;"/>
 							<a id='lblNewimg' class="lbl" style="float: left;"> </a>
 							<input id="chkWatermark" type="checkbox" style="float: left;"/>
 							<a id='lblWatermark' class="lbl" style="float: left;"> </a>
+							<input id="chkIsfocus" type="checkbox" style="float: left;"/>
+							<a id='lblIsfocus' class="lbl" style="float: left;">焦點</a>
+							<input id="chkIsimport" type="checkbox" style="float: left;"/>
+							<a id='lblIsimport' class="lbl" style="float: left;">重要</a>
 						</td>
 					</tr>
 					<tr>
