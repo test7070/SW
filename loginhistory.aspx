@@ -1,5 +1,8 @@
  <%@ Page Language="C#" Debug="true"%>
-    <script language="c#" runat="server">     
+    <script language="c#" runat="server">    
+        
+        static string connString = @"Data Source=127.0.0.1,1799;Persist Security Info=True;User ID=sa;Password=artsql963;Database=sw";
+         
     	public void get_sess(){
             string a = "";
             foreach (string x in getOnlineUsers())
@@ -12,8 +15,38 @@
         private System.Collections.Generic.List<String> getOnlineUsers()
         {
             System.Collections.Generic.List<String> activeSessions = new System.Collections.Generic.List<String>();
+            
+            System.Data.DataTable dt = new System.Data.DataTable();
+            using (System.Data.SqlClient.SqlConnection connSource = new System.Data.SqlClient.SqlConnection(connString))
+            {
+                System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter();
+                connSource.Open();
+                string queryString = @"select id
+from loginhistory
+where [status] = 'success'
+and abs(DATEDIFF(SECOND,cast(rdate as datetime),getdate()) )<=1200
+group by id";//rdate 會記錄最後一次活動時間
+                System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(queryString, connSource); 
+                adapter.SelectCommand = cmd;
+                adapter.Fill(dt);
+                connSource.Close();
+            }
+            foreach (System.Data.DataRow r in dt.Rows)
+            {
+                activeSessions.Add(System.DBNull.Value.Equals(r.ItemArray[0]) ? "" : (System.String)r.ItemArray[0]);
+            }
+            
+            return activeSessions;
+        }
+        
+        private System.Collections.Generic.List<String> OLD_getOnlineUsers()
+        {
+            System.Collections.Generic.List<String> activeSessions = new System.Collections.Generic.List<String>();
+            
             object obj = typeof(HttpRuntime).GetProperty("CacheInternal", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null, null);
-            object[] obj2 = (object[])obj.GetType().GetField("_caches", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(obj);
+            object[] obj2 = new object[0];
+        //    if (obj.GetType().GetField("_caches", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!=null)
+                obj2 = (object[])obj.GetType().GetField("_caches", System.Reflection.BindingFlags.NonPublic |  System.Reflection.BindingFlags.Instance).GetValue(obj);
             for (int i = 0; i < obj2.Length; i++)
             {
                 Hashtable c2 = (Hashtable)obj2[i].GetType().GetField("_entries", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(obj2[i]);
