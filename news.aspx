@@ -1736,6 +1736,7 @@
 										<input name="typea2" type="checkbox" value="1006"/>加工剪裁
 										<input name="typea2" type="checkbox" value="1007"/>單軋業
 										<input name="typea2" type="checkbox" value="1008"/>團體組織
+										<input name="typea2" type="checkbox" value="1009"/>石油
 										<input name="typea2" type="checkbox" value="1099"/>其它
 									</td>
 								</tr>
